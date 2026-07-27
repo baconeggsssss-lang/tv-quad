@@ -1,0 +1,50 @@
+# News Live Quad View
+
+Static web app that shows 6 live news streams at once:
+
+- Al Jazeera English / TRT World
+- DW News / FRANCE 24
+- CNN
+- CNA
+- Euronews English
+- NHK WORLD-JAPAN News / CGTN
+
+## Behavior
+
+- All 6 streams load simultaneously.
+- Closed captions are forced off by default.
+- Only one stream has audio at any moment.
+- Click a channel header to switch audio to that stream.
+- After each click, 10-minute rotation restarts from the selected stream.
+- Al Jazeera tile auto-switches between Al Jazeera English and TRT World every 11 minutes.
+- Use the inline `Switch AJ/TRT` button next to the Al Jazeera title for instant switch.
+- DW tile auto-switches between DW News and FRANCE 24 every 11 minutes.
+- Use the inline `Switch DW/F24` button next to the DW title for instant switch.
+- CNN tile auto-switches between two CNN live sources every 11 minutes.
+- Use the inline `Switch CNN/ABC` button next to the CNN title for instant switch.
+- Euronews tile auto-switches between English and Espanol every 11 minutes.
+- Use the inline `Switch EN/ES` button next to the Euronews title for instant switch.
+- NHK tile auto-switches between NHK and CGTN every 5 minutes.
+- Use the inline `Switch NHK/CGTN` button next to the NHK title for instant switch.
+- Both variant tiles show their own per-tile `Next switch in mm:ss` countdown.
+- Variant tiles are forced to alternate sub-channels only when audio focus arrives via automatic rotation (not manual switching).
+- `Pause all feeds` unloads every stream to save resources.
+- `Resume all feeds` reloads all streams fresh (like a page refresh), not from paused frame state.
+- `Mute all` immediately mutes all tiles and clears active audio rotation.
+- Keyboard shortcuts: press `1..6` (top row or numpad) to switch audio to tile positions:
+  - `1 2 3`
+  - `4 5 6`
+- Keyboard shortcut: press `Space` to switch AB sub-channel only for the currently active (audio-on) variant tile.
+- Keyboard shortcut: press `Enter` to trigger `Next audio now`.
+
+## Run
+
+Serve this folder with any static server (do not use `file://` directly, YouTube embeds can fail there).
+
+Example:
+
+```powershell
+python -m http.server 8080
+```
+
+Then open: `http://localhost:8080`

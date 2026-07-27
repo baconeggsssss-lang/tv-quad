@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>News Live Quad View</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbarMain">
+        <h1>News Live Quad View</h1>
+        <span id="rotationCountdown" class="countdownText"
+          >Next audio rotation in --:--</span
+        >
+        <button id="nextAudioBtn" class="nextAudioBtn" type="button">
+          Next audio now
+        </button>
+        <button id="muteAllBtn" class="muteAllBtn" type="button">Mute all</button>
+        <button id="pauseFeedsBtn" class="pauseFeedsBtn" type="button">
+          Pause all feeds
+        </button>
+      </div>
+      <p id="statusText" class="srOnly" aria-live="polite">
+        Click a tile header to start audio rotation (10-minute interval).
+      </p>
+      <p id="protocolWarning" class="warning" hidden>
+        YouTube embeds may fail on file://. Open this app via http://localhost or
+        https:// hosting.
+      </p>
+    </header>
+
+    <main class="grid" id="grid"></main>
+
+    <template id="tileTemplate">
+      <section class="tile" data-channel-key="">
+        <button class="tileHeader" type="button">
+          <span class="channelMain">
+            <span class="channelName"></span>
+            <span class="variantCountdown" hidden>Next switch in --:--</span>
+            <span class="sourceInlineSwitch" role="button" tabindex="0" hidden
+              >Switch EN/ES</span
+            >
+          </span>
+          <span class="audioBadge">Muted</span>
+        </button>
+        <div class="playerWrap">
+          <iframe
+            class="playerFrame"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+            title=""
+          ></iframe>
+        </div>
+      </section>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
