@@ -24,7 +24,7 @@ Static web app that shows 6 live news streams at once:
 - Use the inline `Switch CNN/ABC` button next to the CNN title for instant switch.
 - Euronews tile auto-switches between English and Espanol every 11 minutes.
 - Use the inline `Switch EN/ES` button next to the Euronews title for instant switch.
-- NHK tile auto-switches between NHK and CGTN every 5 minutes.
+- NHK tile auto-switches with asymmetric timing: NHK (3 minutes), CGTN (8 minutes).
 - Use the inline `Switch NHK/CGTN` button next to the NHK title for instant switch.
 - Both variant tiles show their own per-tile `Next switch in mm:ss` countdown.
 - Variant tiles are forced to alternate sub-channels only when audio focus arrives via automatic rotation (not manual switching).

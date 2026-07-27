@@ -49,10 +49,13 @@ const channels = [
     key: NHK_KEY,
     name: "NHK / CGTN",
     switchLabel: "Switch NHK/CGTN",
-    switchIntervalMs: 5 * 60 * 1000,
     variants: [
-      { name: "NHK WORLD-JAPAN News", videoId: "f0lYkdA-Gtw" },
-      { name: "CGTN", videoId: "BOy2xDU1LC8" },
+      {
+        name: "NHK WORLD-JAPAN News",
+        videoId: "f0lYkdA-Gtw",
+        switchIntervalMs: 3 * 60 * 1000,
+      },
+      { name: "CGTN", videoId: "BOy2xDU1LC8", switchIntervalMs: 8 * 60 * 1000 },
     ],
   },
 ];
@@ -127,7 +130,15 @@ function getCurrentVideoId(channel) {
 
 function getVariantSwitchIntervalMs(channelKey) {
   const channel = channels[getChannelIndexByKey(channelKey)];
-  return channel?.switchIntervalMs ?? VARIANT_SWITCH_INTERVAL_MS;
+  if (!channel?.variants?.length) {
+    return channel?.switchIntervalMs ?? VARIANT_SWITCH_INTERVAL_MS;
+  }
+  const currentVariant = getCurrentVariant(channelKey);
+  return (
+    currentVariant?.switchIntervalMs ??
+    channel?.switchIntervalMs ??
+    VARIANT_SWITCH_INTERVAL_MS
+  );
 }
 
 function sendPlayerCommand(iframe, func, args = []) {
