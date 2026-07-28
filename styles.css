@@ -176,13 +176,15 @@ body {
   align-items: center;
   gap: 6px;
   min-width: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .channelName {
   font-weight: 600;
   font-size: 0.82rem;
   line-height: 1.2;
+  flex: 1 1 auto;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -202,6 +204,7 @@ body {
   line-height: 1.1;
   color: #8ea4c6;
   flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .sourceInlineSwitch {
@@ -215,6 +218,27 @@ body {
   background: transparent;
   flex-shrink: 0;
   white-space: nowrap;
+}
+
+.tile.compactHeader .channelMain {
+  gap: 4px;
+}
+
+.tile.compactHeader .channelName {
+  font-size: 0.72rem;
+}
+
+.tile.compactHeader .regionClock {
+  font-size: 0.52rem;
+}
+
+.tile.compactHeader .variantCountdown {
+  font-size: 0.55rem;
+}
+
+.tile.compactHeader .sourceInlineSwitch {
+  font-size: 0.55rem;
+  padding: 1px 4px;
 }
 
 .sourceInlineSwitch:hover {

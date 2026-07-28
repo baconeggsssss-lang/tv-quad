@@ -275,11 +275,30 @@ function updateTileRegionClock(channelKey) {
   }
   regionClock.hidden = false;
   regionClock.textContent = `${meta.regionLabel} ${getTimeForTimeZone(meta.timeZone)}`;
+  updateTileHeaderCompression(tile);
 }
 
 function updateAllRegionClocks() {
   channels.forEach((channel) => {
     updateTileRegionClock(channel.key);
+  });
+}
+
+function updateTileHeaderCompression(tile) {
+  if (!tile) {
+    return;
+  }
+  const channelMain = tile.querySelector(".channelMain");
+  if (!channelMain) {
+    return;
+  }
+  const isOverflowing = channelMain.scrollWidth > channelMain.clientWidth + 1;
+  tile.classList.toggle("compactHeader", isOverflowing);
+}
+
+function updateAllTileHeaderCompression() {
+  document.querySelectorAll(".tile").forEach((tile) => {
+    updateTileHeaderCompression(tile);
   });
 }
 
@@ -409,6 +428,7 @@ function updateVariantCountdowns() {
     const mm = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
     const ss = String(totalSeconds % 60).padStart(2, "0");
     countdownEl.textContent = `Next switch in ${mm}:${ss}`;
+    updateTileHeaderCompression(tile);
   });
 }
 
@@ -420,10 +440,12 @@ function startRotationCountdownTicker() {
     updateRotationCountdown();
     updateVariantCountdowns();
     updateAllRegionClocks();
+    updateAllTileHeaderCompression();
   }, 1000);
   updateRotationCountdown();
   updateVariantCountdowns();
   updateAllRegionClocks();
+  updateAllTileHeaderCompression();
 }
 
 function applyActiveChannel(index, initiatedByUser) {
@@ -492,6 +514,7 @@ function renderVariantTile(channelKey, options = {}) {
     forceReload: needsHardReloadForActive,
   });
   updateTileRegionClock(channelKey);
+  updateTileHeaderCompression(tile);
   setTimeout(() => {
     forceCaptionsOffForFrame(frame);
   }, 1800);
@@ -787,6 +810,7 @@ function init() {
       scheduleVariantSwitch(channel.key);
     }
   });
+  updateAllTileHeaderCompression();
   setTimeout(() => {
     forceCaptionsOffAll();
   }, 2200);
@@ -805,6 +829,9 @@ function init() {
     togglePauseFeeds();
   });
   window.addEventListener("keydown", handleGlobalHotkeys);
+  window.addEventListener("resize", () => {
+    updateAllTileHeaderCompression();
+  });
 
   if (window.location.protocol !== "file:") {
     statusText.textContent =
