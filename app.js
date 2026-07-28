@@ -26,7 +26,15 @@ const channels = [
       { name: "FRANCE 24", videoId: "a47ckXKZjxI" },
     ],
   },
-  { key: "cna", name: "CNA", videoId: "XWq5kBlakcQ" },
+  {
+    key: "cna",
+    name: "CNA / NTN24",
+    switchLabel: "Switch CNA/NTN24",
+    variants: [
+      { name: "CNA", videoId: "XWq5kBlakcQ" },
+      { name: "NTN24", videoId: "kHcuZsMTckM" },
+    ],
+  },
   {
     key: "cnn",
     name: "CNN",
