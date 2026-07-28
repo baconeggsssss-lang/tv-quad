@@ -87,6 +87,10 @@ const variantTimers = {};
 const variantNextSwitchAt = {};
 const variantLastAudioIndex = {};
 let audioActivationToken = 0;
+const LOUD_CHANNEL_VOLUME_OVERRIDES = {
+  BOy2xDU1LC8: 70, // CGTN
+  kHcuZsMTckM: 70, // NTN24
+};
 
 function buildEmbedUrl(videoId) {
   const params = new URLSearchParams({
@@ -149,6 +153,15 @@ function getVariantSwitchIntervalMs(channelKey) {
   );
 }
 
+function getTargetVolumeForChannelIndex(index) {
+  const channel = channels[index];
+  if (!channel) {
+    return 100;
+  }
+  const videoId = getCurrentVideoId(channel);
+  return LOUD_CHANNEL_VOLUME_OVERRIDES[videoId] ?? 100;
+}
+
 function sendPlayerCommand(iframe, func, args = []) {
   iframe.contentWindow?.postMessage(
     JSON.stringify({ event: "command", func, args }),
@@ -194,7 +207,7 @@ function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
     if (feedsPaused || activeIndex !== expectedIndex || audioActivationToken !== token) {
       return;
     }
-    sendPlayerCommand(frame, "setVolume", [100]);
+    sendPlayerCommand(frame, "setVolume", [getTargetVolumeForChannelIndex(expectedIndex)]);
     sendPlayerCommand(frame, "unMute");
     sendPlayerCommand(frame, "playVideo");
   };
