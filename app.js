@@ -88,6 +88,7 @@ const variantNextSwitchAt = {};
 const variantLastAudioIndex = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
+  XWq5kBlakcQ: 70, // CNA
   BOy2xDU1LC8: 70, // CGTN
   kHcuZsMTckM: 70, // NTN24
 };
