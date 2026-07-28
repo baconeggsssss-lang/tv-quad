@@ -327,11 +327,12 @@ function switchToNextAudioNow() {
   applyActiveChannel((activeIndex + 1) % channels.length, true);
 }
 
-function renderVariantTile(channelKey) {
+function renderVariantTile(channelKey, options = {}) {
   const tile = document.querySelector(`.tile[data-channel-key="${channelKey}"]`);
   if (!tile) {
     return;
   }
+  const { forceReloadIfActive = false } = options;
   const frame = tile.querySelector(".playerFrame");
   const channelName = tile.querySelector(".channelName");
   const variant = getCurrentVariant(channelKey);
@@ -340,12 +341,16 @@ function renderVariantTile(channelKey) {
   }
   channelName.textContent = variant.name;
   frame.title = `${variant.name} Live`;
-  switchFrameVideo(frame, variant.videoId);
+  const channelIndex = getChannelIndexByKey(channelKey);
+  const isActiveChannel = channelIndex === activeIndex;
+  const needsHardReloadForActive = isActiveChannel && forceReloadIfActive;
+  switchFrameVideo(frame, variant.videoId, {
+    forceReload: needsHardReloadForActive,
+  });
   setTimeout(() => {
     forceCaptionsOffForFrame(frame);
   }, 1800);
 
-  const channelIndex = getChannelIndexByKey(channelKey);
   if (channelIndex === activeIndex) {
     setTimeout(() => {
       maximizeAndStabilizeAudio(frame, channelIndex, audioActivationToken);
@@ -393,7 +398,7 @@ function advanceVariantOnAudioActivation(channelKey) {
   const nextAudioIndex = ((lastAudioIndex ?? -1) + 1) % channel.variants.length;
   variantIndices[channelKey] = nextAudioIndex;
   variantLastAudioIndex[channelKey] = nextAudioIndex;
-  renderVariantTile(channelKey);
+  renderVariantTile(channelKey, { forceReloadIfActive: true });
   scheduleVariantSwitch(channelKey);
 }
 
