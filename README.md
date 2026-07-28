@@ -4,9 +4,9 @@ Static web app that shows 6 live news streams at once:
 
 - Al Jazeera English / TRT World
 - DW News / FRANCE 24
-- CNN
-- CNA
-- Euronews English
+- CNA / NTN24
+- CNN / ABC News
+- Euronews English / Espanol
 - NHK WORLD-JAPAN News / CGTN
 
 ## Behavior
@@ -28,7 +28,7 @@ Static web app that shows 6 live news streams at once:
 - Use the inline `Switch EN/ES` button next to the Euronews title for instant switch.
 - NHK tile auto-switches with asymmetric timing: NHK (3 minutes), CGTN (8 minutes).
 - Use the inline `Switch NHK/CGTN` button next to the NHK title for instant switch.
-- Both variant tiles show their own per-tile `Next switch in mm:ss` countdown.
+- Every variant tile shows its own per-tile `Next switch in mm:ss` countdown.
 - Variant tiles are forced to alternate sub-channels only when audio focus arrives via automatic rotation (not manual switching).
 - `Pause all feeds` unloads every stream to save resources.
 - `Resume all feeds` reloads all streams fresh (like a page refresh), not from paused frame state.
