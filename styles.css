@@ -176,6 +176,7 @@ body {
   align-items: center;
   gap: 6px;
   min-width: 0;
+  flex-wrap: wrap;
 }
 
 .channelName {
@@ -185,6 +186,15 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.regionClock {
+  font-size: 0.58rem;
+  line-height: 1.1;
+  color: #7285a4;
+  letter-spacing: 0.01em;
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .variantCountdown {

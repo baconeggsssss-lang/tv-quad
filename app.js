@@ -12,8 +12,18 @@ const channels = [
     switchLabel: "Switch AJ/TRT",
     switchIntervalMs: 11 * 60 * 1000,
     variants: [
-      { name: "Al Jazeera English", videoId: "gCNeDWCI0vo" },
-      { name: "TRT World", videoId: "b8lPrtjmnmw" },
+      {
+        name: "Al Jazeera English",
+        videoId: "gCNeDWCI0vo",
+        regionLabel: "Doha",
+        timeZone: "Asia/Qatar",
+      },
+      {
+        name: "TRT World",
+        videoId: "b8lPrtjmnmw",
+        regionLabel: "Istanbul",
+        timeZone: "Europe/Istanbul",
+      },
     ],
   },
   {
@@ -22,8 +32,18 @@ const channels = [
     switchLabel: "Switch DW/F24",
     switchIntervalMs: 11 * 60 * 1000,
     variants: [
-      { name: "DW News", videoId: "LuKwFajn37U" },
-      { name: "FRANCE 24", videoId: "a47ckXKZjxI" },
+      {
+        name: "DW News",
+        videoId: "LuKwFajn37U",
+        regionLabel: "Berlin",
+        timeZone: "Europe/Berlin",
+      },
+      {
+        name: "FRANCE 24",
+        videoId: "a47ckXKZjxI",
+        regionLabel: "Paris",
+        timeZone: "Europe/Paris",
+      },
     ],
   },
   {
@@ -31,8 +51,18 @@ const channels = [
     name: "CNA / NTN24",
     switchLabel: "Switch CNA/NTN24",
     variants: [
-      { name: "CNA", videoId: "XWq5kBlakcQ" },
-      { name: "NTN24", videoId: "kHcuZsMTckM" },
+      {
+        name: "CNA",
+        videoId: "XWq5kBlakcQ",
+        regionLabel: "Singapore",
+        timeZone: "Asia/Singapore",
+      },
+      {
+        name: "NTN24",
+        videoId: "kHcuZsMTckM",
+        regionLabel: "Bogota",
+        timeZone: "America/Bogota",
+      },
     ],
   },
   {
@@ -40,8 +70,18 @@ const channels = [
     name: "CNN",
     switchLabel: "Switch CNN/ABC",
     variants: [
-      { name: "CNN", videoId: "GotlA1KKWoo" },
-      { name: "ABC News", videoId: "vOTiJkg1voo" },
+      {
+        name: "CNN",
+        videoId: "GotlA1KKWoo",
+        regionLabel: "New York",
+        timeZone: "America/New_York",
+      },
+      {
+        name: "ABC News",
+        videoId: "vOTiJkg1voo",
+        regionLabel: "New York",
+        timeZone: "America/New_York",
+      },
     ],
   },
   {
@@ -49,8 +89,18 @@ const channels = [
     name: "Euronews",
     switchLabel: "Switch EN/ES",
     variants: [
-      { name: "Euronews English", videoId: "pykpO5kQJ98" },
-      { name: "Euronews Espanol", videoId: "O9mOtdZ-nSk" },
+      {
+        name: "Euronews English",
+        videoId: "pykpO5kQJ98",
+        regionLabel: "Brussels",
+        timeZone: "Europe/Brussels",
+      },
+      {
+        name: "Euronews Espanol",
+        videoId: "O9mOtdZ-nSk",
+        regionLabel: "Madrid",
+        timeZone: "Europe/Madrid",
+      },
     ],
   },
   {
@@ -61,9 +111,17 @@ const channels = [
       {
         name: "NHK WORLD-JAPAN News",
         videoId: "f0lYkdA-Gtw",
+        regionLabel: "Tokyo",
+        timeZone: "Asia/Tokyo",
         switchIntervalMs: 3 * 60 * 1000,
       },
-      { name: "CGTN", videoId: "BOy2xDU1LC8", switchIntervalMs: 8 * 60 * 1000 },
+      {
+        name: "CGTN",
+        videoId: "BOy2xDU1LC8",
+        regionLabel: "Beijing",
+        timeZone: "Asia/Shanghai",
+        switchIntervalMs: 8 * 60 * 1000,
+      },
     ],
   },
 ];
@@ -92,6 +150,7 @@ const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   BOy2xDU1LC8: 70, // CGTN
   kHcuZsMTckM: 70, // NTN24
 };
+const TIME_FORMATTERS = {};
 
 function buildEmbedUrl(videoId) {
   const params = new URLSearchParams({
@@ -161,6 +220,67 @@ function getTargetVolumeForChannelIndex(index) {
   }
   const videoId = getCurrentVideoId(channel);
   return LOUD_CHANNEL_VOLUME_OVERRIDES[videoId] ?? 100;
+}
+
+function getRegionTimeMeta(channel) {
+  if (!channel) {
+    return null;
+  }
+  if (channel.variants?.length) {
+    const currentVariant = getCurrentVariant(channel.key);
+    if (!currentVariant) {
+      return null;
+    }
+    return {
+      regionLabel: currentVariant.regionLabel ?? currentVariant.name,
+      timeZone: currentVariant.timeZone,
+    };
+  }
+  return {
+    regionLabel: channel.regionLabel ?? channel.name,
+    timeZone: channel.timeZone,
+  };
+}
+
+function getTimeForTimeZone(timeZone) {
+  if (!timeZone) {
+    return "--:--";
+  }
+  if (!TIME_FORMATTERS[timeZone]) {
+    TIME_FORMATTERS[timeZone] = new Intl.DateTimeFormat("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone,
+    });
+  }
+  return TIME_FORMATTERS[timeZone].format(new Date());
+}
+
+function updateTileRegionClock(channelKey) {
+  const channelIndex = getChannelIndexByKey(channelKey);
+  const channel = channels[channelIndex];
+  const tile = document.querySelector(`.tile[data-channel-key="${channelKey}"]`);
+  if (!channel || !tile) {
+    return;
+  }
+  const regionClock = tile.querySelector(".regionClock");
+  if (!regionClock) {
+    return;
+  }
+  const meta = getRegionTimeMeta(channel);
+  if (!meta?.regionLabel || !meta?.timeZone) {
+    regionClock.hidden = true;
+    return;
+  }
+  regionClock.hidden = false;
+  regionClock.textContent = `${meta.regionLabel} ${getTimeForTimeZone(meta.timeZone)}`;
+}
+
+function updateAllRegionClocks() {
+  channels.forEach((channel) => {
+    updateTileRegionClock(channel.key);
+  });
 }
 
 function sendPlayerCommand(iframe, func, args = []) {
@@ -299,9 +419,11 @@ function startRotationCountdownTicker() {
   rotationCountdownTimer = setInterval(() => {
     updateRotationCountdown();
     updateVariantCountdowns();
+    updateAllRegionClocks();
   }, 1000);
   updateRotationCountdown();
   updateVariantCountdowns();
+  updateAllRegionClocks();
 }
 
 function applyActiveChannel(index, initiatedByUser) {
@@ -369,6 +491,7 @@ function renderVariantTile(channelKey, options = {}) {
   switchFrameVideo(frame, variant.videoId, {
     forceReload: needsHardReloadForActive,
   });
+  updateTileRegionClock(channelKey);
   setTimeout(() => {
     forceCaptionsOffForFrame(frame);
   }, 1800);
@@ -609,6 +732,7 @@ function buildTile(channel, index) {
   node.dataset.channelKey = channel.key;
   const headerBtn = node.querySelector(".tileHeader");
   const channelName = node.querySelector(".channelName");
+  const regionClock = node.querySelector(".regionClock");
   const variantCountdown = node.querySelector(".variantCountdown");
   const sourceInlineSwitch = node.querySelector(".sourceInlineSwitch");
   const frame = node.querySelector(".playerFrame");
@@ -632,6 +756,9 @@ function buildTile(channel, index) {
     channelName.textContent = channel.name;
     frame.title = `${channel.name} Live`;
     switchFrameVideo(frame, channel.videoId, { forceReload: true });
+  }
+  if (regionClock) {
+    regionClock.hidden = true;
   }
 
   headerBtn.addEventListener("click", () => {

@@ -29,6 +29,7 @@ Static web app that shows 6 live news streams at once:
 - NHK tile auto-switches with asymmetric timing: NHK (3 minutes), CGTN (8 minutes).
 - Use the inline `Switch NHK/CGTN` button next to the NHK title for instant switch.
 - Every variant tile shows its own per-tile `Next switch in mm:ss` countdown.
+- Each tile header shows a subtle region local-time label for the currently active source.
 - Variant tiles are forced to alternate sub-channels only when audio focus arrives via automatic rotation (not manual switching).
 - `Pause all feeds` unloads every stream to save resources.
 - `Resume all feeds` reloads all streams fresh (like a page refresh), not from paused frame state.
