@@ -712,6 +712,12 @@ function handleGlobalHotkeys(event) {
     return;
   }
 
+  if (event.code === "Escape") {
+    event.preventDefault();
+    pauseAllFeeds();
+    return;
+  }
+
   const mainDigitMatch = event.code.match(/^Digit([1-6])$/);
   const numpadDigitMatch = event.code.match(/^Numpad([1-6])$/);
   const digit = mainDigitMatch?.[1] ?? numpadDigitMatch?.[1];

@@ -39,6 +39,7 @@ Static web app that shows 6 live news streams at once:
   - `4 5 6`
 - Keyboard shortcut: press `Space` to switch AB sub-channel only for the currently active (audio-on) variant tile.
 - Keyboard shortcut: press `Enter` to trigger `Next audio now`.
+- Keyboard shortcut: press `Esc` to trigger `Pause all feeds`.
 
 ## Run
 
