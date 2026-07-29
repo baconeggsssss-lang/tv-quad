@@ -661,7 +661,7 @@ function renderVariantTile(channelKey, options = {}) {
   }
   const { forceReloadIfActive = false } = options;
   const frame = tile.querySelector(".playerFrame");
-  frame.dataset.channelKey = channel.key;
+  frame.dataset.channelKey = channelKey;
   const channelName = tile.querySelector(".channelName");
   const variant = getCurrentVariant(channelKey);
   if (!variant) {
@@ -992,7 +992,8 @@ function init() {
   pauseFeedsBtn.addEventListener("click", () => {
     togglePauseFeeds();
   });
-  window.addEventListener("keydown", handleGlobalHotkeys);
+  document.addEventListener("keydown", handleGlobalHotkeys, true);
+  window.addEventListener("keydown", handleGlobalHotkeys, true);
   window.addEventListener("message", handleYouTubePlayerMessage);
   window.addEventListener("resize", () => {
     updateAllTileHeaderCompression();
