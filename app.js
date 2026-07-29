@@ -151,8 +151,6 @@ const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   kHcuZsMTckM: 70, // NTN24
 };
 const TIME_FORMATTERS = {};
-const framePlaybackTelemetry = {};
-let activePlaybackRecoveryTimers = [];
 
 function buildEmbedUrl(videoId) {
   const params = new URLSearchParams({
@@ -326,32 +324,13 @@ function syncVariantUiByChannelKey(channelKey) {
   updateTileHeaderCompression(tile);
 }
 
-function getFrameTelemetry(frame) {
-  const channelKey = frame?.dataset.channelKey;
-  if (!channelKey) {
-    return null;
-  }
-  if (!framePlaybackTelemetry[channelKey]) {
-    framePlaybackTelemetry[channelKey] = {
-      playerState: null,
-      lastCurrentTime: null,
-      lastProgressAt: 0,
-    };
-  }
-  return framePlaybackTelemetry[channelKey];
-}
-
-function findFrameByContentWindow(contentWindow) {
-  return [...document.querySelectorAll(".playerFrame")].find(
-    (frame) => frame.contentWindow === contentWindow,
-  );
-}
-
 function handleYouTubePlayerMessage(event) {
   if (!event.origin.includes("youtube.com")) {
     return;
   }
-  const frame = findFrameByContentWindow(event.source);
+  const frame = [...document.querySelectorAll(".playerFrame")].find(
+    (candidate) => candidate.contentWindow === event.source,
+  );
   if (!frame) {
     return;
   }
@@ -366,11 +345,6 @@ function handleYouTubePlayerMessage(event) {
     } catch {
       return;
     }
-  }
-
-  const telemetry = getFrameTelemetry(frame);
-  if (!telemetry || typeof payload !== "object" || payload === null) {
-    return;
   }
 
   const channelKey = frame.dataset.channelKey;
@@ -389,26 +363,6 @@ function handleYouTubePlayerMessage(event) {
       variantIndices[channelKey] = matchedIndex;
       syncVariantUiByChannelKey(channelKey);
     }
-  }
-
-  const playerState =
-    typeof payload.info?.playerState === "number"
-      ? payload.info.playerState
-      : typeof payload.info === "number"
-        ? payload.info
-        : null;
-  if (playerState !== null) {
-    telemetry.playerState = playerState;
-  }
-
-  const currentTime =
-    typeof payload.info?.currentTime === "number" ? payload.info.currentTime : null;
-  if (currentTime !== null) {
-    const delta = Math.abs(currentTime - (telemetry.lastCurrentTime ?? currentTime));
-    if (delta > 0.15) {
-      telemetry.lastProgressAt = Date.now();
-    }
-    telemetry.lastCurrentTime = currentTime;
   }
 }
 
@@ -446,12 +400,6 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
     frame.src = buildEmbedUrl(videoId);
   }
   frame.dataset.currentVideoId = videoId;
-  const telemetry = getFrameTelemetry(frame);
-  if (telemetry) {
-    telemetry.playerState = null;
-    telemetry.lastCurrentTime = null;
-    telemetry.lastProgressAt = 0;
-  }
 }
 
 function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
@@ -459,59 +407,12 @@ function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
     return;
   }
 
-  const activate = () => {
-    if (feedsPaused || activeIndex !== expectedIndex || audioActivationToken !== token) {
-      return;
-    }
-    sendPlayerCommand(frame, "setVolume", [getTargetVolumeForChannelIndex(expectedIndex)]);
-    sendPlayerCommand(frame, "unMute");
-    sendPlayerCommand(frame, "playVideo");
-  };
-
-  activate();
-  [250, 700, 1300, 2200].forEach((delay) => {
-    setTimeout(activate, delay);
-  });
-}
-
-function clearActivePlaybackRecoveryTimers() {
-  activePlaybackRecoveryTimers.forEach((timerId) => clearTimeout(timerId));
-  activePlaybackRecoveryTimers = [];
-}
-
-function scheduleActivePlaybackRecovery(expectedIndex, token) {
-  clearActivePlaybackRecoveryTimers();
-  [4500, 9000].forEach((delay) => {
-    const timerId = setTimeout(() => {
-      if (feedsPaused || activeIndex !== expectedIndex || audioActivationToken !== token) {
-        return;
-      }
-      const tile = document.querySelector(
-        `.tile[data-channel-key="${channels[expectedIndex]?.key}"]`,
-      );
-      const frame = tile?.querySelector(".playerFrame");
-      const telemetry = frame ? getFrameTelemetry(frame) : null;
-      if (!frame || !telemetry) {
-        return;
-      }
-
-      const stalledTooLong =
-        !telemetry.lastProgressAt || Date.now() - telemetry.lastProgressAt > 3000;
-      const bufferingOrUnstarted =
-        telemetry.playerState === 3 || telemetry.playerState === -1 || telemetry.playerState === null;
-      if (!stalledTooLong && !bufferingOrUnstarted) {
-        return;
-      }
-
-      const currentVideoId = frame.dataset.currentVideoId;
-      switchFrameVideo(frame, currentVideoId, { forceReload: true });
-      forceCaptionsOffForFrame(frame);
-      setTimeout(() => {
-        maximizeAndStabilizeAudio(frame, expectedIndex, token);
-      }, 900);
-    }, delay);
-    activePlaybackRecoveryTimers.push(timerId);
-  });
+  if (feedsPaused || activeIndex !== expectedIndex || audioActivationToken !== token) {
+    return;
+  }
+  sendPlayerCommand(frame, "setVolume", [getTargetVolumeForChannelIndex(expectedIndex)]);
+  sendPlayerCommand(frame, "unMute");
+  sendPlayerCommand(frame, "playVideo");
 }
 
 function setAudioState(nextActiveIndex) {
@@ -523,7 +424,6 @@ function setAudioState(nextActiveIndex) {
     forceCaptionsOffForFrame(frame);
     if (index === nextActiveIndex) {
       maximizeAndStabilizeAudio(frame, nextActiveIndex, activationToken);
-      scheduleActivePlaybackRecovery(nextActiveIndex, activationToken);
       tile.classList.add("active");
       badge.textContent = "Audio On";
     } else {
@@ -617,10 +517,6 @@ function applyActiveChannel(index, initiatedByUser) {
   activeIndex = index;
   if (!initiatedByUser && targetChannel.variants?.length) {
     advanceVariantOnAudioActivation(targetChannel.key);
-  } else if (initiatedByUser && targetChannel.variants?.length) {
-    // When user manually focuses a variant tile, hard-reload current source once to
-    // recover from possible stuck buffering states before unmuting.
-    renderVariantTile(targetChannel.key, { forceReloadIfActive: true });
   }
   rotationStartAt = Date.now();
   setAudioState(activeIndex);
@@ -654,12 +550,11 @@ function switchToNextAudioNow() {
   applyActiveChannel((activeIndex + 1) % channels.length, true);
 }
 
-function renderVariantTile(channelKey, options = {}) {
+function renderVariantTile(channelKey) {
   const tile = document.querySelector(`.tile[data-channel-key="${channelKey}"]`);
   if (!tile) {
     return;
   }
-  const { forceReloadIfActive = false } = options;
   const frame = tile.querySelector(".playerFrame");
   frame.dataset.channelKey = channelKey;
   const channelName = tile.querySelector(".channelName");
@@ -669,21 +564,16 @@ function renderVariantTile(channelKey, options = {}) {
   }
   channelName.textContent = variant.name;
   frame.title = `${variant.name} Live`;
-  const channelIndex = getChannelIndexByKey(channelKey);
-  const isActiveChannel = channelIndex === activeIndex;
-  const needsHardReloadForActive = isActiveChannel && forceReloadIfActive;
-  switchFrameVideo(frame, variant.videoId, {
-    forceReload: needsHardReloadForActive,
-  });
+  switchFrameVideo(frame, variant.videoId);
   updateTileRegionClock(channelKey);
   updateTileHeaderCompression(tile);
   setTimeout(() => {
     forceCaptionsOffForFrame(frame);
   }, 1800);
 
-  if (channelIndex === activeIndex) {
+  if (getChannelIndexByKey(channelKey) === activeIndex) {
     setTimeout(() => {
-      maximizeAndStabilizeAudio(frame, channelIndex, audioActivationToken);
+      maximizeAndStabilizeAudio(frame, getChannelIndexByKey(channelKey), audioActivationToken);
     }, 900);
   }
 }
@@ -712,9 +602,7 @@ function switchVariant(channelKey, triggeredByUser) {
   }
   const current = variantIndices[channelKey] ?? 0;
   variantIndices[channelKey] = (current + 1) % channel.variants.length;
-  const channelIndex = getChannelIndexByKey(channelKey);
-  const forceReloadIfActive = !triggeredByUser && channelIndex === activeIndex;
-  renderVariantTile(channelKey, { forceReloadIfActive });
+  renderVariantTile(channelKey);
   scheduleVariantSwitch(channelKey);
   if (triggeredByUser) {
     statusText.textContent = `Switched to ${getCurrentVariant(channelKey).name}.`;
@@ -730,7 +618,7 @@ function advanceVariantOnAudioActivation(channelKey) {
   const nextAudioIndex = ((lastAudioIndex ?? -1) + 1) % channel.variants.length;
   variantIndices[channelKey] = nextAudioIndex;
   variantLastAudioIndex[channelKey] = nextAudioIndex;
-  renderVariantTile(channelKey, { forceReloadIfActive: true });
+  renderVariantTile(channelKey);
   scheduleVariantSwitch(channelKey);
 }
 
