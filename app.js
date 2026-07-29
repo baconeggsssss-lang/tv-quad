@@ -304,6 +304,28 @@ function updateAllTileHeaderCompression() {
   });
 }
 
+function syncVariantUiByChannelKey(channelKey) {
+  const channel = channels[getChannelIndexByKey(channelKey)];
+  if (!channel?.variants?.length) {
+    return;
+  }
+  const tile = document.querySelector(`.tile[data-channel-key="${channelKey}"]`);
+  if (!tile) {
+    return;
+  }
+  const frame = tile.querySelector(".playerFrame");
+  const channelName = tile.querySelector(".channelName");
+  const variant = getCurrentVariant(channelKey);
+  if (!variant) {
+    return;
+  }
+  channelName.textContent = variant.name;
+  frame.title = `${variant.name} Live`;
+  frame.dataset.currentVideoId = variant.videoId;
+  updateTileRegionClock(channelKey);
+  updateTileHeaderCompression(tile);
+}
+
 function getFrameTelemetry(frame) {
   const channelKey = frame?.dataset.channelKey;
   if (!channelKey) {
@@ -349,6 +371,24 @@ function handleYouTubePlayerMessage(event) {
   const telemetry = getFrameTelemetry(frame);
   if (!telemetry || typeof payload !== "object" || payload === null) {
     return;
+  }
+
+  const channelKey = frame.dataset.channelKey;
+  const channel = channels[getChannelIndexByKey(channelKey)];
+  const reportedVideoId = payload.info?.videoData?.video_id;
+  if (
+    channelKey &&
+    channel?.variants?.length &&
+    typeof reportedVideoId === "string" &&
+    reportedVideoId.length > 0
+  ) {
+    const matchedIndex = channel.variants.findIndex(
+      (variant) => variant.videoId === reportedVideoId,
+    );
+    if (matchedIndex >= 0 && variantIndices[channelKey] !== matchedIndex) {
+      variantIndices[channelKey] = matchedIndex;
+      syncVariantUiByChannelKey(channelKey);
+    }
   }
 
   const playerState =
