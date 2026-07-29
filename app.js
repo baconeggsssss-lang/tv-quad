@@ -21,7 +21,7 @@ const channels = [
       {
         name: "TRT World",
         videoId: "b8lPrtjmnmw",
-        regionLabel: "Istanbul",
+        regionLabel: "Ankara",
         timeZone: "Europe/Istanbul",
       },
     ],
@@ -35,7 +35,7 @@ const channels = [
       {
         name: "DW News",
         videoId: "LuKwFajn37U",
-        regionLabel: "Berlin",
+        regionLabel: "Bonn",
         timeZone: "Europe/Berlin",
       },
       {
@@ -73,14 +73,14 @@ const channels = [
       {
         name: "CNN",
         videoId: "GotlA1KKWoo",
-        regionLabel: "New York",
+        regionLabel: "Atlanta",
         timeZone: "America/New_York",
       },
       {
-        name: "ABC News",
+        name: "ABC News Australia",
         videoId: "vOTiJkg1voo",
-        regionLabel: "New York",
-        timeZone: "America/New_York",
+        regionLabel: "Ultimo",
+        timeZone: "Australia/Sydney",
       },
     ],
   },
@@ -92,14 +92,14 @@ const channels = [
       {
         name: "Euronews English",
         videoId: "pykpO5kQJ98",
-        regionLabel: "Brussels",
-        timeZone: "Europe/Brussels",
+        regionLabel: "Lyon",
+        timeZone: "Europe/Paris",
       },
       {
         name: "Euronews Espanol",
         videoId: "O9mOtdZ-nSk",
-        regionLabel: "Madrid",
-        timeZone: "Europe/Madrid",
+        regionLabel: "Lyon",
+        timeZone: "Europe/Paris",
       },
     ],
   },
