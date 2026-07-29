@@ -146,7 +146,7 @@ const variantLastAudioIndex = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   XWq5kBlakcQ: 70, // CNA
-  2mCSYvcfhtc: 70, // TVBS
+  "2mCSYvcfhtc": 70, // TVBS
   BOy2xDU1LC8: 70, // CGTN
   kHcuZsMTckM: 70, // NTN24
 };
