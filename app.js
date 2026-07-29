@@ -151,6 +151,8 @@ const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   kHcuZsMTckM: 70, // NTN24
 };
 const TIME_FORMATTERS = {};
+const framePlaybackTelemetry = {};
+let activePlaybackRecoveryTimers = [];
 
 function buildEmbedUrl(videoId) {
   const params = new URLSearchParams({
@@ -302,6 +304,74 @@ function updateAllTileHeaderCompression() {
   });
 }
 
+function getFrameTelemetry(frame) {
+  const channelKey = frame?.dataset.channelKey;
+  if (!channelKey) {
+    return null;
+  }
+  if (!framePlaybackTelemetry[channelKey]) {
+    framePlaybackTelemetry[channelKey] = {
+      playerState: null,
+      lastCurrentTime: null,
+      lastProgressAt: 0,
+    };
+  }
+  return framePlaybackTelemetry[channelKey];
+}
+
+function findFrameByContentWindow(contentWindow) {
+  return [...document.querySelectorAll(".playerFrame")].find(
+    (frame) => frame.contentWindow === contentWindow,
+  );
+}
+
+function handleYouTubePlayerMessage(event) {
+  if (!event.origin.includes("youtube.com")) {
+    return;
+  }
+  const frame = findFrameByContentWindow(event.source);
+  if (!frame) {
+    return;
+  }
+
+  let payload = event.data;
+  if (typeof payload === "string") {
+    if (!payload.startsWith("{")) {
+      return;
+    }
+    try {
+      payload = JSON.parse(payload);
+    } catch {
+      return;
+    }
+  }
+
+  const telemetry = getFrameTelemetry(frame);
+  if (!telemetry || typeof payload !== "object" || payload === null) {
+    return;
+  }
+
+  const playerState =
+    typeof payload.info?.playerState === "number"
+      ? payload.info.playerState
+      : typeof payload.info === "number"
+        ? payload.info
+        : null;
+  if (playerState !== null) {
+    telemetry.playerState = playerState;
+  }
+
+  const currentTime =
+    typeof payload.info?.currentTime === "number" ? payload.info.currentTime : null;
+  if (currentTime !== null) {
+    const delta = Math.abs(currentTime - (telemetry.lastCurrentTime ?? currentTime));
+    if (delta > 0.15) {
+      telemetry.lastProgressAt = Date.now();
+    }
+    telemetry.lastCurrentTime = currentTime;
+  }
+}
+
 function sendPlayerCommand(iframe, func, args = []) {
   iframe.contentWindow?.postMessage(
     JSON.stringify({ event: "command", func, args }),
@@ -336,6 +406,12 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
     frame.src = buildEmbedUrl(videoId);
   }
   frame.dataset.currentVideoId = videoId;
+  const telemetry = getFrameTelemetry(frame);
+  if (telemetry) {
+    telemetry.playerState = null;
+    telemetry.lastCurrentTime = null;
+    telemetry.lastProgressAt = 0;
+  }
 }
 
 function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
@@ -358,6 +434,46 @@ function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
   });
 }
 
+function clearActivePlaybackRecoveryTimers() {
+  activePlaybackRecoveryTimers.forEach((timerId) => clearTimeout(timerId));
+  activePlaybackRecoveryTimers = [];
+}
+
+function scheduleActivePlaybackRecovery(expectedIndex, token) {
+  clearActivePlaybackRecoveryTimers();
+  [4500, 9000].forEach((delay) => {
+    const timerId = setTimeout(() => {
+      if (feedsPaused || activeIndex !== expectedIndex || audioActivationToken !== token) {
+        return;
+      }
+      const tile = document.querySelector(
+        `.tile[data-channel-key="${channels[expectedIndex]?.key}"]`,
+      );
+      const frame = tile?.querySelector(".playerFrame");
+      const telemetry = frame ? getFrameTelemetry(frame) : null;
+      if (!frame || !telemetry) {
+        return;
+      }
+
+      const stalledTooLong =
+        !telemetry.lastProgressAt || Date.now() - telemetry.lastProgressAt > 3000;
+      const bufferingOrUnstarted =
+        telemetry.playerState === 3 || telemetry.playerState === -1 || telemetry.playerState === null;
+      if (!stalledTooLong && !bufferingOrUnstarted) {
+        return;
+      }
+
+      const currentVideoId = frame.dataset.currentVideoId;
+      switchFrameVideo(frame, currentVideoId, { forceReload: true });
+      forceCaptionsOffForFrame(frame);
+      setTimeout(() => {
+        maximizeAndStabilizeAudio(frame, expectedIndex, token);
+      }, 900);
+    }, delay);
+    activePlaybackRecoveryTimers.push(timerId);
+  });
+}
+
 function setAudioState(nextActiveIndex) {
   const activationToken = ++audioActivationToken;
   const tiles = [...document.querySelectorAll(".tile")];
@@ -367,6 +483,7 @@ function setAudioState(nextActiveIndex) {
     forceCaptionsOffForFrame(frame);
     if (index === nextActiveIndex) {
       maximizeAndStabilizeAudio(frame, nextActiveIndex, activationToken);
+      scheduleActivePlaybackRecovery(nextActiveIndex, activationToken);
       tile.classList.add("active");
       badge.textContent = "Audio On";
     } else {
@@ -504,6 +621,7 @@ function renderVariantTile(channelKey, options = {}) {
   }
   const { forceReloadIfActive = false } = options;
   const frame = tile.querySelector(".playerFrame");
+  frame.dataset.channelKey = channel.key;
   const channelName = tile.querySelector(".channelName");
   const variant = getCurrentVariant(channelKey);
   if (!variant) {
@@ -835,6 +953,7 @@ function init() {
     togglePauseFeeds();
   });
   window.addEventListener("keydown", handleGlobalHotkeys);
+  window.addEventListener("message", handleYouTubePlayerMessage);
   window.addEventListener("resize", () => {
     updateAllTileHeaderCompression();
   });
