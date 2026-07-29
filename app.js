@@ -993,7 +993,6 @@ function init() {
     togglePauseFeeds();
   });
   document.addEventListener("keydown", handleGlobalHotkeys, true);
-  window.addEventListener("keydown", handleGlobalHotkeys, true);
   window.addEventListener("message", handleYouTubePlayerMessage);
   window.addEventListener("resize", () => {
     updateAllTileHeaderCompression();
