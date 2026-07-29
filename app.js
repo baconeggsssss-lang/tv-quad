@@ -146,7 +146,7 @@ const variantLastAudioIndex = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   XWq5kBlakcQ: 70, // CNA
-  "2mCSYvcfhtc": 60, // TVBS
+  "2mCSYvcfhtc": 50, // TVBS
   BOy2xDU1LC8: 70, // CGTN
   kHcuZsMTckM: 70, // NTN24
 };
@@ -460,6 +460,10 @@ function applyActiveChannel(index, initiatedByUser) {
   activeIndex = index;
   if (!initiatedByUser && targetChannel.variants?.length) {
     advanceVariantOnAudioActivation(targetChannel.key);
+  } else if (initiatedByUser && targetChannel.variants?.length) {
+    // When user manually focuses a variant tile, hard-reload current source once to
+    // recover from possible stuck buffering states before unmuting.
+    renderVariantTile(targetChannel.key, { forceReloadIfActive: true });
   }
   rotationStartAt = Date.now();
   setAudioState(activeIndex);
@@ -550,7 +554,9 @@ function switchVariant(channelKey, triggeredByUser) {
   }
   const current = variantIndices[channelKey] ?? 0;
   variantIndices[channelKey] = (current + 1) % channel.variants.length;
-  renderVariantTile(channelKey);
+  const channelIndex = getChannelIndexByKey(channelKey);
+  const forceReloadIfActive = channelIndex === activeIndex;
+  renderVariantTile(channelKey, { forceReloadIfActive });
   scheduleVariantSwitch(channelKey);
   if (triggeredByUser) {
     statusText.textContent = `Switched to ${getCurrentVariant(channelKey).name}.`;
