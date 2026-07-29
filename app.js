@@ -713,7 +713,7 @@ function switchVariant(channelKey, triggeredByUser) {
   const current = variantIndices[channelKey] ?? 0;
   variantIndices[channelKey] = (current + 1) % channel.variants.length;
   const channelIndex = getChannelIndexByKey(channelKey);
-  const forceReloadIfActive = channelIndex === activeIndex;
+  const forceReloadIfActive = !triggeredByUser && channelIndex === activeIndex;
   renderVariantTile(channelKey, { forceReloadIfActive });
   scheduleVariantSwitch(channelKey);
   if (triggeredByUser) {
