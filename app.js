@@ -105,21 +105,30 @@ const channels = [
   },
   {
     key: NHK_KEY,
-    name: "TVBS / CGTN",
-    switchLabel: "Switch TVBS/CGTN",
+    name: "CGTN / Phoenix / TVBS",
+    switchLabel: "Switch CGTN/PHX/TVBS",
     switchIntervalMs: 11 * 60 * 1000,
     variants: [
-      {
-        name: "TVBS News",
-        videoId: "2mCSYvcfhtc",
-        regionLabel: "Taipei",
-        timeZone: "Asia/Taipei",
-      },
       {
         name: "CGTN",
         videoId: "BOy2xDU1LC8",
         regionLabel: "Beijing",
         timeZone: "Asia/Shanghai",
+        switchIntervalMs: 6 * 60 * 1000,
+      },
+      {
+        name: "Phoenix InfoNews",
+        videoId: "Ry--eMIjYLQ",
+        regionLabel: "Hong Kong",
+        timeZone: "Asia/Hong_Kong",
+        switchIntervalMs: 3 * 60 * 1000,
+      },
+      {
+        name: "TVBS News",
+        videoId: "2mCSYvcfhtc",
+        regionLabel: "Taipei",
+        timeZone: "Asia/Taipei",
+        switchIntervalMs: 2 * 60 * 1000,
       },
     ],
   },
@@ -350,12 +359,23 @@ function handleYouTubePlayerMessage(event) {
   const channelKey = frame.dataset.channelKey;
   const channel = channels[getChannelIndexByKey(channelKey)];
   const reportedVideoId = payload.info?.videoData?.video_id;
+  const expectedVideoId = frame.dataset.expectedVideoId ?? "";
+  const switchRequestedAt = Number(frame.dataset.switchRequestedAt ?? 0);
+  const withinSwitchGraceWindow =
+    expectedVideoId.length > 0 && Date.now() - switchRequestedAt < 6000;
   if (
     channelKey &&
     channel?.variants?.length &&
     typeof reportedVideoId === "string" &&
     reportedVideoId.length > 0
   ) {
+    if (withinSwitchGraceWindow && reportedVideoId !== expectedVideoId) {
+      return;
+    }
+    if (reportedVideoId === expectedVideoId) {
+      frame.dataset.expectedVideoId = "";
+      frame.dataset.switchRequestedAt = "0";
+    }
     const matchedIndex = channel.variants.findIndex(
       (variant) => variant.videoId === reportedVideoId,
     );
@@ -392,6 +412,8 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
   if (!forceReload && currentVideoId === videoId) {
     return;
   }
+  frame.dataset.expectedVideoId = videoId;
+  frame.dataset.switchRequestedAt = String(Date.now());
 
   const hasEmbedPlayer = frame.src.includes("youtube.com/embed/");
   if (!forceReload && hasEmbedPlayer && currentVideoId) {
@@ -817,6 +839,7 @@ function buildTile(channel, index) {
   const variantCountdown = node.querySelector(".variantCountdown");
   const sourceInlineSwitch = node.querySelector(".sourceInlineSwitch");
   const frame = node.querySelector(".playerFrame");
+  frame.dataset.channelKey = channel.key;
 
   if (channel.variants?.length) {
     variantIndices[channel.key] = 0;
