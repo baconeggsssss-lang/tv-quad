@@ -611,7 +611,10 @@ function renderVariantTile(channelKey) {
   }
   channelName.textContent = variant.name;
   frame.title = `${variant.name} Live`;
-  switchFrameVideo(frame, variant.videoId);
+  const forceReloadForKnownUnstableSwitch = channelKey === "cnn";
+  switchFrameVideo(frame, variant.videoId, {
+    forceReload: forceReloadForKnownUnstableSwitch,
+  });
   updateTileRegionClock(channelKey);
   updateTileHeaderCompression(tile);
   setTimeout(() => {
