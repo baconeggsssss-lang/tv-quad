@@ -361,6 +361,7 @@ function handleYouTubePlayerMessage(event) {
   const reportedVideoId = payload.info?.videoData?.video_id;
   const expectedVideoId = frame.dataset.expectedVideoId ?? "";
   const switchRequestedAt = Number(frame.dataset.switchRequestedAt ?? 0);
+  const expectedRepairTried = frame.dataset.expectedRepairTried === "1";
   const withinSwitchGraceWindow =
     expectedVideoId.length > 0 && Date.now() - switchRequestedAt < 6000;
   if (
@@ -372,9 +373,32 @@ function handleYouTubePlayerMessage(event) {
     if (withinSwitchGraceWindow && reportedVideoId !== expectedVideoId) {
       return;
     }
+    if (
+      !withinSwitchGraceWindow &&
+      expectedVideoId.length > 0 &&
+      reportedVideoId !== expectedVideoId
+    ) {
+      if (!expectedRepairTried) {
+        frame.dataset.expectedRepairTried = "1";
+        switchFrameVideo(frame, expectedVideoId, { forceReload: true });
+        forceCaptionsOffForFrame(frame);
+        const channelIndex = getChannelIndexByKey(channelKey);
+        if (channelIndex === activeIndex) {
+          setTimeout(() => {
+            maximizeAndStabilizeAudio(frame, channelIndex, audioActivationToken);
+          }, 900);
+        }
+        return;
+      }
+      // If one repair already failed, clear expectation to avoid infinite retries.
+      frame.dataset.expectedVideoId = "";
+      frame.dataset.switchRequestedAt = "0";
+      frame.dataset.expectedRepairTried = "0";
+    }
     if (reportedVideoId === expectedVideoId) {
       frame.dataset.expectedVideoId = "";
       frame.dataset.switchRequestedAt = "0";
+      frame.dataset.expectedRepairTried = "0";
     }
     const matchedIndex = channel.variants.findIndex(
       (variant) => variant.videoId === reportedVideoId,
@@ -414,6 +438,7 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
   }
   frame.dataset.expectedVideoId = videoId;
   frame.dataset.switchRequestedAt = String(Date.now());
+  frame.dataset.expectedRepairTried = "0";
 
   const hasEmbedPlayer = frame.src.includes("youtube.com/embed/");
   if (!forceReload && hasEmbedPlayer && currentVideoId) {
