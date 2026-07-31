@@ -114,14 +114,14 @@ const channels = [
         videoId: "BOy2xDU1LC8",
         regionLabel: "Beijing",
         timeZone: "Asia/Shanghai",
-        switchIntervalMs: 6 * 60 * 1000,
+        switchIntervalMs: 5 * 60 * 1000,
       },
       {
         name: "Phoenix InfoNews",
         videoId: "Ry--eMIjYLQ",
         regionLabel: "Hong Kong",
         timeZone: "Asia/Hong_Kong",
-        switchIntervalMs: 3 * 60 * 1000,
+        switchIntervalMs: 5 * 60 * 1000,
       },
       {
         name: "TVBS News",
