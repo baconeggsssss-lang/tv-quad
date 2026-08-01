@@ -90,13 +90,6 @@ const channels = [
     switchLabel: "Switch EN/ES/AF",
     variants: [
       {
-        name: "Euronews English",
-        videoId: "pykpO5kQJ98",
-        regionLabel: "Lyon",
-        timeZone: "Europe/Paris",
-        switchIntervalMs: 5 * 60 * 1000,
-      },
-      {
         name: "Euronews Espanol",
         videoId: "O9mOtdZ-nSk",
         regionLabel: "Lyon",
@@ -108,7 +101,14 @@ const channels = [
         videoId: "NQjabLGdP5g",
         regionLabel: "Pointe-Noire",
         timeZone: "Africa/Brazzaville",
-        switchIntervalMs: 3 * 60 * 1000,
+        switchIntervalMs: 5 * 60 * 1000,
+      },
+      {
+        name: "Euronews English",
+        videoId: "pykpO5kQJ98",
+        regionLabel: "Lyon",
+        timeZone: "Europe/Paris",
+        switchIntervalMs: 5 * 60 * 1000,
       },
     ],
   },
