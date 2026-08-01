@@ -87,7 +87,7 @@ const channels = [
   {
     key: EURONEWS_KEY,
     name: "Euronews / Africanews",
-    switchLabel: "Switch EN/ES/AF",
+    switchLabel: "Switch ES/AF/EN",
     variants: [
       {
         name: "Euronews Espanol",
