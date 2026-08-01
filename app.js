@@ -86,20 +86,29 @@ const channels = [
   },
   {
     key: EURONEWS_KEY,
-    name: "Euronews",
-    switchLabel: "Switch EN/ES",
+    name: "Euronews / Africanews",
+    switchLabel: "Switch EN/ES/AF",
     variants: [
       {
         name: "Euronews English",
         videoId: "pykpO5kQJ98",
         regionLabel: "Lyon",
         timeZone: "Europe/Paris",
+        switchIntervalMs: 5 * 60 * 1000,
       },
       {
         name: "Euronews Espanol",
         videoId: "O9mOtdZ-nSk",
         regionLabel: "Lyon",
         timeZone: "Europe/Paris",
+        switchIntervalMs: 5 * 60 * 1000,
+      },
+      {
+        name: "Africanews English",
+        videoId: "NQjabLGdP5g",
+        regionLabel: "Pointe-Noire",
+        timeZone: "Africa/Brazzaville",
+        switchIntervalMs: 3 * 60 * 1000,
       },
     ],
   },

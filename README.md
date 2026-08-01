@@ -6,7 +6,7 @@ Static web app that shows 6 live news streams at once:
 - DW News / FRANCE 24
 - CNA / NTN24
 - CNN / ABC News
-- Euronews English / Espanol
+- Euronews English / Espanol / Africanews English
 - CGTN / Phoenix InfoNews / TVBS News
 
 ## Behavior
@@ -24,8 +24,8 @@ Static web app that shows 6 live news streams at once:
 - Use the inline `Switch CNA/NTN24` button next to the CNA title for instant switch.
 - CNN tile auto-switches between two CNN live sources every 11 minutes.
 - Use the inline `Switch CNN/ABC` button next to the CNN title for instant switch.
-- Euronews tile auto-switches between English and Espanol every 11 minutes.
-- Use the inline `Switch EN/ES` button next to the Euronews title for instant switch.
+- Euronews tile auto-switches with weighted timing: English (5 minutes), Espanol (5 minutes), Africanews English (3 minutes), total 13 minutes.
+- Use the inline `Switch EN/ES/AF` button next to the Euronews title for instant switch.
 - This tile auto-switches with weighted timing: CGTN (5 minutes), Phoenix InfoNews (5 minutes), TVBS News (2 minutes), total 12 minutes.
 - Use the inline `Switch CGTN/PHX/TVBS` button next to the title for instant switch.
 - Every variant tile shows its own per-tile `Next switch in mm:ss` countdown.
