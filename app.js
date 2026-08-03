@@ -86,14 +86,14 @@ const channels = [
   },
   {
     key: EURONEWS_KEY,
-    name: "Euronews / Africanews",
-    switchLabel: "Switch ES/AF/EN",
+    name: "RTVE / Africanews / Euronews",
+    switchLabel: "Switch RTVE/AF/EN",
     variants: [
       {
-        name: "Euronews Espanol",
-        videoId: "O9mOtdZ-nSk",
-        regionLabel: "Lyon",
-        timeZone: "Europe/Paris",
+        name: "RTVE 24H",
+        videoId: "b4tE5aKhtlg",
+        regionLabel: "Madrid",
+        timeZone: "Europe/Madrid",
         switchIntervalMs: 5 * 60 * 1000,
       },
       {
