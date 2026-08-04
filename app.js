@@ -546,6 +546,21 @@ function updateVariantCountdowns() {
       countdownEl.textContent = "Next switch in paused";
       return;
     }
+    if (getChannelIndexByKey(channel.key) === activeIndex) {
+      if (rotationStartAt === null) {
+        countdownEl.textContent = "Next switch in --:--";
+        return;
+      }
+      const remainingMs = Math.max(
+        0,
+        rotationStartAt + ROTATE_INTERVAL_MS - Date.now(),
+      );
+      const totalSeconds = Math.ceil(remainingMs / 1000);
+      const mm = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+      const ss = String(totalSeconds % 60).padStart(2, "0");
+      countdownEl.textContent = `Next switch in ${mm}:${ss}`;
+      return;
+    }
     if (!nextAt) {
       countdownEl.textContent = "Next switch in --:--";
       return;
