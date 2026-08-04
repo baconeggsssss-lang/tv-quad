@@ -137,7 +137,7 @@ const channels = [
         videoId: "vfszY1JYbMc",
         regionLabel: "Noida",
         timeZone: "Asia/Kolkata",
-        switchIntervalMs: 3 * 60 * 1000,
+        switchIntervalMs: 5 * 60 * 1000,
       },
     ],
   },
