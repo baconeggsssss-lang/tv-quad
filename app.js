@@ -114,8 +114,8 @@ const channels = [
   },
   {
     key: NHK_KEY,
-    name: "CGTN / Phoenix / TVBS",
-    switchLabel: "Switch CGTN/PHX/TVBS",
+    name: "CGTN / Phoenix / NHK",
+    switchLabel: "Switch CGTN/PHX/NHK",
     switchIntervalMs: 11 * 60 * 1000,
     variants: [
       {
@@ -133,10 +133,10 @@ const channels = [
         switchIntervalMs: 5 * 60 * 1000,
       },
       {
-        name: "TVBS News",
-        videoId: "2mCSYvcfhtc",
-        regionLabel: "Taipei",
-        timeZone: "Asia/Taipei",
+        name: "NHK WORLD-JAPAN News",
+        videoId: "f0lYkdA-Gtw",
+        regionLabel: "Tokyo",
+        timeZone: "Asia/Tokyo",
         switchIntervalMs: 2 * 60 * 1000,
       },
     ],
@@ -164,7 +164,7 @@ const variantLastAudioIndex = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   XWq5kBlakcQ: 70, // CNA
-  "2mCSYvcfhtc": 50, // TVBS
+  "f0lYkdA-Gtw": 50, // NHK
   BOy2xDU1LC8: 70, // CGTN
   kHcuZsMTckM: 70, // NTN24
 };
