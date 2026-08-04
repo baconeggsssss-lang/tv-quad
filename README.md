@@ -16,21 +16,21 @@ Static web app that shows 6 live news streams at once:
 - Only one stream has audio at any moment.
 - Click a channel header to switch audio to that stream.
 - After each click, 10-minute rotation restarts from the selected stream.
-- Al Jazeera tile auto-switches between Al Jazeera English and TRT World every 11 minutes.
+- Al Jazeera tile auto-switches between Al Jazeera English and TRT World every 8 minutes while muted.
 - Use the inline `Switch AJ/TRT` button next to the Al Jazeera title for instant switch.
-- DW tile auto-switches between DW News and FRANCE 24 every 11 minutes.
+- DW tile auto-switches between DW News and FRANCE 24 every 8 minutes while muted.
 - Use the inline `Switch DW/F24` button next to the DW title for instant switch.
-- CNA tile auto-switches between CNA and NTN24 every 11 minutes.
+- CNA tile auto-switches between CNA and NTN24 every 8 minutes while muted.
 - Use the inline `Switch CNA/NTN24` button next to the CNA title for instant switch.
-- CNN tile auto-switches between two CNN live sources every 11 minutes.
+- CNN tile auto-switches between CNN and ABC News Australia every 8 minutes while muted.
 - Use the inline `Switch CNN/ABC` button next to the CNN title for instant switch.
-- RTVE/Africanews/Euronews tile auto-switches in this order with equal timing: RTVE 24H (5 minutes), Africanews English (5 minutes), Euronews English (5 minutes), total 15 minutes.
+- RTVE/Africanews/Euronews tile auto-switches in this order while muted: RTVE 24H (8 minutes), Africanews English (8 minutes), Euronews English (8 minutes).
 - Use the inline `Switch RTVE/AF/EN` button next to the title for instant switch.
-- This tile auto-switches with weighted timing: CGTN (5 minutes), Phoenix InfoNews (5 minutes), WION LIVE (5 minutes), total 15 minutes.
+- This tile auto-switches in this order while muted: CGTN (8 minutes), Phoenix InfoNews (8 minutes), WION LIVE (8 minutes).
 - Use the inline `Switch CGTN/PHX/WION` button next to the title for instant switch.
 - Every variant tile shows its own per-tile `Next switch in mm:ss` countdown.
 - Each tile header shows a subtle region local-time label for the currently active source.
-- Variant tiles are forced to alternate sub-channels only when audio focus arrives via automatic rotation (not manual switching).
+- Variant tiles keep rotating every 8 minutes while muted, but when top-level audio auto-rotation lands on a tile it uses a separate fair-turn pointer so each sub-channel gets its turn with audio; manual audio switching does not force a sub-channel change.
 - `Pause all feeds` unloads every stream to save resources.
 - `Resume all feeds` reloads all streams fresh (like a page refresh), not from paused frame state.
 - `Mute all` immediately mutes all tiles and clears active audio rotation.

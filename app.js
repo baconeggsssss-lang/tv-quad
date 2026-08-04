@@ -1,5 +1,5 @@
 const ROTATE_INTERVAL_MS = 10 * 60 * 1000;
-const VARIANT_SWITCH_INTERVAL_MS = 11 * 60 * 1000;
+const VARIANT_SWITCH_INTERVAL_MS = 8 * 60 * 1000;
 const EURONEWS_KEY = "euronews";
 const NHK_KEY = "nhk";
 const ALJAZEERA_KEY = "aljazeera";
@@ -10,7 +10,7 @@ const channels = [
     key: ALJAZEERA_KEY,
     name: "Al Jazeera / TRT World",
     switchLabel: "Switch AJ/TRT",
-    switchIntervalMs: 11 * 60 * 1000,
+    switchIntervalMs: 8 * 60 * 1000,
     variants: [
       {
         name: "Al Jazeera English",
@@ -30,7 +30,7 @@ const channels = [
     key: DW_KEY,
     name: "DW / FRANCE 24",
     switchLabel: "Switch DW/F24",
-    switchIntervalMs: 11 * 60 * 1000,
+    switchIntervalMs: 8 * 60 * 1000,
     variants: [
       {
         name: "DW News",
@@ -94,21 +94,21 @@ const channels = [
         videoId: "b4tE5aKhtlg",
         regionLabel: "Madrid",
         timeZone: "Europe/Madrid",
-        switchIntervalMs: 5 * 60 * 1000,
+        switchIntervalMs: 8 * 60 * 1000,
       },
       {
         name: "Africanews English",
         videoId: "NQjabLGdP5g",
         regionLabel: "Pointe-Noire",
         timeZone: "Africa/Brazzaville",
-        switchIntervalMs: 5 * 60 * 1000,
+        switchIntervalMs: 8 * 60 * 1000,
       },
       {
         name: "Euronews English",
         videoId: "pykpO5kQJ98",
         regionLabel: "Lyon",
         timeZone: "Europe/Paris",
-        switchIntervalMs: 5 * 60 * 1000,
+        switchIntervalMs: 8 * 60 * 1000,
       },
     ],
   },
@@ -116,28 +116,28 @@ const channels = [
     key: NHK_KEY,
     name: "CGTN / Phoenix / WION",
     switchLabel: "Switch CGTN/PHX/WION",
-    switchIntervalMs: 11 * 60 * 1000,
+    switchIntervalMs: 8 * 60 * 1000,
     variants: [
       {
         name: "CGTN",
         videoId: "BOy2xDU1LC8",
         regionLabel: "Beijing",
         timeZone: "Asia/Shanghai",
-        switchIntervalMs: 5 * 60 * 1000,
+        switchIntervalMs: 8 * 60 * 1000,
       },
       {
         name: "Phoenix InfoNews",
         videoId: "Ry--eMIjYLQ",
         regionLabel: "Hong Kong",
         timeZone: "Asia/Hong_Kong",
-        switchIntervalMs: 5 * 60 * 1000,
+        switchIntervalMs: 8 * 60 * 1000,
       },
       {
         name: "WION LIVE",
         videoId: "vfszY1JYbMc",
         regionLabel: "Noida",
         timeZone: "Asia/Kolkata",
-        switchIntervalMs: 5 * 60 * 1000,
+        switchIntervalMs: 8 * 60 * 1000,
       },
     ],
   },
@@ -160,7 +160,7 @@ let feedsPaused = false;
 const variantIndices = {};
 const variantTimers = {};
 const variantNextSwitchAt = {};
-const variantLastAudioIndex = {};
+const audioVariantPointers = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   XWq5kBlakcQ: 70, // CNA
@@ -477,12 +477,26 @@ function setAudioState(nextActiveIndex) {
   tiles.forEach((tile, index) => {
     const frame = tile.querySelector(".playerFrame");
     const badge = tile.querySelector(".audioBadge");
+    const channelKey = tile.dataset.channelKey;
+    const channel = channels[index];
     forceCaptionsOffForFrame(frame);
     if (index === nextActiveIndex) {
+      if (channel?.variants?.length && variantTimers[channelKey]) {
+        clearTimeout(variantTimers[channelKey]);
+        variantTimers[channelKey] = null;
+        variantNextSwitchAt[channelKey] = null;
+      }
       maximizeAndStabilizeAudio(frame, nextActiveIndex, activationToken);
       tile.classList.add("active");
       badge.textContent = "Audio On";
     } else {
+      if (
+        channel?.variants?.length &&
+        !feedsPaused &&
+        !variantTimers[channelKey]
+      ) {
+        scheduleVariantSwitch(channelKey);
+      }
       sendPlayerCommand(frame, "mute");
       tile.classList.remove("active");
       badge.textContent = "Muted";
@@ -641,6 +655,14 @@ function scheduleVariantSwitch(channelKey) {
   if (feedsPaused) {
     return;
   }
+  if (getChannelIndexByKey(channelKey) === activeIndex) {
+    if (variantTimers[channelKey]) {
+      clearTimeout(variantTimers[channelKey]);
+      variantTimers[channelKey] = null;
+    }
+    variantNextSwitchAt[channelKey] = null;
+    return;
+  }
   if (variantTimers[channelKey]) {
     clearTimeout(variantTimers[channelKey]);
   }
@@ -673,10 +695,9 @@ function advanceVariantOnAutoRotation(channelKey) {
   if (!channel?.variants?.length) {
     return;
   }
-  const lastAudioIndex = variantLastAudioIndex[channelKey];
-  const nextAudioIndex = ((lastAudioIndex ?? -1) + 1) % channel.variants.length;
+  const nextAudioIndex = audioVariantPointers[channelKey] ?? 0;
   variantIndices[channelKey] = nextAudioIndex;
-  variantLastAudioIndex[channelKey] = nextAudioIndex;
+  audioVariantPointers[channelKey] = (nextAudioIndex + 1) % channel.variants.length;
   renderVariantTile(channelKey);
   scheduleVariantSwitch(channelKey);
 }
@@ -880,6 +901,7 @@ function buildTile(channel, index) {
 
   if (channel.variants?.length) {
     variantIndices[channel.key] = 0;
+    audioVariantPointers[channel.key] = 0;
     const variant = getCurrentVariant(channel.key);
     channelName.textContent = variant.name;
     frame.title = `${variant.name} Live`;
