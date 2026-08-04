@@ -114,8 +114,8 @@ const channels = [
   },
   {
     key: NHK_KEY,
-    name: "CGTN / Phoenix / NHK",
-    switchLabel: "Switch CGTN/PHX/NHK",
+    name: "CGTN / Phoenix / WION",
+    switchLabel: "Switch CGTN/PHX/WION",
     switchIntervalMs: 11 * 60 * 1000,
     variants: [
       {
@@ -133,11 +133,11 @@ const channels = [
         switchIntervalMs: 5 * 60 * 1000,
       },
       {
-        name: "NHK WORLD-JAPAN News",
-        videoId: "f0lYkdA-Gtw",
-        regionLabel: "Tokyo",
-        timeZone: "Asia/Tokyo",
-        switchIntervalMs: 2 * 60 * 1000,
+        name: "WION LIVE",
+        videoId: "vfszY1JYbMc",
+        regionLabel: "Noida",
+        timeZone: "Asia/Kolkata",
+        switchIntervalMs: 3 * 60 * 1000,
       },
     ],
   },
@@ -164,7 +164,7 @@ const variantLastAudioIndex = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   XWq5kBlakcQ: 70, // CNA
-  "f0lYkdA-Gtw": 50, // NHK
+  vfszY1JYbMc: 50, // WION
   BOy2xDU1LC8: 70, // CGTN
   kHcuZsMTckM: 70, // NTN24
 };
