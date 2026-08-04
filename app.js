@@ -59,7 +59,7 @@ const channels = [
       },
       {
         name: "NTN24",
-        videoId: "kHcuZsMTckM",
+        videoId: "I4AVxPm58S0",
         regionLabel: "Bogota",
         timeZone: "America/Bogota",
       },
@@ -166,7 +166,7 @@ const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   XWq5kBlakcQ: 70, // CNA
   vfszY1JYbMc: 50, // WION
   BOy2xDU1LC8: 70, // CGTN
-  kHcuZsMTckM: 70, // NTN24
+  I4AVxPm58S0: 70, // NTN24
 };
 const TIME_FORMATTERS = {};
 
