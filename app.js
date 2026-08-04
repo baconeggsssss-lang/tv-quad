@@ -572,7 +572,7 @@ function applyActiveChannel(index, initiatedByUser) {
 
   activeIndex = index;
   if (!initiatedByUser && targetChannel.variants?.length) {
-    advanceVariantOnAudioActivation(targetChannel.key);
+    advanceVariantOnAutoRotation(targetChannel.key);
   }
   rotationStartAt = Date.now();
   setAudioState(activeIndex);
@@ -668,7 +668,7 @@ function switchVariant(channelKey, triggeredByUser) {
   }
 }
 
-function advanceVariantOnAudioActivation(channelKey) {
+function advanceVariantOnAutoRotation(channelKey) {
   const channel = channels[getChannelIndexByKey(channelKey)];
   if (!channel?.variants?.length) {
     return;
