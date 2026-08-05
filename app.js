@@ -467,6 +467,21 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
   frame.dataset.currentVideoId = videoId;
 }
 
+function replaceFrameVideo(frame, videoId) {
+  if (!frame || !videoId) {
+    return frame;
+  }
+  const replacement = frame.cloneNode(false);
+  replacement.dataset.channelKey = frame.dataset.channelKey ?? "";
+  replacement.dataset.currentVideoId = videoId;
+  replacement.dataset.expectedVideoId = videoId;
+  replacement.dataset.switchRequestedAt = String(Date.now());
+  replacement.dataset.expectedRepairTried = "0";
+  replacement.src = buildEmbedUrl(videoId);
+  frame.replaceWith(replacement);
+  return replacement;
+}
+
 function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
   if (!frame) {
     return;
@@ -614,6 +629,14 @@ function applyActiveChannel(index, initiatedByUser) {
   }
   rotationStartAt = Date.now();
   setAudioState(activeIndex);
+  const activeFrame = document.querySelector(
+    `.tile[data-channel-key="${targetChannel.key}"] .playerFrame`,
+  );
+  const expectedActiveIndex = activeIndex;
+  const activationToken = audioActivationToken;
+  setTimeout(() => {
+    maximizeAndStabilizeAudio(activeFrame, expectedActiveIndex, activationToken);
+  }, 1200);
   statusText.textContent = formatNextRotationText();
 
   if (rotationTimer) {
@@ -649,7 +672,7 @@ function renderVariantTile(channelKey) {
   if (!tile) {
     return;
   }
-  const frame = tile.querySelector(".playerFrame");
+  let frame = tile.querySelector(".playerFrame");
   frame.dataset.channelKey = channelKey;
   const channelName = tile.querySelector(".channelName");
   const variant = getCurrentVariant(channelKey);
@@ -658,9 +681,14 @@ function renderVariantTile(channelKey) {
   }
   channelName.textContent = variant.name;
   frame.title = `${variant.name} Live`;
-  switchFrameVideo(frame, variant.videoId, {
-    forceReload: true,
-  });
+  if (channelKey === "cnn") {
+    frame = replaceFrameVideo(frame, variant.videoId);
+    frame.title = `${variant.name} Live`;
+  } else {
+    switchFrameVideo(frame, variant.videoId, {
+      forceReload: true,
+    });
+  }
   updateTileRegionClock(channelKey);
   updateTileHeaderCompression(tile);
   setTimeout(() => {
@@ -846,8 +874,14 @@ function muteAllAudio() {
     badge.textContent = "Muted";
     tile.classList.remove("active");
   });
+  channels.forEach((channel) => {
+    if (channel.variants?.length) {
+      scheduleVariantSwitch(channel.key);
+    }
+  });
   statusText.textContent = "All feeds muted.";
   updateRotationCountdown();
+  updateVariantCountdowns();
 }
 
 function isTypingTarget(target) {
