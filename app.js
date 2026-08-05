@@ -379,6 +379,16 @@ function handleYouTubePlayerMessage(event) {
     typeof reportedVideoId === "string" &&
     reportedVideoId.length > 0
   ) {
+    if (channelKey === "cnn") {
+      const matchedIndex = channel.variants.findIndex(
+        (variant) => variant.videoId === reportedVideoId,
+      );
+      if (matchedIndex >= 0 && variantIndices[channelKey] !== matchedIndex) {
+        variantIndices[channelKey] = matchedIndex;
+        syncVariantUiByChannelKey(channelKey);
+      }
+      return;
+    }
     if (withinSwitchGraceWindow && reportedVideoId !== expectedVideoId) {
       return;
     }
