@@ -385,7 +385,6 @@ function handleYouTubePlayerMessage(event) {
       );
       if (matchedIndex >= 0 && variantIndices[channelKey] !== matchedIndex) {
         variantIndices[channelKey] = matchedIndex;
-        syncVariantUiByChannelKey(channelKey);
       }
       return;
     }
@@ -659,9 +658,8 @@ function renderVariantTile(channelKey) {
   }
   channelName.textContent = variant.name;
   frame.title = `${variant.name} Live`;
-  const forceReloadForKnownUnstableSwitch = channelKey === "cnn";
   switchFrameVideo(frame, variant.videoId, {
-    forceReload: forceReloadForKnownUnstableSwitch,
+    forceReload: true,
   });
   updateTileRegionClock(channelKey);
   updateTileHeaderCompression(tile);
