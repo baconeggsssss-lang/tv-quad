@@ -370,7 +370,6 @@ function handleYouTubePlayerMessage(event) {
   const reportedVideoId = payload.info?.videoData?.video_id;
   const expectedVideoId = frame.dataset.expectedVideoId ?? "";
   const switchRequestedAt = Number(frame.dataset.switchRequestedAt ?? 0);
-  const expectedRepairTried = frame.dataset.expectedRepairTried === "1";
   const withinSwitchGraceWindow =
     expectedVideoId.length > 0 && Date.now() - switchRequestedAt < 6000;
   if (
@@ -379,15 +378,6 @@ function handleYouTubePlayerMessage(event) {
     typeof reportedVideoId === "string" &&
     reportedVideoId.length > 0
   ) {
-    if (channelKey === "cnn") {
-      const matchedIndex = channel.variants.findIndex(
-        (variant) => variant.videoId === reportedVideoId,
-      );
-      if (matchedIndex >= 0 && variantIndices[channelKey] !== matchedIndex) {
-        variantIndices[channelKey] = matchedIndex;
-      }
-      return;
-    }
     if (withinSwitchGraceWindow && reportedVideoId !== expectedVideoId) {
       return;
     }
@@ -396,27 +386,12 @@ function handleYouTubePlayerMessage(event) {
       expectedVideoId.length > 0 &&
       reportedVideoId !== expectedVideoId
     ) {
-      if (!expectedRepairTried) {
-        frame.dataset.expectedRepairTried = "1";
-        switchFrameVideo(frame, expectedVideoId, { forceReload: true });
-        forceCaptionsOffForFrame(frame);
-        const channelIndex = getChannelIndexByKey(channelKey);
-        if (channelIndex === activeIndex) {
-          setTimeout(() => {
-            maximizeAndStabilizeAudio(frame, channelIndex, audioActivationToken);
-          }, 900);
-        }
-        return;
-      }
-      // If one repair already failed, clear expectation to avoid infinite retries.
       frame.dataset.expectedVideoId = "";
       frame.dataset.switchRequestedAt = "0";
-      frame.dataset.expectedRepairTried = "0";
     }
     if (reportedVideoId === expectedVideoId) {
       frame.dataset.expectedVideoId = "";
       frame.dataset.switchRequestedAt = "0";
-      frame.dataset.expectedRepairTried = "0";
     }
     const matchedIndex = channel.variants.findIndex(
       (variant) => variant.videoId === reportedVideoId,
@@ -456,7 +431,6 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
   }
   frame.dataset.expectedVideoId = videoId;
   frame.dataset.switchRequestedAt = String(Date.now());
-  frame.dataset.expectedRepairTried = "0";
 
   const hasEmbedPlayer = frame.src.includes("youtube.com/embed/");
   if (!forceReload && hasEmbedPlayer && currentVideoId) {
@@ -465,21 +439,6 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
     frame.src = buildEmbedUrl(videoId);
   }
   frame.dataset.currentVideoId = videoId;
-}
-
-function replaceFrameVideo(frame, videoId) {
-  if (!frame || !videoId) {
-    return frame;
-  }
-  const replacement = frame.cloneNode(false);
-  replacement.dataset.channelKey = frame.dataset.channelKey ?? "";
-  replacement.dataset.currentVideoId = videoId;
-  replacement.dataset.expectedVideoId = videoId;
-  replacement.dataset.switchRequestedAt = String(Date.now());
-  replacement.dataset.expectedRepairTried = "0";
-  replacement.src = buildEmbedUrl(videoId);
-  frame.replaceWith(replacement);
-  return replacement;
 }
 
 function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
@@ -672,7 +631,7 @@ function renderVariantTile(channelKey) {
   if (!tile) {
     return;
   }
-  let frame = tile.querySelector(".playerFrame");
+  const frame = tile.querySelector(".playerFrame");
   frame.dataset.channelKey = channelKey;
   const channelName = tile.querySelector(".channelName");
   const variant = getCurrentVariant(channelKey);
@@ -681,23 +640,24 @@ function renderVariantTile(channelKey) {
   }
   channelName.textContent = variant.name;
   frame.title = `${variant.name} Live`;
-  if (channelKey === "cnn") {
-    frame = replaceFrameVideo(frame, variant.videoId);
-    frame.title = `${variant.name} Live`;
-  } else {
-    switchFrameVideo(frame, variant.videoId, {
-      forceReload: true,
-    });
-  }
+  switchFrameVideo(frame, variant.videoId);
   updateTileRegionClock(channelKey);
   updateTileHeaderCompression(tile);
   setTimeout(() => {
     forceCaptionsOffForFrame(frame);
   }, 1800);
 
-  if (getChannelIndexByKey(channelKey) === activeIndex) {
+  const channelIndex = getChannelIndexByKey(channelKey);
+  if (channelIndex === activeIndex) {
     setTimeout(() => {
-      maximizeAndStabilizeAudio(frame, getChannelIndexByKey(channelKey), audioActivationToken);
+      maximizeAndStabilizeAudio(frame, channelIndex, audioActivationToken);
+    }, 900);
+  } else {
+    sendPlayerCommand(frame, "mute");
+    setTimeout(() => {
+      if (channelIndex !== activeIndex) {
+        sendPlayerCommand(frame, "mute");
+      }
     }, 900);
   }
 }
