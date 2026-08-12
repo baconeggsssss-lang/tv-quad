@@ -171,7 +171,7 @@ let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   XWq5kBlakcQ: 70, // CNA
   vfszY1JYbMc: 50, // WION
-  "-JeNrQVjWQU": 70, // CCTV13
+  "-JeNrQVjWQU": 50, // CCTV13
   I4AVxPm58S0: 70, // NTN24
 };
 const TIME_FORMATTERS = {};
