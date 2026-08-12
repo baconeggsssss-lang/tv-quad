@@ -7,7 +7,7 @@ Static web app that shows 6 live news streams at once:
 - CNA / NTN24
 - CNN / ABC News
 - RTVE 24H / Africanews English / Euronews English
-- CGTN / Phoenix InfoNews / WION LIVE
+- CCTV13 / Phoenix InfoNews / WION LIVE
 
 ## Behavior
 
@@ -26,8 +26,8 @@ Static web app that shows 6 live news streams at once:
 - Use the inline `Switch CNN/ABC` button next to the CNN title for instant switch.
 - RTVE/Africanews/Euronews tile auto-switches in this order while muted: RTVE 24H (8 minutes), Africanews English (8 minutes), Euronews English (8 minutes).
 - Use the inline `Switch RTVE/AF/EN` button next to the title for instant switch.
-- This tile auto-switches in this order while muted: CGTN (8 minutes), Phoenix InfoNews (8 minutes), WION LIVE (8 minutes).
-- Use the inline `Switch CGTN/PHX/WION` button next to the title for instant switch.
+- This tile auto-switches in this order while muted: CCTV13 (8 minutes), Phoenix InfoNews (8 minutes), WION LIVE (8 minutes).
+- Use the inline `Switch CCTV13/PHX/WION` button next to the title for instant switch.
 - Every variant tile shows its own per-tile `Next switch in mm:ss` countdown.
 - Each tile header shows a subtle region local-time label for the currently active source.
 - Variant tiles keep rotating every 8 minutes while muted, but when top-level audio auto-rotation lands on a tile it uses a separate fair-turn pointer so each sub-channel gets its turn with audio; manual audio switching does not force a sub-channel change.

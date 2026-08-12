@@ -114,13 +114,13 @@ const channels = [
   },
   {
     key: NHK_KEY,
-    name: "CGTN / Phoenix / WION",
-    switchLabel: "Switch CGTN/PHX/WION",
+    name: "CCTV13 / Phoenix / WION",
+    switchLabel: "Switch CCTV13/PHX/WION",
     switchIntervalMs: 8 * 60 * 1000,
     variants: [
       {
-        name: "CGTN",
-        videoId: "BOy2xDU1LC8",
+        name: "CCTV13",
+        videoId: "-JeNrQVjWQU",
         regionLabel: "Beijing",
         timeZone: "Asia/Shanghai",
         switchIntervalMs: 8 * 60 * 1000,
@@ -165,7 +165,7 @@ let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   XWq5kBlakcQ: 70, // CNA
   vfszY1JYbMc: 50, // WION
-  BOy2xDU1LC8: 70, // CGTN
+  "-JeNrQVjWQU": 70, // CCTV13
   I4AVxPm58S0: 70, // NTN24
 };
 const TIME_FORMATTERS = {};
