@@ -48,8 +48,8 @@ const channels = [
   },
   {
     key: "cna",
-    name: "CNA / NTN24",
-    switchLabel: "Switch CNA/NTN24",
+    name: "CNA / NTN24 / TN",
+    switchLabel: "Switch CNA/NTN24/TN",
     variants: [
       {
         name: "CNA",
@@ -62,6 +62,12 @@ const channels = [
         videoId: "I4AVxPm58S0",
         regionLabel: "Bogota",
         timeZone: "America/Bogota",
+      },
+      {
+        name: "TN",
+        videoId: "cb12KmMMDJA",
+        regionLabel: "Buenos Aires",
+        timeZone: "America/Argentina/Buenos_Aires",
       },
     ],
   },

@@ -20,8 +20,8 @@ Static web app that shows 6 live news streams at once:
 - Use the inline `Switch AJ/TRT` button next to the Al Jazeera title for instant switch.
 - DW tile auto-switches between DW News and FRANCE 24 every 8 minutes while muted.
 - Use the inline `Switch DW/F24` button next to the DW title for instant switch.
-- CNA tile auto-switches between CNA and NTN24 every 8 minutes while muted.
-- Use the inline `Switch CNA/NTN24` button next to the CNA title for instant switch.
+- CNA tile auto-switches between CNA, NTN24, and TN every 8 minutes while muted.
+- Use the inline `Switch CNA/NTN24/TN` button next to the CNA title for instant switch.
 - CNN tile auto-switches between CNN and ABC News Australia every 8 minutes while muted.
 - Use the inline `Switch CNN/ABC` button next to the CNN title for instant switch.
 - RTVE/Africanews/Euronews tile auto-switches in this order while muted: RTVE 24H (8 minutes), Africanews English (8 minutes), Euronews English (8 minutes).
