@@ -20,7 +20,7 @@ const channels = [
       },
       {
         name: "TRT World",
-        videoId: "b8lPrtjmnmw",
+        videoId: "Ox9v0q-ohLM",
         regionLabel: "Ankara",
         timeZone: "Europe/Istanbul",
       },
