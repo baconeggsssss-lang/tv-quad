@@ -126,7 +126,7 @@ const channels = [
     variants: [
       {
         name: "CCTV13",
-        videoId: "-JeNrQVjWQU",
+        videoId: "mhpnZZf-XYU",
         regionLabel: "Beijing",
         timeZone: "Asia/Shanghai",
         switchIntervalMs: 8 * 60 * 1000,
@@ -169,7 +169,7 @@ const variantNextSwitchAt = {};
 const audioVariantPointers = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
-  "-JeNrQVjWQU": 50, // CCTV13
+  "mhpnZZf-XYU": 50, // CCTV13
 };
 const TIME_FORMATTERS = {};
 
