@@ -1,34 +1,18 @@
 # News Live Quad View
 
-Static web app that shows 6 live news streams at once:
-
-- Al Jazeera English / TRT World / Arise News
-- DW News / FRANCE 24
-- CNA / NTN24
-- CNN / ABC News / CBC News
-- RTVE 24H / Africanews English / Euronews English
-- CCTV13 / Phoenix InfoNews / WION LIVE
+Static web app that shows 6 live news streams at once from a pool of 17 channels.
 
 ## Behavior
 
 - All 6 streams load simultaneously.
-- The 6 channel groups are assigned to random tile positions on every page load.
+- All 17 channels are shuffled and regrouped on every page load.
+- Five tiles receive 3 channels and one tile receives 2; the 2-channel tile position is also random.
 - Closed captions are forced off by default.
 - Only one stream has audio at any moment.
 - Click a channel header to switch audio to that stream.
 - After each click, 10-minute rotation restarts from the selected stream.
-- Al Jazeera tile auto-switches between Al Jazeera English, TRT World, and Arise News every 8 minutes while muted.
-- Use the inline `Switch AJ/TRT/Arise` button next to the Al Jazeera title for instant switch.
-- DW tile auto-switches between DW News and FRANCE 24 every 8 minutes while muted.
-- Use the inline `Switch DW/F24` button next to the DW title for instant switch.
-- CNA tile auto-switches between CNA, NTN24, and TN every 8 minutes while muted.
-- Use the inline `Switch CNA/NTN24/TN` button next to the CNA title for instant switch.
-- CNN tile auto-switches between CNN, ABC News Australia, and CBC News every 8 minutes while muted.
-- Use the inline `Switch CNN/ABC/CBC` button next to the CNN title for instant switch.
-- RTVE/Africanews/Euronews tile auto-switches in this order while muted: RTVE 24H (8 minutes), Africanews English (8 minutes), Euronews English (8 minutes).
-- Use the inline `Switch RTVE/AF/EN` button next to the title for instant switch.
-- This tile auto-switches in this order while muted: CCTV13 (8 minutes), Phoenix InfoNews (8 minutes), WION LIVE (8 minutes).
-- Use the inline `Switch CCTV13/PHX/WION` button next to the title for instant switch.
+- Each tile auto-switches through its randomly assigned channels every 8 minutes while muted.
+- Each tile's inline `Switch ...` control is generated from its current random channel group.
 - Every variant tile shows its own per-tile `Next switch in mm:ss` countdown.
 - Each tile header shows a subtle region local-time label for the currently active source.
 - Variant tiles keep rotating every 8 minutes while muted, but when top-level audio auto-rotation lands on a tile it uses a separate fair-turn pointer so each sub-channel gets its turn with audio; manual audio switching does not force a sub-channel change.

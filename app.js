@@ -1,163 +1,124 @@
 const ROTATE_INTERVAL_MS = 10 * 60 * 1000;
 const VARIANT_SWITCH_INTERVAL_MS = 8 * 60 * 1000;
-const EURONEWS_KEY = "euronews";
-const NHK_KEY = "nhk";
-const ALJAZEERA_KEY = "aljazeera";
-const DW_KEY = "dw";
-
-const channelDefinitions = [
+const sourceDefinitions = [
   {
-    key: ALJAZEERA_KEY,
-    name: "Al Jazeera / TRT World / Arise",
-    switchLabel: "Switch AJ/TRT/Arise",
-    switchIntervalMs: 8 * 60 * 1000,
-    variants: [
-      {
-        name: "Al Jazeera English",
-        videoId: "gCNeDWCI0vo",
-        regionLabel: "Doha",
-        timeZone: "Asia/Qatar",
-      },
-      {
-        name: "TRT World",
-        videoId: "Ox9v0q-ohLM",
-        regionLabel: "Ankara",
-        timeZone: "Europe/Istanbul",
-      },
-      {
-        name: "Arise News",
-        videoId: "Fy_03Aorpq8",
-        regionLabel: "Lagos",
-        timeZone: "Africa/Lagos",
-      },
-    ],
+    name: "Al Jazeera English",
+    shortName: "AJ",
+    videoId: "gCNeDWCI0vo",
+    regionLabel: "Doha",
+    timeZone: "Asia/Qatar",
   },
   {
-    key: DW_KEY,
-    name: "DW / FRANCE 24",
-    switchLabel: "Switch DW/F24",
-    switchIntervalMs: 8 * 60 * 1000,
-    variants: [
-      {
-        name: "DW News",
-        videoId: "LuKwFajn37U",
-        regionLabel: "Bonn",
-        timeZone: "Europe/Berlin",
-      },
-      {
-        name: "FRANCE 24",
-        videoId: "a47ckXKZjxI",
-        regionLabel: "Paris",
-        timeZone: "Europe/Paris",
-      },
-    ],
+    name: "TRT World",
+    shortName: "TRT",
+    videoId: "Ox9v0q-ohLM",
+    regionLabel: "Ankara",
+    timeZone: "Europe/Istanbul",
   },
   {
-    key: "cna",
-    name: "CNA / NTN24 / TN",
-    switchLabel: "Switch CNA/NTN24/TN",
-    variants: [
-      {
-        name: "CNA",
-        videoId: "XWq5kBlakcQ",
-        regionLabel: "Singapore",
-        timeZone: "Asia/Singapore",
-      },
-      {
-        name: "NTN24",
-        videoId: "I4AVxPm58S0",
-        regionLabel: "Bogota",
-        timeZone: "America/Bogota",
-      },
-      {
-        name: "TN",
-        videoId: "cb12KmMMDJA",
-        regionLabel: "Buenos Aires",
-        timeZone: "America/Argentina/Buenos_Aires",
-      },
-    ],
+    name: "Arise News",
+    shortName: "Arise",
+    videoId: "Fy_03Aorpq8",
+    regionLabel: "Lagos",
+    timeZone: "Africa/Lagos",
   },
   {
-    key: "cnn",
+    name: "DW News",
+    shortName: "DW",
+    videoId: "LuKwFajn37U",
+    regionLabel: "Bonn",
+    timeZone: "Europe/Berlin",
+  },
+  {
+    name: "FRANCE 24",
+    shortName: "F24",
+    videoId: "a47ckXKZjxI",
+    regionLabel: "Paris",
+    timeZone: "Europe/Paris",
+  },
+  {
+    name: "CNA",
+    shortName: "CNA",
+    videoId: "XWq5kBlakcQ",
+    regionLabel: "Singapore",
+    timeZone: "Asia/Singapore",
+  },
+  {
+    name: "NTN24",
+    shortName: "NTN24",
+    videoId: "I4AVxPm58S0",
+    regionLabel: "Bogota",
+    timeZone: "America/Bogota",
+  },
+  {
+    name: "TN",
+    shortName: "TN",
+    videoId: "cb12KmMMDJA",
+    regionLabel: "Buenos Aires",
+    timeZone: "America/Argentina/Buenos_Aires",
+  },
+  {
     name: "CNN",
-    switchLabel: "Switch CNN/ABC/CBC",
-    variants: [
-      {
-        name: "CNN",
-        videoId: "GotlA1KKWoo",
-        regionLabel: "Atlanta",
-        timeZone: "America/New_York",
-      },
-      {
-        name: "ABC News Australia",
-        videoId: "vOTiJkg1voo",
-        regionLabel: "Ultimo",
-        timeZone: "Australia/Sydney",
-      },
-      {
-        name: "CBC News",
-        videoId: "5vfaDsMhCF4",
-        regionLabel: "Toronto",
-        timeZone: "America/Toronto",
-      },
-    ],
+    shortName: "CNN",
+    videoId: "GotlA1KKWoo",
+    regionLabel: "Atlanta",
+    timeZone: "America/New_York",
   },
   {
-    key: EURONEWS_KEY,
-    name: "RTVE / Africanews / Euronews",
-    switchLabel: "Switch RTVE/AF/EN",
-    variants: [
-      {
-        name: "RTVE 24H",
-        videoId: "b4tE5aKhtlg",
-        regionLabel: "Madrid",
-        timeZone: "Europe/Madrid",
-        switchIntervalMs: 8 * 60 * 1000,
-      },
-      {
-        name: "Africanews English",
-        videoId: "NQjabLGdP5g",
-        regionLabel: "Pointe-Noire",
-        timeZone: "Africa/Brazzaville",
-        switchIntervalMs: 8 * 60 * 1000,
-      },
-      {
-        name: "Euronews English",
-        videoId: "pykpO5kQJ98",
-        regionLabel: "Lyon",
-        timeZone: "Europe/Paris",
-        switchIntervalMs: 8 * 60 * 1000,
-      },
-    ],
+    name: "ABC News Australia",
+    shortName: "ABC",
+    videoId: "vOTiJkg1voo",
+    regionLabel: "Ultimo",
+    timeZone: "Australia/Sydney",
   },
   {
-    key: NHK_KEY,
-    name: "CCTV13 / Phoenix / WION",
-    switchLabel: "Switch CCTV13/PHX/WION",
-    switchIntervalMs: 8 * 60 * 1000,
-    variants: [
-      {
-        name: "CCTV13",
-        videoId: "7VtHFHkRgPk",
-        regionLabel: "Beijing",
-        timeZone: "Asia/Shanghai",
-        switchIntervalMs: 8 * 60 * 1000,
-      },
-      {
-        name: "Phoenix InfoNews",
-        videoId: "Ry--eMIjYLQ",
-        regionLabel: "Hong Kong",
-        timeZone: "Asia/Hong_Kong",
-        switchIntervalMs: 8 * 60 * 1000,
-      },
-      {
-        name: "WION LIVE",
-        videoId: "vfszY1JYbMc",
-        regionLabel: "Noida",
-        timeZone: "Asia/Kolkata",
-        switchIntervalMs: 8 * 60 * 1000,
-      },
-    ],
+    name: "CBC News",
+    shortName: "CBC",
+    videoId: "5vfaDsMhCF4",
+    regionLabel: "Toronto",
+    timeZone: "America/Toronto",
+  },
+  {
+    name: "RTVE 24H",
+    shortName: "RTVE",
+    videoId: "b4tE5aKhtlg",
+    regionLabel: "Madrid",
+    timeZone: "Europe/Madrid",
+  },
+  {
+    name: "Africanews English",
+    shortName: "AF",
+    videoId: "NQjabLGdP5g",
+    regionLabel: "Pointe-Noire",
+    timeZone: "Africa/Brazzaville",
+  },
+  {
+    name: "Euronews English",
+    shortName: "EN",
+    videoId: "pykpO5kQJ98",
+    regionLabel: "Lyon",
+    timeZone: "Europe/Paris",
+  },
+  {
+    name: "CCTV13",
+    shortName: "CCTV13",
+    videoId: "7VtHFHkRgPk",
+    regionLabel: "Beijing",
+    timeZone: "Asia/Shanghai",
+  },
+  {
+    name: "Phoenix InfoNews",
+    shortName: "PHX",
+    videoId: "Ry--eMIjYLQ",
+    regionLabel: "Hong Kong",
+    timeZone: "Asia/Hong_Kong",
+  },
+  {
+    name: "WION LIVE",
+    shortName: "WION",
+    videoId: "vfszY1JYbMc",
+    regionLabel: "Noida",
+    timeZone: "Asia/Kolkata",
   },
 ];
 
@@ -173,7 +134,27 @@ function shuffledCopy(items) {
   return shuffled;
 }
 
-const channels = shuffledCopy(channelDefinitions);
+function createRandomChannelGroups(sources) {
+  const shuffledSources = shuffledCopy(sources);
+  const groupSizes = shuffledCopy([3, 3, 3, 3, 3, 2]);
+  let sourceIndex = 0;
+
+  return groupSizes.map((size, groupIndex) => {
+    const variants = shuffledSources.slice(sourceIndex, sourceIndex + size);
+    sourceIndex += size;
+    return {
+      key: `random-group-${groupIndex + 1}`,
+      name: variants.map((variant) => variant.name).join(" / "),
+      switchLabel: `Switch ${variants
+        .map((variant) => variant.shortName)
+        .join("/")}`,
+      switchIntervalMs: VARIANT_SWITCH_INTERVAL_MS,
+      variants,
+    };
+  });
+}
+
+const channels = createRandomChannelGroups(sourceDefinitions);
 
 const grid = document.getElementById("grid");
 const template = document.getElementById("tileTemplate");
