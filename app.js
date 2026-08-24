@@ -5,11 +5,11 @@ const NHK_KEY = "nhk";
 const ALJAZEERA_KEY = "aljazeera";
 const DW_KEY = "dw";
 
-const channels = [
+const channelDefinitions = [
   {
     key: ALJAZEERA_KEY,
-    name: "Al Jazeera / TRT World",
-    switchLabel: "Switch AJ/TRT",
+    name: "Al Jazeera / TRT World / Arise",
+    switchLabel: "Switch AJ/TRT/Arise",
     switchIntervalMs: 8 * 60 * 1000,
     variants: [
       {
@@ -23,6 +23,12 @@ const channels = [
         videoId: "Ox9v0q-ohLM",
         regionLabel: "Ankara",
         timeZone: "Europe/Istanbul",
+      },
+      {
+        name: "Arise News",
+        videoId: "Fy_03Aorpq8",
+        regionLabel: "Lagos",
+        timeZone: "Africa/Lagos",
       },
     ],
   },
@@ -74,7 +80,7 @@ const channels = [
   {
     key: "cnn",
     name: "CNN",
-    switchLabel: "Switch CNN/ABC",
+    switchLabel: "Switch CNN/ABC/CBC",
     variants: [
       {
         name: "CNN",
@@ -87,6 +93,12 @@ const channels = [
         videoId: "vOTiJkg1voo",
         regionLabel: "Ultimo",
         timeZone: "Australia/Sydney",
+      },
+      {
+        name: "CBC News",
+        videoId: "5vfaDsMhCF4",
+        regionLabel: "Toronto",
+        timeZone: "America/Toronto",
       },
     ],
   },
@@ -126,7 +138,7 @@ const channels = [
     variants: [
       {
         name: "CCTV13",
-        videoId: "mhpnZZf-XYU",
+        videoId: "7VtHFHkRgPk",
         regionLabel: "Beijing",
         timeZone: "Asia/Shanghai",
         switchIntervalMs: 8 * 60 * 1000,
@@ -149,6 +161,20 @@ const channels = [
   },
 ];
 
+function shuffledCopy(items) {
+  const shuffled = [...items];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = Math.floor(Math.random() * (index + 1));
+    [shuffled[index], shuffled[randomIndex]] = [
+      shuffled[randomIndex],
+      shuffled[index],
+    ];
+  }
+  return shuffled;
+}
+
+const channels = shuffledCopy(channelDefinitions);
+
 const grid = document.getElementById("grid");
 const template = document.getElementById("tileTemplate");
 const statusText = document.getElementById("statusText");
@@ -169,7 +195,7 @@ const variantNextSwitchAt = {};
 const audioVariantPointers = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
-  "mhpnZZf-XYU": 50, // CCTV13
+  "7VtHFHkRgPk": 50, // CCTV13
 };
 const TIME_FORMATTERS = {};
 

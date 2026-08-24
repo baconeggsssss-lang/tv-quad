@@ -2,28 +2,29 @@
 
 Static web app that shows 6 live news streams at once:
 
-- Al Jazeera English / TRT World
+- Al Jazeera English / TRT World / Arise News
 - DW News / FRANCE 24
 - CNA / NTN24
-- CNN / ABC News
+- CNN / ABC News / CBC News
 - RTVE 24H / Africanews English / Euronews English
 - CCTV13 / Phoenix InfoNews / WION LIVE
 
 ## Behavior
 
 - All 6 streams load simultaneously.
+- The 6 channel groups are assigned to random tile positions on every page load.
 - Closed captions are forced off by default.
 - Only one stream has audio at any moment.
 - Click a channel header to switch audio to that stream.
 - After each click, 10-minute rotation restarts from the selected stream.
-- Al Jazeera tile auto-switches between Al Jazeera English and TRT World every 8 minutes while muted.
-- Use the inline `Switch AJ/TRT` button next to the Al Jazeera title for instant switch.
+- Al Jazeera tile auto-switches between Al Jazeera English, TRT World, and Arise News every 8 minutes while muted.
+- Use the inline `Switch AJ/TRT/Arise` button next to the Al Jazeera title for instant switch.
 - DW tile auto-switches between DW News and FRANCE 24 every 8 minutes while muted.
 - Use the inline `Switch DW/F24` button next to the DW title for instant switch.
 - CNA tile auto-switches between CNA, NTN24, and TN every 8 minutes while muted.
 - Use the inline `Switch CNA/NTN24/TN` button next to the CNA title for instant switch.
-- CNN tile auto-switches between CNN and ABC News Australia every 8 minutes while muted.
-- Use the inline `Switch CNN/ABC` button next to the CNN title for instant switch.
+- CNN tile auto-switches between CNN, ABC News Australia, and CBC News every 8 minutes while muted.
+- Use the inline `Switch CNN/ABC/CBC` button next to the CNN title for instant switch.
 - RTVE/Africanews/Euronews tile auto-switches in this order while muted: RTVE 24H (8 minutes), Africanews English (8 minutes), Euronews English (8 minutes).
 - Use the inline `Switch RTVE/AF/EN` button next to the title for instant switch.
 - This tile auto-switches in this order while muted: CCTV13 (8 minutes), Phoenix InfoNews (8 minutes), WION LIVE (8 minutes).
