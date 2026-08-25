@@ -177,6 +177,7 @@ const audioVariantPointers = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   "7VtHFHkRgPk": 50, // CCTV13
+  Fy_03Aorpq8: 50, // Arise News
 };
 const TIME_FORMATTERS = {};
 
