@@ -120,6 +120,13 @@ const sourceDefinitions = [
     regionLabel: "Noida",
     timeZone: "Asia/Kolkata",
   },
+  {
+    name: "GB News",
+    shortName: "GB",
+    videoId: "I8E6eDmhegY",
+    regionLabel: "London",
+    timeZone: "Europe/London",
+  },
 ];
 
 function shuffledCopy(items) {
@@ -136,7 +143,7 @@ function shuffledCopy(items) {
 
 function createRandomChannelGroups(sources) {
   const shuffledSources = shuffledCopy(sources);
-  const groupSizes = shuffledCopy([3, 3, 3, 3, 3, 2]);
+  const groupSizes = [3, 3, 3, 3, 3, 3];
   let sourceIndex = 0;
 
   return groupSizes.map((size, groupIndex) => {
@@ -800,7 +807,7 @@ function pauseAllFeeds() {
     badge.textContent = "Paused";
     tile.classList.remove("active");
   });
-  pauseFeedsBtn.textContent = "Resume all feeds";
+  pauseFeedsBtn.textContent = "Resume all feeds (R)";
   statusText.textContent = "All feeds paused.";
   updateRotationCountdown();
   updateVariantCountdowns();
@@ -818,7 +825,7 @@ function resumeAllFeedsFresh() {
       scheduleVariantSwitch(channel.key);
     }
   });
-  pauseFeedsBtn.textContent = "Pause all feeds";
+  pauseFeedsBtn.textContent = "Pause all feeds (Esc)";
   statusText.textContent =
     "All feeds reloaded fresh. Click a tile header to start audio rotation.";
   updateRotationCountdown();
@@ -898,6 +905,20 @@ function handleGlobalHotkeys(event) {
   if (event.code === "Escape") {
     event.preventDefault();
     pauseAllFeeds();
+    return;
+  }
+
+  if (event.code === "KeyR") {
+    if (feedsPaused) {
+      event.preventDefault();
+      resumeAllFeedsFresh();
+    }
+    return;
+  }
+
+  if (event.code === "KeyM") {
+    event.preventDefault();
+    muteAllAudio();
     return;
   }
 

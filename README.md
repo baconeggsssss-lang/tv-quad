@@ -1,12 +1,12 @@
 # News Live Quad View
 
-Static web app that shows 6 live news streams at once from a pool of 17 channels.
+Static web app that shows 6 live news streams at once from a pool of 18 channels.
 
 ## Behavior
 
 - All 6 streams load simultaneously.
-- All 17 channels are shuffled and regrouped on every page load.
-- Five tiles receive 3 channels and one tile receives 2; the 2-channel tile position is also random.
+- All 18 channels are shuffled and regrouped on every page load.
+- Each of the 6 tiles receives 3 channels.
 - Closed captions are forced off by default.
 - Only one stream has audio at any moment.
 - Click a channel header to switch audio to that stream.
@@ -25,6 +25,8 @@ Static web app that shows 6 live news streams at once from a pool of 17 channels
 - Keyboard shortcut: press `Space` to switch AB sub-channel only for the currently active (audio-on) variant tile.
 - Keyboard shortcut: press `Enter` to trigger `Next audio now`.
 - Keyboard shortcut: press `Esc` to trigger `Pause all feeds`.
+- Keyboard shortcut: press `R` to resume all feeds after pausing.
+- Keyboard shortcut: press `M` to mute all audio.
 
 ## Run
 
