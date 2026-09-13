@@ -1,12 +1,12 @@
 # News Live Quad View
 
-Static web app that shows 6 live news streams at once from a pool of 18 channels.
+Static web app that shows 6 live news streams at once from a pool of 19 channels.
 
 ## Behavior
 
 - All 6 streams load simultaneously.
-- All 18 channels are shuffled and regrouped on every page load.
-- Each of the 6 tiles receives 3 channels.
+- All 19 channels are shuffled and regrouped on every page load.
+- Five tiles receive 3 channels and one randomly positioned tile receives 4.
 - Closed captions are forced off by default.
 - Only one stream has audio at any moment.
 - Click a channel header to switch audio to that stream.
