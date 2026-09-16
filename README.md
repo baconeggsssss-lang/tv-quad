@@ -1,11 +1,11 @@
 # News Live Quad View
 
-A lightweight static web app that shows six live news streams at once from a rotating pool of 19 global channels. Each page load reshuffles the source mix, keeps one feed active with audio, and rotates muted variants automatically to mimic a live newsroom wall.
+A lightweight static web app that shows six live news streams at once from a rotating pool of 23 global channels. Each page load reshuffles the source mix, keeps one feed active with audio, and rotates muted variants automatically to mimic a live newsroom wall.
 
 ## Features
 
 - 6 live video tiles displayed simultaneously
-- 19 international news sources, reshuffled on every page load
+- 23 international news sources, reshuffled on every page load
 - Five tiles receive three channels each; one tile receives four
 - Audio rotates across tiles on a 10-minute cycle
 - Each muted tile rotates through its assigned channel set every 8 minutes
