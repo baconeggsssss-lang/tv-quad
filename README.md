@@ -1,41 +1,63 @@
 # News Live Quad View
 
-Static web app that shows 6 live news streams at once from a pool of 19 channels.
+A lightweight static web app that shows six live news streams at once from a rotating pool of 19 global channels. Each page load reshuffles the source mix, keeps one feed active with audio, and rotates muted variants automatically to mimic a live newsroom wall.
 
-## Behavior
+## Features
 
-- All 6 streams load simultaneously.
-- All 19 channels are shuffled and regrouped on every page load.
-- Five tiles receive 3 channels and one randomly positioned tile receives 4.
-- Closed captions are forced off by default.
-- Only one stream has audio at any moment.
-- Click a channel header to switch audio to that stream.
-- After each click, 10-minute rotation restarts from the selected stream.
-- Each tile auto-switches through its randomly assigned channels every 8 minutes while muted.
-- Each tile's inline `Switch ...` control is generated from its current random channel group.
-- Every variant tile shows its own per-tile `Next switch in mm:ss` countdown.
-- Each tile header shows a subtle region local-time label for the currently active source.
-- Variant tiles keep rotating every 8 minutes while muted, but when top-level audio auto-rotation lands on a tile it uses a separate fair-turn pointer so each sub-channel gets its turn with audio; manual audio switching does not force a sub-channel change.
-- `Pause all feeds` unloads every stream to save resources.
-- `Resume all feeds` reloads all streams fresh (like a page refresh), not from paused frame state.
-- `Mute all` immediately mutes all tiles and clears active audio rotation.
-- Keyboard shortcuts: press `1..6` (top row or numpad) to switch audio to tile positions:
-  - `1 2 3`
-  - `4 5 6`
-- Keyboard shortcut: press `Space` to switch AB sub-channel only for the currently active (audio-on) variant tile.
-- Keyboard shortcut: press `Enter` to trigger `Next audio now`.
-- Keyboard shortcut: press `Esc` to trigger `Pause all feeds`.
-- Keyboard shortcut: press `R` to resume all feeds after pausing.
-- Keyboard shortcut: press `M` to mute all audio.
+- 6 live video tiles displayed simultaneously
+- 19 international news sources, reshuffled on every page load
+- Five tiles receive three channels each; one tile receives four
+- Audio rotates across tiles on a 10-minute cycle
+- Each muted tile rotates through its assigned channel set every 8 minutes
+- Local time labels show the active source's region clock
+- Closed captions are forced off by default
+- One stream has audio at a time; clicking a tile switches focus
+- Inline channel switch controls for each tile
+- Keyboard shortcuts for quick playback control
+- Pause/resume and mute-all controls for lower resource use
 
-## Run
+## Running locally
 
-Serve this folder with any static server (do not use `file://` directly, YouTube embeds can fail there).
+This project is a static site with no build step or package install required.
 
-Example:
+1. From the project folder, start a local web server:
 
-```powershell
+```bash
 python -m http.server 8080
 ```
 
-Then open: `http://localhost:8080`
+2. Open the app in your browser:
+
+```text
+http://localhost:8080
+```
+
+Note: do not open the page directly via `file://` because embedded YouTube streams can fail in that mode.
+
+## Controls
+
+- Click a tile header to switch audio to that stream.
+- Use the `Next audio now` button to jump to the next tile.
+- Use `Pause all feeds` to unload all streams and save resources.
+- Use `Resume all feeds` to reload them fresh.
+- Use `Mute all` to silence all streams immediately.
+
+### Keyboard shortcuts
+
+- `1` through `6`: switch audio to the corresponding tile position
+- `Space`: switch the AB sub-channel for the currently active tile
+- `Enter`: move to the next audio tile immediately
+- `Esc`: pause all feeds
+- `R`: resume all feeds after pausing
+- `M`: mute all audio
+
+## Project structure
+
+- `index.html` — page structure and UI templates
+- `styles.css` — layout, tiles, controls, and responsive styling
+- `app.js` — channel rotation logic, player behavior, and controls
+- `README.md` — project overview and usage notes
+
+## Notes
+
+The app is intentionally browser-based and relies on embedded YouTube live streams. Availability, stream quality, and region labels can vary by source and network conditions.
