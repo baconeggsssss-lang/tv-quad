@@ -141,6 +141,27 @@ const sourceDefinitions = [
     regionLabel: "Seoul",
     timeZone: "Asia/Seoul",
   },
+  {
+    name: "NHK WORLD-JAPAN",
+    shortName: "NHK",
+    videoId: "IimtbuqYIE8",
+    regionLabel: "Tokyo",
+    timeZone: "Asia/Tokyo",
+  },
+  {
+    name: "ABC News",
+    shortName: "ABC US",
+    videoId: "iipR5yUp36o",
+    regionLabel: "New York",
+    timeZone: "America/New_York",
+  },
+  {
+    name: "CGTN",
+    shortName: "CGTN",
+    videoId: "0i7n3r01L2U",
+    regionLabel: "Beijing",
+    timeZone: "Asia/Shanghai",
+  },
 ];
 
 function shuffledCopy(items) {
@@ -157,7 +178,7 @@ function shuffledCopy(items) {
 
 function createRandomChannelGroups(sources) {
   const shuffledSources = shuffledCopy(sources);
-  const groupSizes = shuffledCopy([4, 4, 3, 3, 3, 3]);
+  const groupSizes = shuffledCopy([4, 4, 4, 4, 4, 3]);
   let sourceIndex = 0;
 
   return groupSizes.map((size, groupIndex) => {
