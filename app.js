@@ -128,6 +128,13 @@ const sourceDefinitions = [
     timeZone: "Europe/London",
   },
   {
+    name: "Sky News",
+    shortName: "Sky",
+    videoId: "xDWQ3LkccY8",
+    regionLabel: "London",
+    timeZone: "Europe/London",
+  },
+  {
     name: "Arirang TV",
     shortName: "Arirang",
     videoId: "hvVlyZ5GiE8",
@@ -150,7 +157,7 @@ function shuffledCopy(items) {
 
 function createRandomChannelGroups(sources) {
   const shuffledSources = shuffledCopy(sources);
-  const groupSizes = shuffledCopy([4, 3, 3, 3, 3, 3]);
+  const groupSizes = shuffledCopy([4, 4, 3, 3, 3, 3]);
   let sourceIndex = 0;
 
   return groupSizes.map((size, groupIndex) => {
