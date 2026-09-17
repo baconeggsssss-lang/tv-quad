@@ -579,12 +579,12 @@ function updateVariantCountdowns() {
     }
     const nextAt = variantNextSwitchAt[channel.key];
     if (feedsPaused) {
-      countdownEl.textContent = "Next switch in paused";
+      countdownEl.textContent = "paused";
       return;
     }
     if (getChannelIndexByKey(channel.key) === activeIndex) {
       if (rotationStartAt === null) {
-        countdownEl.textContent = "Next switch in --:--";
+        countdownEl.textContent = "--:--";
         return;
       }
       const remainingMs = Math.max(
@@ -594,18 +594,18 @@ function updateVariantCountdowns() {
       const totalSeconds = Math.ceil(remainingMs / 1000);
       const mm = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
       const ss = String(totalSeconds % 60).padStart(2, "0");
-      countdownEl.textContent = `Next switch in ${mm}:${ss}`;
+      countdownEl.textContent = `${mm}:${ss}`;
       return;
     }
     if (!nextAt) {
-      countdownEl.textContent = "Next switch in --:--";
+      countdownEl.textContent = "--:--";
       return;
     }
     const remainingMs = Math.max(0, nextAt - Date.now());
     const totalSeconds = Math.ceil(remainingMs / 1000);
     const mm = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
     const ss = String(totalSeconds % 60).padStart(2, "0");
-    countdownEl.textContent = `Next switch in ${mm}:${ss}`;
+    countdownEl.textContent = `${mm}:${ss}`;
     updateTileHeaderCompression(tile);
   });
 }
@@ -991,7 +991,7 @@ function buildTile(channel, index) {
     frame.title = `${variant.name} Live`;
     switchFrameVideo(frame, variant.videoId, { forceReload: true });
     variantCountdown.hidden = false;
-    variantCountdown.textContent = "Next switch in --:--";
+    variantCountdown.textContent = "--:--";
     if (channel.switchLabel) {
       sourceInlineSwitch.hidden = false;
       sourceInlineSwitch.textContent = channel.switchLabel;
