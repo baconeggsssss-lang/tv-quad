@@ -11,7 +11,7 @@ const sourceDefinitions = [
   {
     name: "TRT World",
     shortName: "TRT",
-    videoId: "9CucucyxECM",
+    videoId: "A1xuih-xum8",
     regionLabel: "Ankara",
     timeZone: "Europe/Istanbul",
   },
