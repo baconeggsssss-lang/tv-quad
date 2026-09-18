@@ -65,6 +65,13 @@ const sourceDefinitions = [
     timeZone: "America/New_York",
   },
   {
+    name: "Bloomberg Business News",
+    shortName: "Bloomberg",
+    videoId: "QB5BNdBFujE",
+    regionLabel: "New York",
+    timeZone: "America/New_York",
+  },
+  {
     name: "ABC News Australia",
     shortName: "ABC",
     videoId: "vOTiJkg1voo",
@@ -178,7 +185,7 @@ function shuffledCopy(items) {
 
 function createRandomChannelGroups(sources) {
   const shuffledSources = shuffledCopy(sources);
-  const groupSizes = shuffledCopy([4, 4, 4, 4, 4, 3]);
+  const groupSizes = shuffledCopy([4, 4, 4, 4, 4, 4]);
   let sourceIndex = 0;
 
   return groupSizes.map((size, groupIndex) => {
