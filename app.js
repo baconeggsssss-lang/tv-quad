@@ -109,7 +109,14 @@ const sourceDefinitions = [
   {
     name: "CCTV13",
     shortName: "CCTV13",
-    videoId: "6TXuURijMTg",
+    videoId: "w2hJVTbycDs",
+    regionLabel: "Beijing",
+    timeZone: "Asia/Shanghai",
+  },
+  {
+    name: "CCTV中文国际",
+    shortName: "CCTV4",
+    videoId: "vNVp6bxkL1c",
     regionLabel: "Beijing",
     timeZone: "Asia/Shanghai",
   },
@@ -185,7 +192,15 @@ function shuffledCopy(items) {
 
 function createRandomChannelGroups(sources) {
   const shuffledSources = shuffledCopy(sources);
-  const groupSizes = shuffledCopy([4, 4, 4, 4, 4, 4]);
+  const totalGroups = 6;
+  const baseGroupSize = Math.floor(sources.length / totalGroups);
+  const extraSources = sources.length % totalGroups;
+  const groupSizes = shuffledCopy(
+    Array.from(
+      { length: totalGroups },
+      (_, index) => baseGroupSize + (index < extraSources ? 1 : 0)
+    )
+  );
   let sourceIndex = 0;
 
   return groupSizes.map((size, groupIndex) => {
@@ -225,7 +240,7 @@ const variantNextSwitchAt = {};
 const audioVariantPointers = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
-  "6TXuURijMTg": 50, // CCTV13
+  w2hJVTbycDs: 50, // CCTV13
   Fy_03Aorpq8: 50, // Arise News
 };
 const TIME_FORMATTERS = {};
