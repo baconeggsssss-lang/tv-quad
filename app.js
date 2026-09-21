@@ -5,6 +5,7 @@ const sourceDefinitions = [
     name: "Al Jazeera English",
     shortName: "AJ",
     videoId: "gCNeDWCI0vo",
+    flagKey: "qa",
     regionLabel: "Doha",
     timeZone: "Asia/Qatar",
   },
@@ -12,6 +13,7 @@ const sourceDefinitions = [
     name: "TRT World",
     shortName: "TRT",
     videoId: "A1xuih-xum8",
+    flagKey: "tr",
     regionLabel: "Ankara",
     timeZone: "Europe/Istanbul",
   },
@@ -19,6 +21,7 @@ const sourceDefinitions = [
     name: "Arise News",
     shortName: "Arise",
     videoId: "Fy_03Aorpq8",
+    flagKey: "ng",
     regionLabel: "Lagos",
     timeZone: "Africa/Lagos",
   },
@@ -26,6 +29,7 @@ const sourceDefinitions = [
     name: "DW News",
     shortName: "DW",
     videoId: "LuKwFajn37U",
+    flagKey: "de",
     regionLabel: "Bonn",
     timeZone: "Europe/Berlin",
   },
@@ -33,6 +37,7 @@ const sourceDefinitions = [
     name: "FRANCE 24",
     shortName: "F24",
     videoId: "a47ckXKZjxI",
+    flagKey: "fr",
     regionLabel: "Paris",
     timeZone: "Europe/Paris",
   },
@@ -40,6 +45,7 @@ const sourceDefinitions = [
     name: "CNA",
     shortName: "CNA",
     videoId: "XWq5kBlakcQ",
+    flagKey: "sg",
     regionLabel: "Singapore",
     timeZone: "Asia/Singapore",
   },
@@ -47,6 +53,7 @@ const sourceDefinitions = [
     name: "NTN24",
     shortName: "NTN24",
     videoId: "I4AVxPm58S0",
+    flagKey: "co",
     regionLabel: "Bogota",
     timeZone: "America/Bogota",
   },
@@ -54,6 +61,7 @@ const sourceDefinitions = [
     name: "TN",
     shortName: "TN",
     videoId: "cb12KmMMDJA",
+    flagKey: "ar",
     regionLabel: "Buenos Aires",
     timeZone: "America/Argentina/Buenos_Aires",
   },
@@ -61,6 +69,7 @@ const sourceDefinitions = [
     name: "CNN",
     shortName: "CNN",
     videoId: "GotlA1KKWoo",
+    flagKey: "us",
     regionLabel: "Atlanta",
     timeZone: "America/New_York",
   },
@@ -68,6 +77,7 @@ const sourceDefinitions = [
     name: "Bloomberg Business News",
     shortName: "Bloomberg",
     videoId: "QB5BNdBFujE",
+    flagKey: "us",
     regionLabel: "New York",
     timeZone: "America/New_York",
   },
@@ -75,6 +85,7 @@ const sourceDefinitions = [
     name: "ABC News Australia",
     shortName: "ABC",
     videoId: "vOTiJkg1voo",
+    flagKey: "au",
     regionLabel: "Ultimo",
     timeZone: "Australia/Sydney",
   },
@@ -82,6 +93,7 @@ const sourceDefinitions = [
     name: "CBC News",
     shortName: "CBC",
     videoId: "5vfaDsMhCF4",
+    flagKey: "ca",
     regionLabel: "Toronto",
     timeZone: "America/Toronto",
   },
@@ -89,6 +101,7 @@ const sourceDefinitions = [
     name: "RTVE 24H",
     shortName: "RTVE",
     videoId: "b4tE5aKhtlg",
+    flagKey: "es",
     regionLabel: "Madrid",
     timeZone: "Europe/Madrid",
   },
@@ -96,6 +109,7 @@ const sourceDefinitions = [
     name: "Africanews English",
     shortName: "AF",
     videoId: "NQjabLGdP5g",
+    flagKey: "cg",
     regionLabel: "Pointe-Noire",
     timeZone: "Africa/Brazzaville",
   },
@@ -103,6 +117,7 @@ const sourceDefinitions = [
     name: "Euronews English",
     shortName: "EN",
     videoId: "pykpO5kQJ98",
+    flagKey: "eu",
     regionLabel: "Lyon",
     timeZone: "Europe/Paris",
   },
@@ -110,6 +125,7 @@ const sourceDefinitions = [
     name: "CCTV13",
     shortName: "CCTV13",
     videoId: "FBSePb-Noqs",
+    flagKey: "cn",
     regionLabel: "Beijing",
     timeZone: "Asia/Shanghai",
   },
@@ -117,6 +133,7 @@ const sourceDefinitions = [
     name: "Phoenix InfoNews",
     shortName: "PHX",
     videoId: "Ry--eMIjYLQ",
+    flagKey: "hk",
     regionLabel: "Hong Kong",
     timeZone: "Asia/Hong_Kong",
   },
@@ -124,6 +141,7 @@ const sourceDefinitions = [
     name: "WION LIVE",
     shortName: "WION",
     videoId: "vfszY1JYbMc",
+    flagKey: "in",
     regionLabel: "Noida",
     timeZone: "Asia/Kolkata",
   },
@@ -131,6 +149,7 @@ const sourceDefinitions = [
     name: "GB News",
     shortName: "GB",
     videoId: "I8E6eDmhegY",
+    flagKey: "gb",
     regionLabel: "London",
     timeZone: "Europe/London",
   },
@@ -138,6 +157,7 @@ const sourceDefinitions = [
     name: "Sky News",
     shortName: "Sky",
     videoId: "xDWQ3LkccY8",
+    flagKey: "gb",
     regionLabel: "London",
     timeZone: "Europe/London",
   },
@@ -145,6 +165,7 @@ const sourceDefinitions = [
     name: "Arirang TV",
     shortName: "Arirang",
     videoId: "hvVlyZ5GiE8",
+    flagKey: "kr",
     regionLabel: "Seoul",
     timeZone: "Asia/Seoul",
   },
@@ -152,6 +173,7 @@ const sourceDefinitions = [
     name: "NHK WORLD-JAPAN",
     shortName: "NHK",
     videoId: "IimtbuqYIE8",
+    flagKey: "jp",
     regionLabel: "Tokyo",
     timeZone: "Asia/Tokyo",
   },
@@ -159,6 +181,7 @@ const sourceDefinitions = [
     name: "ABC News",
     shortName: "ABC US",
     videoId: "iipR5yUp36o",
+    flagKey: "us",
     regionLabel: "New York",
     timeZone: "America/New_York",
   },
@@ -166,6 +189,7 @@ const sourceDefinitions = [
     name: "CGTN",
     shortName: "CGTN",
     videoId: "0i7n3r01L2U",
+    flagKey: "cn",
     regionLabel: "Beijing",
     timeZone: "Asia/Shanghai",
   },
@@ -356,6 +380,28 @@ function getRegionTimeMeta(channel) {
   };
 }
 
+function getCurrentFlagKey(channel) {
+  if (!channel) {
+    return "";
+  }
+  if (channel.variants?.length) {
+    return getCurrentVariant(channel.key)?.flagKey ?? "";
+  }
+  return channel.flagKey ?? "";
+}
+
+function syncTileFlagBackground(tile, channel) {
+  if (!tile) {
+    return;
+  }
+  const flagKey = getCurrentFlagKey(channel);
+  if (flagKey) {
+    tile.dataset.flag = flagKey;
+    return;
+  }
+  delete tile.dataset.flag;
+}
+
 function getTimeForTimeZone(timeZone) {
   if (!timeZone) {
     return "--:--";
@@ -467,6 +513,7 @@ function syncVariantUiByChannelKey(channelKey) {
   frame.title = `${variant.name} Live`;
   frame.dataset.currentVideoId = variant.videoId;
   updatePlayerThumbnail(frame, variant.videoId);
+  syncTileFlagBackground(tile, channel);
   updateTileRegionClock(channelKey);
   updateTileHeaderCompression(tile);
 }
@@ -771,6 +818,7 @@ function renderVariantTile(channelKey) {
   channelName.textContent = variant.name;
   frame.title = `${variant.name} Live`;
   switchFrameVideo(frame, variant.videoId);
+  syncTileFlagBackground(tile, channel);
   updateTileRegionClock(channelKey);
   updateTileHeaderCompression(tile);
   setTimeout(() => {
@@ -896,6 +944,7 @@ function reloadAllFeedsFresh() {
       channelName.textContent = channel.name;
       frame.title = `${channel.name} Live`;
     }
+    syncTileFlagBackground(tile, channel);
     switchFrameVideo(frame, videoId, { forceReload: true });
     setTimeout(() => {
       forceCaptionsOffForFrame(frame);
@@ -1071,6 +1120,7 @@ function buildTile(channel, index) {
     channelName.textContent = variant.name;
     frame.title = `${variant.name} Live`;
     switchFrameVideo(frame, variant.videoId, { forceReload: true });
+    syncTileFlagBackground(node, channel);
     variantCountdown.hidden = false;
     variantCountdown.textContent = "--:--";
     if (channel.switchLabel) {
@@ -1084,6 +1134,7 @@ function buildTile(channel, index) {
     channelName.textContent = channel.name;
     frame.title = `${channel.name} Live`;
     switchFrameVideo(frame, channel.videoId, { forceReload: true });
+    syncTileFlagBackground(node, channel);
   }
   if (regionClock) {
     regionClock.hidden = true;
