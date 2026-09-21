@@ -1110,7 +1110,9 @@ function init() {
     }
   });
   updateAllTileHeaderCompression();
-  updateAllPlayerFrameFits();
+  if (!playerWrapResizeObserver) {
+    updateAllPlayerFrameFits();
+  }
   setTimeout(() => {
     forceCaptionsOffAll();
   }, 2200);
@@ -1132,7 +1134,9 @@ function init() {
   window.addEventListener("message", handleYouTubePlayerMessage);
   window.addEventListener("resize", () => {
     updateAllTileHeaderCompression();
-    updateAllPlayerFrameFits();
+    if (!playerWrapResizeObserver) {
+      updateAllPlayerFrameFits();
+    }
   });
 
   if (window.location.protocol !== "file:") {
