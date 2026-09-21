@@ -114,13 +114,6 @@ const sourceDefinitions = [
     timeZone: "Asia/Shanghai",
   },
   {
-    name: "CCTV中文国际",
-    shortName: "CCTV4",
-    videoId: "vNVp6bxkL1c",
-    regionLabel: "Beijing",
-    timeZone: "Asia/Shanghai",
-  },
-  {
     name: "Phoenix InfoNews",
     shortName: "PHX",
     videoId: "Ry--eMIjYLQ",
@@ -241,7 +234,6 @@ const audioVariantPointers = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   "FBSePb-Noqs": 50, // CCTV13
-  vNVp6bxkL1c: 50, // CCTV4
   Fy_03Aorpq8: 50, // Arise News
 };
 const TIME_FORMATTERS = {};
