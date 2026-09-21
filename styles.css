@@ -19,7 +19,7 @@ body {
 .topbar {
   flex: 0 0 auto;
   padding: 3px 6px;
-  border-bottom: 1px solid #2b5685;
+  border-bottom: 0;
   background: #0d1220;
   overflow-x: auto;
   overflow-y: hidden;
@@ -98,9 +98,9 @@ body {
   padding: 0;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1px;
+  gap: 0;
   min-height: 0;
-  background: #2b5685;
+  background: #0f1728;
 }
 
 .tile {
