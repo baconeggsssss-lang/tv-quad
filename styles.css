@@ -295,7 +295,7 @@ body {
     linear-gradient(#111111 0 100%) 77% 76% / 10% 1.6% no-repeat,
     radial-gradient(circle at 50% 44%, #c63a4a 0 3.8%, transparent 3.8% 100%) var(--flag-fill),
     radial-gradient(circle at 50% 56%, #214fbb 0 3.8%, transparent 3.8% 100%) var(--flag-fill),
-    conic-gradient(from 90deg at 50% 50%, #c63a4a 0 180deg, #214fbb 180deg 360deg) 50% 50% / 22% 22% no-repeat,
+    linear-gradient(180deg, #c63a4a 0 50%, #214fbb 50% 100%) 50% 50% / 22% 22% no-repeat,
     linear-gradient(90deg, #ffffff 0 100%) var(--flag-fill);
 }
 
