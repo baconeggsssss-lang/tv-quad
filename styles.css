@@ -105,7 +105,7 @@ body {
 
 .tile {
   --flag-fill: center / cover no-repeat;
-  --tile-flag: none;
+  --tile-flag: linear-gradient(#090d14 0 100%) var(--flag-fill);
   position: relative;
   border: 0;
   border-radius: 0;
@@ -457,8 +457,7 @@ body {
   inset: 0;
   background:
     linear-gradient(rgba(9, 13, 20, 0.68), rgba(9, 13, 20, 0.68)) center / cover no-repeat,
-    var(--tile-flag),
-    #090d14;
+    var(--tile-flag);
   opacity: 0.55;
   filter: saturate(0.7) brightness(0.7);
   pointer-events: none;
