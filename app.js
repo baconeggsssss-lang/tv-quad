@@ -254,6 +254,26 @@ function buildEmbedUrl(videoId) {
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
 }
 
+function buildThumbnailUrl(videoId) {
+  if (typeof videoId !== "string" || videoId.length === 0) {
+    return "";
+  }
+  return `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`;
+}
+
+function updatePlayerThumbnail(frame, videoId) {
+  const playerWrap = frame?.closest(".playerWrap");
+  if (!playerWrap) {
+    return;
+  }
+  const thumbnailUrl = buildThumbnailUrl(videoId);
+  if (!thumbnailUrl) {
+    playerWrap.style.removeProperty("--player-thumbnail");
+    return;
+  }
+  playerWrap.style.setProperty("--player-thumbnail", `url("${thumbnailUrl}")`);
+}
+
 function getChannelIndexByKey(channelKey) {
   return channels.findIndex((channel) => channel.key === channelKey);
 }
@@ -406,6 +426,7 @@ function syncVariantUiByChannelKey(channelKey) {
   channelName.textContent = variant.name;
   frame.title = `${variant.name} Live`;
   frame.dataset.currentVideoId = variant.videoId;
+  updatePlayerThumbnail(frame, variant.videoId);
   updateTileRegionClock(channelKey);
   updateTileHeaderCompression(tile);
 }
@@ -494,6 +515,7 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
     return;
   }
   const currentVideoId = frame.dataset.currentVideoId ?? "";
+  updatePlayerThumbnail(frame, videoId);
   if (!forceReload && currentVideoId === videoId) {
     return;
   }
