@@ -1104,15 +1104,14 @@ function init() {
   }
 
   channels.forEach((channel, index) => {
-    grid.appendChild(buildTile(channel, index));
+    const tile = buildTile(channel, index);
+    grid.appendChild(tile);
+    updatePlayerFrameFit(tile.querySelector(".playerWrap"));
     if (channel.variants?.length) {
       scheduleVariantSwitch(channel.key);
     }
   });
   updateAllTileHeaderCompression();
-  if (!playerWrapResizeObserver) {
-    updateAllPlayerFrameFits();
-  }
   setTimeout(() => {
     forceCaptionsOffAll();
   }, 2200);
