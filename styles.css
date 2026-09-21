@@ -107,8 +107,6 @@ body {
   position: relative;
   border: 0;
   border-radius: 0;
-  outline: 1px solid #2b5685;
-  outline-offset: -1px;
   overflow: hidden;
   background: #0f1728;
   display: flex;
@@ -117,7 +115,7 @@ body {
 }
 
 .tile.active {
-  outline-color: #8ed0ff;
+  outline: none;
   box-shadow: none;
   animation: none;
   filter: none;
@@ -127,7 +125,6 @@ body {
   all: unset;
   cursor: pointer;
   padding: 6px 8px;
-  border-bottom: 1px solid #2b5685;
   display: flex;
   align-items: center;
   justify-content: space-between;
