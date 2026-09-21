@@ -263,7 +263,6 @@ body {
 .playerWrap {
   --player-thumbnail: none;
   position: relative;
-  container-type: size;
   flex: 1 1 auto;
   width: 100%;
   min-height: 0;
@@ -294,20 +293,12 @@ body {
   position: relative;
   z-index: 1;
   width: 100%;
-  height: auto;
   aspect-ratio: 16 / 9;
   max-width: 100%;
   max-height: 100%;
   border: 0;
   display: block;
   background: #000;
-}
-
-@container (min-aspect-ratio: 16 / 9) {
-  .playerFrame {
-    width: auto;
-    height: 100%;
-  }
 }
 
 @media (max-width: 1200px) {

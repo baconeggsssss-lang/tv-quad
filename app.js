@@ -221,6 +221,14 @@ const rotationCountdown = document.getElementById("rotationCountdown");
 const nextAudioBtn = document.getElementById("nextAudioBtn");
 const muteAllBtn = document.getElementById("muteAllBtn");
 const pauseFeedsBtn = document.getElementById("pauseFeedsBtn");
+const playerWrapResizeObserver =
+  typeof ResizeObserver === "function"
+    ? new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+          updatePlayerFrameFit(entry.target);
+        });
+      })
+    : null;
 
 let activeIndex = -1;
 let rotationTimer = null;
@@ -405,6 +413,38 @@ function updateTileHeaderCompression(tile) {
 function updateAllTileHeaderCompression() {
   document.querySelectorAll(".tile").forEach((tile) => {
     updateTileHeaderCompression(tile);
+  });
+}
+
+function updatePlayerFrameFit(playerWrap) {
+  if (!playerWrap) {
+    return;
+  }
+  const frame = playerWrap.querySelector(".playerFrame");
+  if (!frame) {
+    return;
+  }
+  const availableWidth = playerWrap.clientWidth;
+  const availableHeight = playerWrap.clientHeight;
+  if (!availableWidth || !availableHeight) {
+    frame.style.removeProperty("width");
+    frame.style.removeProperty("height");
+    return;
+  }
+  const aspectRatio = 16 / 9;
+  let frameWidth = availableWidth;
+  let frameHeight = frameWidth / aspectRatio;
+  if (frameHeight > availableHeight) {
+    frameHeight = availableHeight;
+    frameWidth = frameHeight * aspectRatio;
+  }
+  frame.style.width = `${frameWidth}px`;
+  frame.style.height = `${frameHeight}px`;
+}
+
+function updateAllPlayerFrameFits() {
+  document.querySelectorAll(".playerWrap").forEach((playerWrap) => {
+    updatePlayerFrameFit(playerWrap);
   });
 }
 
@@ -1018,7 +1058,11 @@ function buildTile(channel, index) {
   const variantCountdown = node.querySelector(".variantCountdown");
   const sourceInlineSwitch = node.querySelector(".sourceInlineSwitch");
   const frame = node.querySelector(".playerFrame");
+  const playerWrap = node.querySelector(".playerWrap");
   frame.dataset.channelKey = channel.key;
+  if (playerWrapResizeObserver && playerWrap) {
+    playerWrapResizeObserver.observe(playerWrap);
+  }
 
   if (channel.variants?.length) {
     variantIndices[channel.key] = 0;
@@ -1066,6 +1110,7 @@ function init() {
     }
   });
   updateAllTileHeaderCompression();
+  updateAllPlayerFrameFits();
   setTimeout(() => {
     forceCaptionsOffAll();
   }, 2200);
@@ -1087,6 +1132,7 @@ function init() {
   window.addEventListener("message", handleYouTubePlayerMessage);
   window.addEventListener("resize", () => {
     updateAllTileHeaderCompression();
+    updateAllPlayerFrameFits();
   });
 
   if (window.location.protocol !== "file:") {
