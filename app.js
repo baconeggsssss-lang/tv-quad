@@ -558,9 +558,6 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
   if (!forceReload && currentVideoId === videoId) {
     return;
   }
-  if (currentVideoId !== videoId) {
-    updatePlayerThumbnail(frame, videoId);
-  }
   frame.dataset.expectedVideoId = videoId;
   frame.dataset.switchRequestedAt = String(Date.now());
 
@@ -571,6 +568,7 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
     frame.src = buildEmbedUrl(videoId);
   }
   frame.dataset.currentVideoId = videoId;
+  updatePlayerThumbnail(frame, videoId);
 }
 
 function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
