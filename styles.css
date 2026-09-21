@@ -116,11 +116,26 @@ body {
 }
 
 .tile[data-flag="qa"] {
-  --tile-flag: linear-gradient(90deg, #ffffff 0 26%, #8d153a 26% 100%);
+  --tile-flag:
+    repeating-linear-gradient(135deg, #ffffff 0 50%, #8d153a 50% 100%) 24% 0 / 12% 14% repeat-y,
+    linear-gradient(90deg, #ffffff 0 26%, #8d153a 26% 100%);
 }
 
 .tile[data-flag="tr"] {
   --tile-flag:
+    conic-gradient(
+      from -18deg,
+      #ffffff 0 36deg,
+      transparent 36deg 72deg,
+      #ffffff 72deg 108deg,
+      transparent 108deg 144deg,
+      #ffffff 144deg 180deg,
+      transparent 180deg 216deg,
+      #ffffff 216deg 252deg,
+      transparent 252deg 288deg,
+      #ffffff 288deg 324deg,
+      transparent 324deg 360deg
+    ) 58% 50% / 8% 8% no-repeat,
     radial-gradient(circle at 42% 50%, transparent 0 9%, #ffffff 9% 14%, transparent 14% 100%),
     radial-gradient(circle at 45% 50%, #d31f2b 0 8%, transparent 8% 100%),
     linear-gradient(90deg, #d31f2b 0 100%);
@@ -139,7 +154,15 @@ body {
 }
 
 .tile[data-flag="sg"] {
-  --tile-flag: linear-gradient(180deg, #d42c3b 0 50%, #ffffff 50% 100%);
+  --tile-flag:
+    radial-gradient(circle at 14% 26%, #ffffff 0 1.1%, transparent 1.1% 100%),
+    radial-gradient(circle at 18% 20%, #ffffff 0 1.1%, transparent 1.1% 100%),
+    radial-gradient(circle at 23% 20%, #ffffff 0 1.1%, transparent 1.1% 100%),
+    radial-gradient(circle at 27% 26%, #ffffff 0 1.1%, transparent 1.1% 100%),
+    radial-gradient(circle at 20.5% 30%, #ffffff 0 1.1%, transparent 1.1% 100%),
+    radial-gradient(circle at 18% 25%, transparent 0 5%, #ffffff 5% 8%, transparent 8% 100%),
+    radial-gradient(circle at 20% 25%, #d42c3b 0 5%, transparent 5% 100%),
+    linear-gradient(180deg, #d42c3b 0 50%, #ffffff 50% 100%);
 }
 
 .tile[data-flag="co"] {
@@ -152,14 +175,37 @@ body {
 
 .tile[data-flag="us"] {
   --tile-flag:
-    linear-gradient(180deg, #25428f 0 55%, transparent 55% 100%),
+    radial-gradient(circle at 8% 7%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    radial-gradient(circle at 14% 7%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    radial-gradient(circle at 20% 7%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    radial-gradient(circle at 11% 13%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    radial-gradient(circle at 17% 13%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    radial-gradient(circle at 8% 19%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    radial-gradient(circle at 14% 19%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    radial-gradient(circle at 20% 19%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    radial-gradient(circle at 11% 25%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    radial-gradient(circle at 17% 25%, #ffffff 0 0.8%, transparent 0.8% 100%),
+    linear-gradient(#25428f 0 100%) 0 0 / 40% 53.85% no-repeat,
     repeating-linear-gradient(180deg, #b72d38 0 7.69%, #ffffff 7.69% 15.38%);
 }
 
 .tile[data-flag="au"] {
   --tile-flag:
-    radial-gradient(circle at 72% 58%, #ffffff 0 4%, transparent 4% 100%),
-    linear-gradient(90deg, #163b8f 0 100%);
+    radial-gradient(circle at 28% 74%, #ffffff 0 4.5%, transparent 4.5% 100%),
+    radial-gradient(circle at 73% 32%, #ffffff 0 2.2%, transparent 2.2% 100%),
+    radial-gradient(circle at 82% 46%, #ffffff 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 70% 58%, #ffffff 0 2.4%, transparent 2.4% 100%),
+    radial-gradient(circle at 86% 70%, #ffffff 0 2%, transparent 2% 100%),
+    radial-gradient(circle at 77% 83%, #ffffff 0 2.1%, transparent 2.1% 100%),
+    linear-gradient(33deg, transparent 42%, #ffffff 42% 58%, transparent 58%) 0 0 / 46% 52% no-repeat,
+    linear-gradient(-33deg, transparent 42%, #ffffff 42% 58%, transparent 58%) 0 0 / 46% 52% no-repeat,
+    linear-gradient(33deg, transparent 47%, #c33444 47% 53%, transparent 53%) 0 0 / 46% 52% no-repeat,
+    linear-gradient(-33deg, transparent 47%, #c33444 47% 53%, transparent 53%) 0 0 / 46% 52% no-repeat,
+    linear-gradient(0deg, transparent 36%, #ffffff 36% 64%, transparent 64%) 0 0 / 46% 52% no-repeat,
+    linear-gradient(90deg, transparent 36%, #ffffff 36% 64%, transparent 64%) 0 0 / 46% 52% no-repeat,
+    linear-gradient(0deg, transparent 43%, #c33444 43% 57%, transparent 57%) 0 0 / 46% 52% no-repeat,
+    linear-gradient(90deg, transparent 43%, #c33444 43% 57%, transparent 57%) 0 0 / 46% 52% no-repeat,
+    linear-gradient(#163b8f 0 100%);
 }
 
 .tile[data-flag="ca"] {
@@ -176,46 +222,79 @@ body {
 
 .tile[data-flag="eu"] {
   --tile-flag:
-    radial-gradient(circle at 50% 24%, #f2c84b 0 3%, transparent 3% 100%),
-    radial-gradient(circle at 67% 31%, #f2c84b 0 3%, transparent 3% 100%),
-    radial-gradient(circle at 76% 50%, #f2c84b 0 3%, transparent 3% 100%),
-    radial-gradient(circle at 67% 69%, #f2c84b 0 3%, transparent 3% 100%),
-    radial-gradient(circle at 50% 76%, #f2c84b 0 3%, transparent 3% 100%),
-    radial-gradient(circle at 33% 69%, #f2c84b 0 3%, transparent 3% 100%),
-    radial-gradient(circle at 24% 50%, #f2c84b 0 3%, transparent 3% 100%),
-    radial-gradient(circle at 33% 31%, #f2c84b 0 3%, transparent 3% 100%),
+    radial-gradient(circle at 50% 22%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 62% 25%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 71% 34%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 74% 46%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 71% 58%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 62% 67%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 50% 70%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 38% 67%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 29% 58%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 26% 46%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 29% 34%, #f2c84b 0 2.1%, transparent 2.1% 100%),
+    radial-gradient(circle at 38% 25%, #f2c84b 0 2.1%, transparent 2.1% 100%),
     linear-gradient(90deg, #2147a5 0 100%);
 }
 
 .tile[data-flag="cn"] {
   --tile-flag:
     radial-gradient(circle at 18% 22%, #f2d14d 0 5%, transparent 5% 100%),
+    radial-gradient(circle at 30% 12%, #f2d14d 0 1.8%, transparent 1.8% 100%),
+    radial-gradient(circle at 35% 21%, #f2d14d 0 1.8%, transparent 1.8% 100%),
+    radial-gradient(circle at 34% 33%, #f2d14d 0 1.8%, transparent 1.8% 100%),
+    radial-gradient(circle at 26% 40%, #f2d14d 0 1.8%, transparent 1.8% 100%),
     linear-gradient(90deg, #bb212f 0 100%);
 }
 
 .tile[data-flag="hk"] {
   --tile-flag:
-    radial-gradient(circle at 50% 50%, #ffffff 0 11%, transparent 11% 100%),
+    radial-gradient(circle at 50% 34%, #ffffff 0 5%, transparent 5% 100%),
+    radial-gradient(circle at 64% 44%, #ffffff 0 5%, transparent 5% 100%),
+    radial-gradient(circle at 59% 61%, #ffffff 0 5%, transparent 5% 100%),
+    radial-gradient(circle at 41% 61%, #ffffff 0 5%, transparent 5% 100%),
+    radial-gradient(circle at 36% 44%, #ffffff 0 5%, transparent 5% 100%),
+    radial-gradient(circle at 50% 50%, #b52234 0 3.2%, transparent 3.2% 100%),
     linear-gradient(90deg, #b52234 0 100%);
 }
 
 .tile[data-flag="in"] {
-  --tile-flag: linear-gradient(180deg, #e5872c 0 33.33%, #ffffff 33.33% 66.66%, #20824c 66.66% 100%);
+  --tile-flag:
+    radial-gradient(circle at 50% 50%, #233c85 0 1.4%, transparent 1.4% 100%),
+    radial-gradient(circle at 50% 50%, transparent 0 7.2%, #233c85 7.2% 9.2%, transparent 9.2% 100%),
+    linear-gradient(180deg, #e5872c 0 33.33%, #ffffff 33.33% 66.66%, #20824c 66.66% 100%);
 }
 
 .tile[data-flag="gb"] {
   --tile-flag:
-    linear-gradient(0deg, transparent 42%, #c6313e 42% 58%, transparent 58%),
-    linear-gradient(90deg, transparent 44%, #c6313e 44% 56%, transparent 56%),
-    linear-gradient(0deg, transparent 34%, #ffffff 34% 66%, transparent 66%),
-    linear-gradient(90deg, transparent 38%, #ffffff 38% 62%, transparent 62%),
+    linear-gradient(33deg, transparent 41%, #ffffff 41% 59%, transparent 59%),
+    linear-gradient(-33deg, transparent 41%, #ffffff 41% 59%, transparent 59%),
+    linear-gradient(33deg, transparent 46%, #c6313e 46% 54%, transparent 54%),
+    linear-gradient(-33deg, transparent 46%, #c6313e 46% 54%, transparent 54%),
+    linear-gradient(0deg, transparent 36%, #ffffff 36% 64%, transparent 64%),
+    linear-gradient(90deg, transparent 36%, #ffffff 36% 64%, transparent 64%),
+    linear-gradient(0deg, transparent 43%, #c6313e 43% 57%, transparent 57%),
+    linear-gradient(90deg, transparent 43%, #c6313e 43% 57%, transparent 57%),
     linear-gradient(90deg, #193885 0 100%);
 }
 
 .tile[data-flag="kr"] {
   --tile-flag:
-    radial-gradient(circle at 50% 42%, #c63a4a 0 8%, transparent 8% 100%),
-    radial-gradient(circle at 50% 58%, #214fbb 0 8%, transparent 8% 100%),
+    linear-gradient(#111111 0 100%) 23% 24% / 10% 1.6% no-repeat,
+    linear-gradient(#111111 0 100%) 23% 28% / 10% 1.6% no-repeat,
+    linear-gradient(#111111 0 100%) 23% 32% / 10% 1.6% no-repeat,
+    linear-gradient(90deg, #111111 0 35%, transparent 35% 65%, #111111 65% 100%) 77% 24% / 10% 1.6% no-repeat,
+    linear-gradient(90deg, #111111 0 35%, transparent 35% 65%, #111111 65% 100%) 77% 28% / 10% 1.6% no-repeat,
+    linear-gradient(90deg, #111111 0 35%, transparent 35% 65%, #111111 65% 100%) 77% 32% / 10% 1.6% no-repeat,
+    linear-gradient(90deg, #111111 0 35%, transparent 35% 65%, #111111 65% 100%) 23% 68% / 10% 1.6% no-repeat,
+    linear-gradient(#111111 0 100%) 23% 72% / 10% 1.6% no-repeat,
+    linear-gradient(90deg, #111111 0 35%, transparent 35% 65%, #111111 65% 100%) 23% 76% / 10% 1.6% no-repeat,
+    linear-gradient(#111111 0 100%) 77% 68% / 10% 1.6% no-repeat,
+    linear-gradient(90deg, #111111 0 35%, transparent 35% 65%, #111111 65% 100%) 77% 72% / 10% 1.6% no-repeat,
+    linear-gradient(#111111 0 100%) 77% 76% / 10% 1.6% no-repeat,
+    radial-gradient(circle at 50% 44%, #214fbb 0 3.8%, transparent 3.8% 100%),
+    radial-gradient(circle at 50% 56%, #c63a4a 0 3.8%, transparent 3.8% 100%),
+    conic-gradient(from 90deg at 50% 50%, #c63a4a 0 180deg, #214fbb 180deg 360deg) 50% 50% / 22% 22% no-repeat,
     linear-gradient(90deg, #ffffff 0 100%);
 }
 
@@ -375,12 +454,9 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background-image:
+  background:
     linear-gradient(rgba(9, 13, 20, 0.68), rgba(9, 13, 20, 0.68)),
     var(--tile-flag);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
   opacity: 0.55;
   filter: saturate(0.7) brightness(0.7);
   pointer-events: none;
