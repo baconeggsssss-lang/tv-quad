@@ -1139,6 +1139,9 @@ function init() {
       updateAllPlayerFrameFits();
     }
   });
+  window.addEventListener("beforeunload", () => {
+    playerWrapResizeObserver?.disconnect();
+  });
 
   if (window.location.protocol !== "file:") {
     statusText.textContent =
