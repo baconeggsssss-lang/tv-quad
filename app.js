@@ -804,13 +804,21 @@ function switchToNextAudioNow() {
 }
 
 function renderVariantTile(channelKey) {
+  const channelIndex = getChannelIndexByKey(channelKey);
+  const channel = channels[channelIndex];
+  if (!channel?.variants?.length) {
+    return;
+  }
   const tile = document.querySelector(`.tile[data-channel-key="${channelKey}"]`);
   if (!tile) {
     return;
   }
   const frame = tile.querySelector(".playerFrame");
-  frame.dataset.channelKey = channelKey;
   const channelName = tile.querySelector(".channelName");
+  if (!frame || !channelName) {
+    return;
+  }
+  frame.dataset.channelKey = channelKey;
   const variant = getCurrentVariant(channelKey);
   if (!variant) {
     return;
@@ -825,7 +833,6 @@ function renderVariantTile(channelKey) {
     forceCaptionsOffForFrame(frame);
   }, 1800);
 
-  const channelIndex = getChannelIndexByKey(channelKey);
   if (channelIndex === activeIndex) {
     setTimeout(() => {
       maximizeAndStabilizeAudio(frame, channelIndex, audioActivationToken);
