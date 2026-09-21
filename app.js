@@ -221,6 +221,14 @@ const rotationCountdown = document.getElementById("rotationCountdown");
 const nextAudioBtn = document.getElementById("nextAudioBtn");
 const muteAllBtn = document.getElementById("muteAllBtn");
 const pauseFeedsBtn = document.getElementById("pauseFeedsBtn");
+const playerWrapResizeObserver =
+  typeof ResizeObserver === "function"
+    ? new ResizeObserver((entries) => {
+        entries.forEach((entry) => {
+          updatePlayerFrameFit(entry.target);
+        });
+      })
+    : null;
 
 let activeIndex = -1;
 let rotationTimer = null;
@@ -252,6 +260,26 @@ function buildEmbedUrl(videoId) {
     params.set("origin", window.location.origin);
   }
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+}
+
+function buildThumbnailUrl(videoId) {
+  if (typeof videoId !== "string" || videoId.length === 0) {
+    return "";
+  }
+  return `https://i.ytimg.com/vi/${encodeURIComponent(videoId)}/hqdefault.jpg`;
+}
+
+function updatePlayerThumbnail(frame, videoId) {
+  const playerWrap = frame?.closest(".playerWrap");
+  if (!playerWrap) {
+    return;
+  }
+  const thumbnailUrl = buildThumbnailUrl(videoId);
+  if (!thumbnailUrl) {
+    playerWrap.style.removeProperty("--player-thumbnail");
+    return;
+  }
+  playerWrap.style.setProperty("--player-thumbnail", `url("${thumbnailUrl}")`);
 }
 
 function getChannelIndexByKey(channelKey) {
@@ -388,6 +416,38 @@ function updateAllTileHeaderCompression() {
   });
 }
 
+function updatePlayerFrameFit(playerWrap) {
+  if (!playerWrap) {
+    return;
+  }
+  const frame = playerWrap.querySelector(".playerFrame");
+  if (!frame) {
+    return;
+  }
+  const availableWidth = playerWrap.clientWidth;
+  const availableHeight = playerWrap.clientHeight;
+  if (!availableWidth || !availableHeight) {
+    frame.style.removeProperty("width");
+    frame.style.removeProperty("height");
+    return;
+  }
+  const aspectRatio = 16 / 9;
+  let frameWidth = availableWidth;
+  let frameHeight = frameWidth / aspectRatio;
+  if (frameHeight > availableHeight) {
+    frameHeight = availableHeight;
+    frameWidth = frameHeight * aspectRatio;
+  }
+  frame.style.width = `${frameWidth}px`;
+  frame.style.height = `${frameHeight}px`;
+}
+
+function updateAllPlayerFrameFits() {
+  document.querySelectorAll(".playerWrap").forEach((playerWrap) => {
+    updatePlayerFrameFit(playerWrap);
+  });
+}
+
 function syncVariantUiByChannelKey(channelKey) {
   const channel = channels[getChannelIndexByKey(channelKey)];
   if (!channel?.variants?.length) {
@@ -406,6 +466,7 @@ function syncVariantUiByChannelKey(channelKey) {
   channelName.textContent = variant.name;
   frame.title = `${variant.name} Live`;
   frame.dataset.currentVideoId = variant.videoId;
+  updatePlayerThumbnail(frame, variant.videoId);
   updateTileRegionClock(channelKey);
   updateTileHeaderCompression(tile);
 }
@@ -507,6 +568,7 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
     frame.src = buildEmbedUrl(videoId);
   }
   frame.dataset.currentVideoId = videoId;
+  updatePlayerThumbnail(frame, videoId);
 }
 
 function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
@@ -996,7 +1058,11 @@ function buildTile(channel, index) {
   const variantCountdown = node.querySelector(".variantCountdown");
   const sourceInlineSwitch = node.querySelector(".sourceInlineSwitch");
   const frame = node.querySelector(".playerFrame");
+  const playerWrap = node.querySelector(".playerWrap");
   frame.dataset.channelKey = channel.key;
+  if (playerWrapResizeObserver && playerWrap) {
+    playerWrapResizeObserver.observe(playerWrap);
+  }
 
   if (channel.variants?.length) {
     variantIndices[channel.key] = 0;
@@ -1038,7 +1104,9 @@ function init() {
   }
 
   channels.forEach((channel, index) => {
-    grid.appendChild(buildTile(channel, index));
+    const tile = buildTile(channel, index);
+    grid.appendChild(tile);
+    updatePlayerFrameFit(tile.querySelector(".playerWrap"));
     if (channel.variants?.length) {
       scheduleVariantSwitch(channel.key);
     }
@@ -1065,6 +1133,12 @@ function init() {
   window.addEventListener("message", handleYouTubePlayerMessage);
   window.addEventListener("resize", () => {
     updateAllTileHeaderCompression();
+    if (!playerWrapResizeObserver) {
+      updateAllPlayerFrameFits();
+    }
+  });
+  window.addEventListener("beforeunload", () => {
+    playerWrapResizeObserver?.disconnect();
   });
 
   if (window.location.protocol !== "file:") {
