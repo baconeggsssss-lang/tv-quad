@@ -456,7 +456,8 @@ body {
   inset: 0;
   background:
     linear-gradient(rgba(9, 13, 20, 0.68), rgba(9, 13, 20, 0.68)),
-    var(--tile-flag);
+    var(--tile-flag),
+    #090d14;
   opacity: 0.55;
   filter: saturate(0.7) brightness(0.7);
   pointer-events: none;
