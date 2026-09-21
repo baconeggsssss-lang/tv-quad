@@ -555,9 +555,11 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
     return;
   }
   const currentVideoId = frame.dataset.currentVideoId ?? "";
-  updatePlayerThumbnail(frame, videoId);
   if (!forceReload && currentVideoId === videoId) {
     return;
+  }
+  if (currentVideoId !== videoId) {
+    updatePlayerThumbnail(frame, videoId);
   }
   frame.dataset.expectedVideoId = videoId;
   frame.dataset.switchRequestedAt = String(Date.now());
