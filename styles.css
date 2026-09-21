@@ -64,17 +64,16 @@ body {
   font-size: 0.62rem;
   line-height: 1;
   padding: 2px 5px;
-  border: 1px solid #3a4f72;
-  border-radius: 2px;
-  color: #c3d3ec;
+  border: 0;
+  border-radius: 0;
+  color: #71809a;
   white-space: nowrap;
 }
 
 .nextAudioBtn:hover,
 .pauseFeedsBtn:hover,
 .muteAllBtn:hover {
-  border-color: #5eb4ff;
-  color: #a9daff;
+  color: #9aa8bd;
 }
 
 .topbar .warning {
@@ -374,9 +373,9 @@ body {
   line-height: 1.1;
   padding: 1px 5px;
   font-weight: 400;
-  border: 1px solid #3a4f72;
-  border-radius: 999px;
-  color: #c3d3ec;
+  border: 0;
+  border-radius: 0;
+  color: #71809a;
   background: transparent;
   flex-shrink: 0;
   white-space: nowrap;
@@ -404,22 +403,20 @@ body {
 }
 
 .sourceInlineSwitch:hover {
-  border-color: #5eb4ff;
-  color: #a9daff;
+  color: #9aa8bd;
 }
 
 .audioBadge {
   font-size: 0.7rem;
   padding: 2px 6px;
-  border: 1px solid #3a4f72;
-  border-radius: 999px;
-  color: #c3d3ec;
+  border: 0;
+  border-radius: 0;
+  color: #71809a;
   flex-shrink: 0;
 }
 
 .tile.active .audioBadge {
-  border-color: #5eb4ff;
-  color: #a9daff;
+  color: #9aa8bd;
 }
 
 .playerWrap {
