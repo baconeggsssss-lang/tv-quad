@@ -18,7 +18,7 @@ body {
 
 .topbar {
   flex: 0 0 auto;
-  padding: 4px 8px;
+  padding: 3px 6px;
   border-bottom: 1px solid #2b5685;
   background: #0d1220;
   overflow-x: auto;
@@ -29,11 +29,11 @@ body {
 .topbarMain {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: nowrap;
   width: max-content;
   min-width: 100%;
-  min-height: 24px;
+  min-height: 22px;
 }
 
 .topbar h1 {
@@ -50,7 +50,7 @@ body {
 }
 
 .countdownText {
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   line-height: 1;
   color: #adc0de;
   white-space: nowrap;
@@ -61,11 +61,11 @@ body {
 .muteAllBtn {
   all: unset;
   cursor: pointer;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   line-height: 1;
-  padding: 3px 6px;
+  padding: 2px 5px;
   border: 1px solid #3a4f72;
-  border-radius: 3px;
+  border-radius: 2px;
   color: #c3d3ec;
   white-space: nowrap;
 }
@@ -115,8 +115,6 @@ body {
 }
 
 .tile.active {
-  outline: 1px solid #8ed0ff;
-  outline-offset: -1px;
   box-shadow: none;
   animation: none;
   filter: none;
@@ -125,7 +123,6 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .tile.active {
     animation: none;
-    outline-color: #8ed0ff;
     box-shadow: none;
     filter: none;
   }
@@ -135,7 +132,6 @@ body {
   all: unset;
   cursor: pointer;
   padding: 6px 8px;
-  border-bottom: 1px solid #263449;
   display: flex;
   align-items: center;
   justify-content: space-between;
