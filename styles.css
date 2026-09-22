@@ -103,7 +103,10 @@ body {
 }
 
 .tile {
-  --flag-fill: center / cover no-repeat;
+  --flag-fit: cover;
+  --flag-position: center;
+  --flag-repeat: no-repeat;
+  --flag-fill: var(--flag-position) / var(--flag-fit) var(--flag-repeat);
   --tile-flag: linear-gradient(#090d14 0 100%) var(--flag-fill);
   position: relative;
   border: 0;
@@ -116,7 +119,22 @@ body {
 }
 
 .tile[data-flag="qa"] {
-  --tile-flag: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20900%20600%27%3E%3Crect%20width%3D%27900%27%20height%3D%27600%27%20fill%3D%27%23ffffff%27%2F%3E%3Cpath%20d%3D%27M210%2C0%20L900%2C0%20L900%2C600%20L210%2C600%20L210.00%2C0.00%20285.00%2C33.33%20210.00%2C66.67%20285.00%2C100.00%20210.00%2C133.33%20285.00%2C166.67%20210.00%2C200.00%20285.00%2C233.33%20210.00%2C266.67%20285.00%2C300.00%20210.00%2C333.33%20285.00%2C366.67%20210.00%2C400.00%20285.00%2C433.33%20210.00%2C466.67%20285.00%2C500.00%20210.00%2C533.33%20285.00%2C566.67%20210.00%2C600.00%20Z%27%20fill%3D%27%238d153a%27%2F%3E%3C%2Fsvg%3E") var(--flag-fill);
+  --tile-flag: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%20280%20110%27%3E%3Crect%20width%3D%27280%27%20height%3D%27110%27%20fill%3D%27%238d153a%27%2F%3E%3Cpath%20d%3D%27M0%200h70l20%206.11L70%2012.22l20%206.11L70%2024.44l20%206.11L70%2036.67l20%206.11L70%2048.89l20%206.11L70%2061.11l20%206.11L70%2073.33l20%206.11L70%2085.56l20%206.11L70%2097.78l20%206.11L70%20110H0z%27%20fill%3D%27%23ffffff%27%2F%3E%3C%2Fsvg%3E") var(--flag-fill);
+}
+
+.tile[data-flag="qa"],
+.tile[data-flag="tr"],
+.tile[data-flag="sg"],
+.tile[data-flag="us"],
+.tile[data-flag="au"],
+.tile[data-flag="ca"],
+.tile[data-flag="eu"],
+.tile[data-flag="cn"],
+.tile[data-flag="hk"],
+.tile[data-flag="in"],
+.tile[data-flag="gb"],
+.tile[data-flag="kr"] {
+  --flag-fit: contain;
 }
 
 .tile[data-flag="tr"] {
