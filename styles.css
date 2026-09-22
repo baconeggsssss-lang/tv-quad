@@ -234,14 +234,20 @@ body {
 }
 
 .channelName {
-  font-weight: 600;
+  font-weight: 400;
   font-size: 0.82rem;
   line-height: 1.2;
+  color: #71809a;
   flex: 1 1 auto;
   min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.tile.active .channelName {
+  font-weight: 700;
+  color: #f6f8fc;
 }
 
 .regionClock {
@@ -306,6 +312,10 @@ body {
   border-radius: 0;
   color: #71809a;
   flex-shrink: 0;
+}
+
+.audioBadge[hidden] {
+  display: none;
 }
 
 .tile.active .audioBadge {
