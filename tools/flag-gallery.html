@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8' />
+    <meta name='viewport' content='width=device-width, initial-scale=1.0' />
+    <title>Flag Gallery</title>
+    <link rel='stylesheet' href='../styles.css' />
+    <style>
+      body {
+        margin: 0;
+        padding: 20px;
+        background: #090d14;
+        color: #f6f8fc;
+        font-family: Inter, Segoe UI, Arial, sans-serif;
+      }
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 16px;
+      }
+      .tileHeader,
+      .playerFrame,
+      .audioBadge,
+      .srOnly {
+        display: none !important;
+      }
+      .tile {
+        min-height: 180px;
+      }
+      .playerWrap {
+        min-height: 150px;
+      }
+      .playerWrap::before {
+        display: none;
+      }
+      .playerWrap::after {
+        opacity: 1;
+        filter: none;
+      }
+      .label {
+        padding: 8px 0;
+        font-size: 0.8rem;
+        color: #adc0de;
+      }
+    </style>
+  </head>
+  <body>
+    <div class='gallery'>
+      <section><div class='label'>qa</div><section class='tile' data-flag='qa'><div class='playerWrap'></div></section></section>
+<section><div class='label'>tr</div><section class='tile' data-flag='tr'><div class='playerWrap'></div></section></section>
+<section><div class='label'>ng</div><section class='tile' data-flag='ng'><div class='playerWrap'></div></section></section>
+<section><div class='label'>de</div><section class='tile' data-flag='de'><div class='playerWrap'></div></section></section>
+<section><div class='label'>fr</div><section class='tile' data-flag='fr'><div class='playerWrap'></div></section></section>
+<section><div class='label'>sg</div><section class='tile' data-flag='sg'><div class='playerWrap'></div></section></section>
+<section><div class='label'>co</div><section class='tile' data-flag='co'><div class='playerWrap'></div></section></section>
+<section><div class='label'>ar</div><section class='tile' data-flag='ar'><div class='playerWrap'></div></section></section>
+<section><div class='label'>us</div><section class='tile' data-flag='us'><div class='playerWrap'></div></section></section>
+<section><div class='label'>au</div><section class='tile' data-flag='au'><div class='playerWrap'></div></section></section>
+<section><div class='label'>ca</div><section class='tile' data-flag='ca'><div class='playerWrap'></div></section></section>
+<section><div class='label'>es</div><section class='tile' data-flag='es'><div class='playerWrap'></div></section></section>
+<section><div class='label'>cg</div><section class='tile' data-flag='cg'><div class='playerWrap'></div></section></section>
+<section><div class='label'>eu</div><section class='tile' data-flag='eu'><div class='playerWrap'></div></section></section>
+<section><div class='label'>cn</div><section class='tile' data-flag='cn'><div class='playerWrap'></div></section></section>
+<section><div class='label'>hk</div><section class='tile' data-flag='hk'><div class='playerWrap'></div></section></section>
+<section><div class='label'>in</div><section class='tile' data-flag='in'><div class='playerWrap'></div></section></section>
+<section><div class='label'>gb</div><section class='tile' data-flag='gb'><div class='playerWrap'></div></section></section>
+<section><div class='label'>kr</div><section class='tile' data-flag='kr'><div class='playerWrap'></div></section></section>
+<section><div class='label'>jp</div><section class='tile' data-flag='jp'><div class='playerWrap'></div></section></section>
+    </div>
+  </body>
+</html>
