@@ -597,6 +597,14 @@ function forceCaptionsOffAll() {
   });
 }
 
+function setAudioBadgeState(badge, isAudioOn) {
+  if (!badge) {
+    return;
+  }
+  badge.hidden = !isAudioOn;
+  badge.textContent = isAudioOn ? "Audio On" : "";
+}
+
 function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
   if (!frame || !videoId) {
     return;
@@ -648,7 +656,7 @@ function setAudioState(nextActiveIndex) {
       }
       maximizeAndStabilizeAudio(frame, nextActiveIndex, activationToken);
       tile.classList.add("active");
-      badge.textContent = "Audio On";
+      setAudioBadgeState(badge, true);
     } else {
       if (
         channel?.variants?.length &&
@@ -659,7 +667,7 @@ function setAudioState(nextActiveIndex) {
       }
       sendPlayerCommand(frame, "mute");
       tile.classList.remove("active");
-      badge.textContent = "Muted";
+      setAudioBadgeState(badge, false);
     }
   });
 }
@@ -956,7 +964,7 @@ function reloadAllFeedsFresh() {
     setTimeout(() => {
       forceCaptionsOffForFrame(frame);
     }, 1800);
-    badge.textContent = "Muted";
+    setAudioBadgeState(badge, false);
     tile.classList.remove("active");
   });
 }
@@ -972,7 +980,7 @@ function pauseAllFeeds() {
     const frame = tile.querySelector(".playerFrame");
     const badge = tile.querySelector(".audioBadge");
     frame.src = "about:blank";
-    badge.textContent = "Paused";
+    setAudioBadgeState(badge, false);
     tile.classList.remove("active");
   });
   pauseFeedsBtn.textContent = "Resume all feeds (R)";
@@ -1017,7 +1025,7 @@ function muteAllAudio() {
     const frame = tile.querySelector(".playerFrame");
     const badge = tile.querySelector(".audioBadge");
     sendPlayerCommand(frame, "mute");
-    badge.textContent = "Muted";
+    setAudioBadgeState(badge, false);
     tile.classList.remove("active");
   });
   channels.forEach((channel) => {
@@ -1115,7 +1123,9 @@ function buildTile(channel, index) {
   const sourceInlineSwitch = node.querySelector(".sourceInlineSwitch");
   const frame = node.querySelector(".playerFrame");
   const playerWrap = node.querySelector(".playerWrap");
+  const badge = node.querySelector(".audioBadge");
   frame.dataset.channelKey = channel.key;
+  setAudioBadgeState(badge, false);
   if (playerWrapResizeObserver && playerWrap) {
     playerWrapResizeObserver.observe(playerWrap);
   }
