@@ -306,20 +306,7 @@ body {
 }
 
 .audioBadge {
-  font-size: 0.7rem;
-  padding: 2px 6px;
-  border: 0;
-  border-radius: 0;
-  color: #71809a;
-  flex-shrink: 0;
-}
-
-.audioBadge[hidden] {
-  display: none;
-}
-
-.tile.active .audioBadge {
-  color: #9aa8bd;
+  display: none !important;
 }
 
 .playerWrap {

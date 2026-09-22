@@ -597,12 +597,36 @@ function forceCaptionsOffAll() {
   });
 }
 
-function setAudioBadgeState(badge, isAudioOn) {
+function syncTileAudioStatusText(tile, statusText, shouldAnnounce = false) {
+  if (!tile) {
+    return;
+  }
+  const audioStatusText = tile.querySelector(".audioStatusText");
+  if (!audioStatusText) {
+    return;
+  }
+  if (shouldAnnounce) {
+    audioStatusText.setAttribute("aria-live", "polite");
+    audioStatusText.setAttribute("aria-atomic", "true");
+  } else {
+    audioStatusText.removeAttribute("aria-live");
+    audioStatusText.removeAttribute("aria-atomic");
+  }
+  audioStatusText.textContent = statusText;
+}
+
+function setAudioBadgeState(
+  badge,
+  isAudioOn,
+  statusText = isAudioOn ? "Audio On" : "",
+  shouldAnnounce = false,
+) {
   if (!badge) {
     return;
   }
   badge.hidden = !isAudioOn;
   badge.textContent = isAudioOn ? "Audio On" : "";
+  syncTileAudioStatusText(badge.closest(".tile"), statusText, shouldAnnounce);
 }
 
 function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
@@ -656,7 +680,7 @@ function setAudioState(nextActiveIndex) {
       }
       maximizeAndStabilizeAudio(frame, nextActiveIndex, activationToken);
       tile.classList.add("active");
-      setAudioBadgeState(badge, true);
+      setAudioBadgeState(badge, true, "Audio On", true);
     } else {
       if (
         channel?.variants?.length &&
@@ -667,7 +691,7 @@ function setAudioState(nextActiveIndex) {
       }
       sendPlayerCommand(frame, "mute");
       tile.classList.remove("active");
-      setAudioBadgeState(badge, false);
+      setAudioBadgeState(badge, false, "Muted");
     }
   });
 }
@@ -964,7 +988,7 @@ function reloadAllFeedsFresh() {
     setTimeout(() => {
       forceCaptionsOffForFrame(frame);
     }, 1800);
-    setAudioBadgeState(badge, false);
+    setAudioBadgeState(badge, false, "Muted");
     tile.classList.remove("active");
   });
 }
@@ -980,7 +1004,7 @@ function pauseAllFeeds() {
     const frame = tile.querySelector(".playerFrame");
     const badge = tile.querySelector(".audioBadge");
     frame.src = "about:blank";
-    setAudioBadgeState(badge, false);
+    setAudioBadgeState(badge, false, "Paused");
     tile.classList.remove("active");
   });
   pauseFeedsBtn.textContent = "Resume all feeds (R)";
@@ -996,6 +1020,9 @@ function resumeAllFeedsFresh() {
   feedsPaused = false;
   stopAudioRotation();
   reloadAllFeedsFresh();
+  document.querySelectorAll(".tile").forEach((tile) => {
+    syncTileAudioStatusText(tile, "Muted");
+  });
   channels.forEach((channel) => {
     if (channel.variants?.length) {
       scheduleVariantSwitch(channel.key);
@@ -1025,7 +1052,7 @@ function muteAllAudio() {
     const frame = tile.querySelector(".playerFrame");
     const badge = tile.querySelector(".audioBadge");
     sendPlayerCommand(frame, "mute");
-    setAudioBadgeState(badge, false);
+    setAudioBadgeState(badge, false, "Muted");
     tile.classList.remove("active");
   });
   channels.forEach((channel) => {
@@ -1125,7 +1152,6 @@ function buildTile(channel, index) {
   const playerWrap = node.querySelector(".playerWrap");
   const badge = node.querySelector(".audioBadge");
   frame.dataset.channelKey = channel.key;
-  setAudioBadgeState(badge, false);
   if (playerWrapResizeObserver && playerWrap) {
     playerWrapResizeObserver.observe(playerWrap);
   }
@@ -1153,6 +1179,7 @@ function buildTile(channel, index) {
     switchFrameVideo(frame, channel.videoId, { forceReload: true });
     syncTileFlagBackground(node, channel);
   }
+  setAudioBadgeState(badge, false, "Muted");
   if (regionClock) {
     regionClock.hidden = true;
   }
