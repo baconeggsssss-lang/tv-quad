@@ -597,12 +597,25 @@ function forceCaptionsOffAll() {
   });
 }
 
+function syncTileHeaderAriaLabel(tile, isAudioOn = tile?.classList.contains("active")) {
+  if (!tile) {
+    return;
+  }
+  const header = tile.querySelector(".tileHeader");
+  const channelName = tile.querySelector(".channelName")?.textContent?.trim();
+  if (!header || !channelName) {
+    return;
+  }
+  header.setAttribute("aria-label", isAudioOn ? `${channelName}, audio on` : channelName);
+}
+
 function setAudioBadgeState(badge, isAudioOn) {
   if (!badge) {
     return;
   }
   badge.hidden = !isAudioOn;
   badge.textContent = isAudioOn ? "Audio On" : "";
+  syncTileHeaderAriaLabel(badge.closest(".tile"), isAudioOn);
 }
 
 function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
@@ -832,6 +845,7 @@ function renderVariantTile(channelKey) {
     return;
   }
   channelName.textContent = variant.name;
+  syncTileHeaderAriaLabel(tile, channelIndex === activeIndex);
   frame.title = `${variant.name} Live`;
   switchFrameVideo(frame, variant.videoId);
   syncTileFlagBackground(tile, channel);
@@ -1125,7 +1139,6 @@ function buildTile(channel, index) {
   const playerWrap = node.querySelector(".playerWrap");
   const badge = node.querySelector(".audioBadge");
   frame.dataset.channelKey = channel.key;
-  setAudioBadgeState(badge, false);
   if (playerWrapResizeObserver && playerWrap) {
     playerWrapResizeObserver.observe(playerWrap);
   }
@@ -1153,6 +1166,7 @@ function buildTile(channel, index) {
     switchFrameVideo(frame, channel.videoId, { forceReload: true });
     syncTileFlagBackground(node, channel);
   }
+  setAudioBadgeState(badge, false);
   if (regionClock) {
     regionClock.hidden = true;
   }
