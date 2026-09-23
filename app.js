@@ -566,13 +566,22 @@ function handleYouTubePlayerMessage(event) {
   const reportedVideoId = payload.info?.videoData?.video_id;
   const currentVideoId = frame.dataset.currentVideoId ?? "";
   const expectedVideoId = frame.dataset.expectedVideoId ?? "";
+  const isAwaitingExpectedVideo =
+    expectedVideoId.length > 0 && expectedVideoId !== currentVideoId;
   if (
     channelKey &&
     channel?.variants?.length &&
     typeof reportedVideoId === "string" &&
     reportedVideoId.length > 0
   ) {
-    if (reportedVideoId !== currentVideoId) {
+    if (isAwaitingExpectedVideo) {
+      if (reportedVideoId !== expectedVideoId) {
+        return;
+      }
+    } else if (
+      reportedVideoId !== currentVideoId &&
+      reportedVideoId !== expectedVideoId
+    ) {
       return;
     }
     if (reportedVideoId === expectedVideoId) {
