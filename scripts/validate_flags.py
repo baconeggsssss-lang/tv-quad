@@ -11,6 +11,43 @@ repo = Path(__file__).resolve().parent.parent
 css = (repo / 'styles.css').read_text()
 
 errors = []
+
+def rect_numeric_value(rect, key, default=0.0):
+    return float(rect.attrib.get(key, default))
+
+def has_full_canvas_background(root):
+    rects = [child for child in list(root) if child.tag.endswith('rect')]
+    for rect in rects:
+        width = rect_numeric_value(rect, 'width')
+        height = rect_numeric_value(rect, 'height')
+        x = rect_numeric_value(rect, 'x')
+        y = rect_numeric_value(rect, 'y')
+        if width == 1600.0 and height == 900.0 and x == 0.0 and y == 0.0:
+            return True
+
+    stripe_rects = []
+    for rect in rects:
+        width = rect_numeric_value(rect, 'width')
+        x = rect_numeric_value(rect, 'x')
+        if width != 1600.0 or x != 0.0:
+            continue
+        y = rect_numeric_value(rect, 'y')
+        height = rect_numeric_value(rect, 'height')
+        if height <= 0:
+            continue
+        stripe_rects.append((y, y + height))
+
+    if not stripe_rects:
+        return False
+
+    stripe_rects.sort()
+    coverage_end = 0.0
+    for start, end in stripe_rects:
+        if start > coverage_end + 1e-6:
+            return False
+        coverage_end = max(coverage_end, end)
+    return coverage_end >= 900.0 - 1e-6
+
 for key in EXPECTED:
     if f'.tile[data-flag="{key}"]' not in css:
         errors.append(f'missing CSS rule for {key}')
@@ -33,20 +70,11 @@ for key in COMPLEX:
         errors.append(f'root element is not <svg> for {key}')
     if root.attrib.get('viewBox') != '0 0 1600 900':
         errors.append(f'viewBox mismatch for {key}: {root.attrib.get("viewBox")}')
-    rect = None
-    for child in list(root):
-        if child.tag.endswith('rect'):
-            rect = child
-            break
-    if rect is None:
+    if not any(child.tag.endswith('rect') for child in list(root)):
         errors.append(f'no background rect found for {key}')
         continue
-    width = rect.attrib.get('width')
-    height = rect.attrib.get('height')
-    x = rect.attrib.get('x', '0')
-    y = rect.attrib.get('y', '0')
-    if width not in {'1600', '1600.0'} or height not in {'900', '900.0'} or x not in {'0', '0.0'} or y not in {'0', '0.0'}:
-        errors.append(f'background rect does not cover full canvas for {key}')
+    if not has_full_canvas_background(root):
+        errors.append(f'background shapes do not cover full canvas for {key}')
 
 if errors:
     print('FLAG VALIDATION FAILED')
