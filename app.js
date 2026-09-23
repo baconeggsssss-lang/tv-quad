@@ -319,6 +319,19 @@ function getCurrentVariant(channelKey) {
   return channel.variants[index] ?? channel.variants[0];
 }
 
+function getChannelSource(channel, explicitSource = null) {
+  if (!channel) {
+    return null;
+  }
+  if (explicitSource) {
+    return explicitSource;
+  }
+  if (channel.variants?.length) {
+    return getCurrentVariant(channel.key);
+  }
+  return channel;
+}
+
 function getDisplayChannelName(index) {
   const channel = channels[index];
   if (!channel) {
@@ -360,41 +373,25 @@ function getTargetVolumeForChannelIndex(index) {
   return LOUD_CHANNEL_VOLUME_OVERRIDES[videoId] ?? 100;
 }
 
-function getRegionTimeMeta(channel) {
-  if (!channel) {
+function getRegionTimeMeta(channel, explicitSource = null) {
+  const source = getChannelSource(channel, explicitSource);
+  if (!source) {
     return null;
   }
-  if (channel.variants?.length) {
-    const currentVariant = getCurrentVariant(channel.key);
-    if (!currentVariant) {
-      return null;
-    }
-    return {
-      regionLabel: currentVariant.regionLabel ?? currentVariant.name,
-      timeZone: currentVariant.timeZone,
-    };
-  }
   return {
-    regionLabel: channel.regionLabel ?? channel.name,
-    timeZone: channel.timeZone,
+    regionLabel: source.regionLabel ?? source.name,
+    timeZone: source.timeZone,
   };
 }
 
-function getCurrentFlagKey(channel) {
-  if (!channel) {
-    return "";
-  }
-  if (channel.variants?.length) {
-    return getCurrentVariant(channel.key)?.flagKey ?? "";
-  }
-  return channel.flagKey ?? "";
+function getCurrentFlagKey(channel, explicitSource = null) {
+  return getChannelSource(channel, explicitSource)?.flagKey ?? "";
 }
 
-function syncTileFlagBackground(tile, channel) {
+function syncTileFlagBackground(tile, flagKey) {
   if (!tile) {
     return;
   }
-  const flagKey = getCurrentFlagKey(channel);
   if (flagKey) {
     tile.dataset.flag = flagKey;
     return;
@@ -417,6 +414,52 @@ function getTimeForTimeZone(timeZone) {
   return TIME_FORMATTERS[timeZone].format(new Date());
 }
 
+function syncTilePresentation(
+  tile,
+  channel,
+  explicitSource = null,
+  { syncVideo = false, forceReload = false } = {},
+) {
+  const source = getChannelSource(channel, explicitSource);
+  if (!tile || !channel || !source) {
+    if (tile) {
+      syncTileFlagBackground(tile, "");
+    }
+    return null;
+  }
+  const frame = tile.querySelector(".playerFrame");
+  const channelName = tile.querySelector(".channelName");
+  const regionClock = tile.querySelector(".regionClock");
+  if (channelName) {
+    channelName.textContent = source.name ?? channel.name ?? "";
+  }
+  if (frame) {
+    frame.dataset.channelKey = channel.key;
+    frame.title = `${source.name ?? channel.name ?? ""} Live`;
+    if (syncVideo && source.videoId) {
+      switchFrameVideo(frame, source.videoId, { forceReload });
+    } else {
+      frame.dataset.currentVideoId = source.videoId ?? "";
+      updatePlayerThumbnail(frame, source.videoId ?? "");
+    }
+  }
+  syncTileFlagBackground(tile, getCurrentFlagKey(channel, source));
+  const meta = getRegionTimeMeta(channel, source);
+  if (!meta?.regionLabel || !meta?.timeZone) {
+    if (regionClock) {
+      regionClock.hidden = true;
+    }
+    updateTileHeaderCompression(tile);
+    return source;
+  }
+  if (regionClock) {
+    regionClock.hidden = false;
+    regionClock.textContent = `${meta.regionLabel} ${getTimeForTimeZone(meta.timeZone)}`;
+  }
+  updateTileHeaderCompression(tile);
+  return source;
+}
+
 function updateTileRegionClock(channelKey) {
   const channelIndex = getChannelIndexByKey(channelKey);
   const channel = channels[channelIndex];
@@ -424,18 +467,7 @@ function updateTileRegionClock(channelKey) {
   if (!channel || !tile) {
     return;
   }
-  const regionClock = tile.querySelector(".regionClock");
-  if (!regionClock) {
-    return;
-  }
-  const meta = getRegionTimeMeta(channel);
-  if (!meta?.regionLabel || !meta?.timeZone) {
-    regionClock.hidden = true;
-    return;
-  }
-  regionClock.hidden = false;
-  regionClock.textContent = `${meta.regionLabel} ${getTimeForTimeZone(meta.timeZone)}`;
-  updateTileHeaderCompression(tile);
+  syncTilePresentation(tile, channel);
 }
 
 function updateAllRegionClocks() {
@@ -494,7 +526,7 @@ function updateAllPlayerFrameFits() {
   });
 }
 
-function syncVariantUiByChannelKey(channelKey) {
+function syncVariantUiByChannelKey(channelKey, explicitSource = null) {
   const channel = channels[getChannelIndexByKey(channelKey)];
   if (!channel?.variants?.length) {
     return;
@@ -503,19 +535,7 @@ function syncVariantUiByChannelKey(channelKey) {
   if (!tile) {
     return;
   }
-  const frame = tile.querySelector(".playerFrame");
-  const channelName = tile.querySelector(".channelName");
-  const variant = getCurrentVariant(channelKey);
-  if (!variant) {
-    return;
-  }
-  channelName.textContent = variant.name;
-  frame.title = `${variant.name} Live`;
-  frame.dataset.currentVideoId = variant.videoId;
-  updatePlayerThumbnail(frame, variant.videoId);
-  syncTileFlagBackground(tile, channel);
-  updateTileRegionClock(channelKey);
-  updateTileHeaderCompression(tile);
+  syncTilePresentation(tile, channel, explicitSource);
 }
 
 function handleYouTubePlayerMessage(event) {
@@ -544,26 +564,25 @@ function handleYouTubePlayerMessage(event) {
   const channelKey = frame.dataset.channelKey;
   const channel = channels[getChannelIndexByKey(channelKey)];
   const reportedVideoId = payload.info?.videoData?.video_id;
+  const currentVideoId = frame.dataset.currentVideoId ?? "";
   const expectedVideoId = frame.dataset.expectedVideoId ?? "";
-  const switchRequestedAt = Number(frame.dataset.switchRequestedAt ?? 0);
-  const withinSwitchGraceWindow =
-    expectedVideoId.length > 0 && Date.now() - switchRequestedAt < 6000;
+  const isAwaitingExpectedVideo =
+    expectedVideoId.length > 0 && expectedVideoId !== currentVideoId;
   if (
     channelKey &&
     channel?.variants?.length &&
     typeof reportedVideoId === "string" &&
     reportedVideoId.length > 0
   ) {
-    if (withinSwitchGraceWindow && reportedVideoId !== expectedVideoId) {
-      return;
-    }
-    if (
-      !withinSwitchGraceWindow &&
-      expectedVideoId.length > 0 &&
+    if (isAwaitingExpectedVideo) {
+      if (reportedVideoId !== expectedVideoId) {
+        return;
+      }
+    } else if (
+      reportedVideoId !== currentVideoId &&
       reportedVideoId !== expectedVideoId
     ) {
-      frame.dataset.expectedVideoId = "";
-      frame.dataset.switchRequestedAt = "0";
+      return;
     }
     if (reportedVideoId === expectedVideoId) {
       frame.dataset.expectedVideoId = "";
@@ -572,9 +591,17 @@ function handleYouTubePlayerMessage(event) {
     const matchedIndex = channel.variants.findIndex(
       (variant) => variant.videoId === reportedVideoId,
     );
-    if (matchedIndex >= 0 && variantIndices[channelKey] !== matchedIndex) {
+    if (matchedIndex >= 0) {
+      const matchedVariant = channel.variants[matchedIndex];
+      if (!matchedVariant) {
+        return;
+      }
+      const didChangeVariant = variantIndices[channelKey] !== matchedIndex;
       variantIndices[channelKey] = matchedIndex;
-      syncVariantUiByChannelKey(channelKey);
+      syncVariantUiByChannelKey(channelKey, matchedVariant);
+      if (didChangeVariant) {
+        scheduleVariantSwitch(channelKey);
+      }
     }
   }
 }
@@ -846,21 +873,14 @@ function renderVariantTile(channelKey) {
     return;
   }
   const frame = tile.querySelector(".playerFrame");
-  const channelName = tile.querySelector(".channelName");
-  if (!frame || !channelName) {
+  if (!frame) {
     return;
   }
-  frame.dataset.channelKey = channelKey;
   const variant = getCurrentVariant(channelKey);
   if (!variant) {
     return;
   }
-  channelName.textContent = variant.name;
-  frame.title = `${variant.name} Live`;
-  switchFrameVideo(frame, variant.videoId);
-  syncTileFlagBackground(tile, channel);
-  updateTileRegionClock(channelKey);
-  updateTileHeaderCompression(tile);
+  syncTilePresentation(tile, channel, variant, { syncVideo: true });
   setTimeout(() => {
     forceCaptionsOffForFrame(frame);
   }, 1800);
@@ -973,18 +993,8 @@ function reloadAllFeedsFresh() {
       return;
     }
     const frame = tile.querySelector(".playerFrame");
-    const channelName = tile.querySelector(".channelName");
     const badge = tile.querySelector(".audioBadge");
-    const videoId = getCurrentVideoId(channel);
-    if (channel.variants?.length) {
-      channelName.textContent = getCurrentVariant(channel.key).name;
-      frame.title = `${getCurrentVariant(channel.key).name} Live`;
-    } else {
-      channelName.textContent = channel.name;
-      frame.title = `${channel.name} Live`;
-    }
-    syncTileFlagBackground(tile, channel);
-    switchFrameVideo(frame, videoId, { forceReload: true });
+    syncTilePresentation(tile, channel, null, { syncVideo: true, forceReload: true });
     setTimeout(() => {
       forceCaptionsOffForFrame(frame);
     }, 1800);
@@ -1160,10 +1170,10 @@ function buildTile(channel, index) {
     variantIndices[channel.key] = 0;
     audioVariantPointers[channel.key] = 0;
     const variant = getCurrentVariant(channel.key);
-    channelName.textContent = variant.name;
-    frame.title = `${variant.name} Live`;
-    switchFrameVideo(frame, variant.videoId, { forceReload: true });
-    syncTileFlagBackground(node, channel);
+    syncTilePresentation(node, channel, variant, {
+      syncVideo: true,
+      forceReload: true,
+    });
     variantCountdown.hidden = false;
     variantCountdown.textContent = "--:--";
     if (channel.switchLabel) {
@@ -1174,10 +1184,10 @@ function buildTile(channel, index) {
       sourceInlineSwitch.hidden = true;
     }
   } else {
-    channelName.textContent = channel.name;
-    frame.title = `${channel.name} Live`;
-    switchFrameVideo(frame, channel.videoId, { forceReload: true });
-    syncTileFlagBackground(node, channel);
+    syncTilePresentation(node, channel, channel, {
+      syncVideo: true,
+      forceReload: true,
+    });
   }
   setAudioBadgeState(badge, false, "Muted");
   if (regionClock) {
