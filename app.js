@@ -367,6 +367,7 @@ function scheduleFrameLoadRecovery(frame, videoId) {
   const channelKey = frame.dataset.channelKey;
   const loadGeneration = frame.dataset.loadGeneration ?? "0";
   frameLoadRecoveryTimers[channelKey] = setTimeout(() => {
+    frameLoadRecoveryTimers[channelKey] = null;
     const currentVideoId = frame.dataset.currentVideoId ?? "";
     const expectedVideoId = frame.dataset.expectedVideoId ?? "";
     if (
