@@ -367,7 +367,6 @@ body {
   transition: opacity 180ms ease;
 }
 
-.playerWrap[data-player-status="loading"] .playerFrame,
 .playerWrap[data-player-status="error"] .playerFrame,
 .playerWrap[data-player-status="paused"] .playerFrame {
   opacity: 0;

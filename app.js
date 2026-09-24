@@ -339,6 +339,17 @@ function clearFrameLoadRecovery(frame, { resetRetryCount = false } = {}) {
   }
 }
 
+function setFramePlayerReady(frame, isReady) {
+  if (!frame?.dataset) {
+    return;
+  }
+  frame.dataset.playerReady = isReady ? "true" : "false";
+}
+
+function isFramePlayerReady(frame) {
+  return frame?.dataset?.playerReady === "true";
+}
+
 function markFrameLoadConfirmed(frame, reportedVideoId = "") {
   if (!frame) {
     return false;
@@ -355,6 +366,7 @@ function markFrameLoadConfirmed(frame, reportedVideoId = "") {
   clearFrameLoadRecovery(frame, { resetRetryCount: true });
   frame.dataset.expectedVideoId = "";
   frame.dataset.switchRequestedAt = "0";
+  setFramePlayerReady(frame, true);
   setPlayerFrameStatus(frame, "ready");
   return true;
 }
@@ -383,11 +395,13 @@ function scheduleFrameLoadRecovery(frame, videoId) {
       clearFrameLoadRecovery(frame, { resetRetryCount: true });
       frame.dataset.expectedVideoId = "";
       frame.dataset.switchRequestedAt = "0";
+      setFramePlayerReady(frame, false);
       setPlayerFrameStatus(frame, "error");
       return;
     }
     frame.dataset.loadRetryCount = String(retryCount + 1);
     frame.dataset.switchRequestedAt = String(Date.now());
+    setFramePlayerReady(frame, false);
     setPlayerFrameStatus(frame, "loading");
     frame.src = buildEmbedUrl(videoId, `retry-${loadGeneration}-${retryCount + 1}`);
     scheduleFrameLoadRecovery(frame, videoId);
@@ -404,6 +418,13 @@ function getYouTubePlayerErrorCode(payload) {
 
 function isTerminalYouTubePlayerError(errorCode) {
   return errorCode === 2 || errorCode === 100 || errorCode === 101 || errorCode === 150;
+}
+
+function isYouTubeLoadConfirmationPayload(payload, playerState) {
+  return (
+    payload.event === "onReady" ||
+    (typeof playerState === "number" && (playerState === 1 || playerState === 5))
+  );
 }
 
 function getChannelIndexByKey(channelKey) {
@@ -679,14 +700,12 @@ function handleYouTubePlayerMessage(event) {
       clearFrameLoadRecovery(frame, { resetRetryCount: true });
       frame.dataset.expectedVideoId = "";
       frame.dataset.switchRequestedAt = "0";
+      setFramePlayerReady(frame, false);
       setPlayerFrameStatus(frame, "error");
       return;
     }
   }
-  if (
-    matchesExpectedOrCurrentVideo &&
-    (payload.event === "onReady" || (typeof playerState === "number" && playerState === 1))
-  ) {
+  if (matchesExpectedOrCurrentVideo && isYouTubeLoadConfirmationPayload(payload, playerState)) {
     markFrameLoadConfirmed(frame, reportedVideoId || currentVideoId || expectedVideoId);
   }
   if (
@@ -785,15 +804,20 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
   if (!forceReload && currentVideoId === videoId) {
     return;
   }
+  const canUsePlayerCommand =
+    !forceReload &&
+    frame.src.includes("youtube.com/embed/") &&
+    currentVideoId &&
+    isFramePlayerReady(frame);
   const loadGeneration = Number(frame.dataset.loadGeneration ?? "0") + 1;
   frame.dataset.loadGeneration = String(loadGeneration);
   frame.dataset.loadRetryCount = "0";
   frame.dataset.expectedVideoId = videoId;
   frame.dataset.switchRequestedAt = String(Date.now());
+  setFramePlayerReady(frame, false);
   setPlayerFrameStatus(frame, "loading");
 
-  const hasEmbedPlayer = frame.src.includes("youtube.com/embed/");
-  if (!forceReload && hasEmbedPlayer && currentVideoId) {
+  if (canUsePlayerCommand) {
     sendPlayerCommand(frame, "loadVideoById", [videoId]);
   } else {
     frame.src = buildEmbedUrl(videoId, forceReload ? `load-${loadGeneration}` : "");
@@ -1150,6 +1174,7 @@ function pauseAllFeeds() {
     frame.dataset.currentVideoId = "";
     frame.dataset.expectedVideoId = "";
     frame.dataset.switchRequestedAt = "0";
+    setFramePlayerReady(frame, false);
     setPlayerFrameStatus(frame, "paused");
     setAudioBadgeState(badge, false, "Paused");
     tile.classList.remove("active");
@@ -1291,7 +1316,6 @@ function buildTile(channel, index) {
   const node = template.content.firstElementChild.cloneNode(true);
   node.dataset.channelKey = channel.key;
   const headerBtn = node.querySelector(".tileHeader");
-  const channelName = node.querySelector(".channelName");
   const regionClock = node.querySelector(".regionClock");
   const variantCountdown = node.querySelector(".variantCountdown");
   const sourceInlineSwitch = node.querySelector(".sourceInlineSwitch");
@@ -1299,6 +1323,7 @@ function buildTile(channel, index) {
   const playerWrap = node.querySelector(".playerWrap");
   const badge = node.querySelector(".audioBadge");
   frame.dataset.channelKey = channel.key;
+  setFramePlayerReady(frame, false);
   setPlayerFrameStatus(frame, "loading");
   if (playerWrapResizeObserver && playerWrap) {
     playerWrapResizeObserver.observe(playerWrap);
@@ -1308,10 +1333,7 @@ function buildTile(channel, index) {
     variantIndices[channel.key] = 0;
     audioVariantPointers[channel.key] = 0;
     const variant = getCurrentVariant(channel.key);
-    syncTilePresentation(node, channel, variant, {
-      syncVideo: true,
-      forceReload: true,
-    });
+    syncTilePresentation(node, channel, variant);
     variantCountdown.hidden = false;
     variantCountdown.textContent = "--:--";
     if (channel.switchLabel) {
@@ -1322,10 +1344,7 @@ function buildTile(channel, index) {
       sourceInlineSwitch.hidden = true;
     }
   } else {
-    syncTilePresentation(node, channel, channel, {
-      syncVideo: true,
-      forceReload: true,
-    });
+    syncTilePresentation(node, channel, channel);
   }
   setAudioBadgeState(badge, false, "Muted");
   if (regionClock) {
@@ -1350,6 +1369,7 @@ function init() {
   channels.forEach((channel, index) => {
     const tile = buildTile(channel, index);
     grid.appendChild(tile);
+    syncTilePresentation(tile, channel, null, { syncVideo: true, forceReload: true });
     updatePlayerFrameFit(tile.querySelector(".playerWrap"));
     if (channel.variants?.length) {
       scheduleVariantSwitch(channel.key);
