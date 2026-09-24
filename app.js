@@ -685,7 +685,7 @@ function handleYouTubePlayerMessage(event) {
   if (
     matchesExpectedOrCurrentVideo &&
     (payload.event === "onReady" ||
-      (typeof playerState === "number" && [1, 2, 3, 5].includes(playerState)) ||
+      (typeof playerState === "number" && [1, 3, 5].includes(playerState)) ||
       (typeof reportedVideoId === "string" && reportedVideoId.length > 0))
   ) {
     markFrameLoadConfirmed(frame, reportedVideoId || currentVideoId || expectedVideoId);
