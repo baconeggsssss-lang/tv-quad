@@ -153,6 +153,7 @@ const {
 
 function createFakeTile(channelKey) {
   const classNames = new Set();
+  const commands = [];
   const playerWrap = {
     dataset: {},
     style: createStyleStore(),
@@ -171,7 +172,9 @@ function createFakeTile(channelKey) {
     src: "about:blank",
     style: createStyleStore(),
     contentWindow: {
-      postMessage() {},
+      postMessage(message) {
+        commands.push(JSON.parse(message));
+      },
     },
     closest(selector) {
       if (selector === ".playerWrap") {
@@ -219,7 +222,7 @@ function createFakeTile(channelKey) {
     },
   };
   badge.closest = (selector) => (selector === ".tile" ? tile : null);
-  return { tile, frame, playerWrap };
+  return { tile, frame, playerWrap, commands };
 }
 
 function registerTile(channelKey) {
@@ -233,7 +236,7 @@ const primaryChannel = channels[0];
 assert(primaryChannel?.variants?.length >= 2, "expected a multi-variant channel");
 const firstVideoId = primaryChannel.variants[0].videoId;
 const secondVideoId = primaryChannel.variants[1].videoId;
-const { frame, playerWrap } = registerTile(primaryChannel.key);
+const { frame, playerWrap, commands } = registerTile(primaryChannel.key);
 
 switchFrameVideo(frame, firstVideoId, { forceReload: true });
 assert(playerWrap.dataset.playerStatus === "loading", "initial switch should mark loading");
@@ -298,6 +301,41 @@ assert(
   "stale timeout must not consume the retry budget for a newer generation",
 );
 
+commands.length = 0;
+switchFrameVideo(frame, firstVideoId, { forceReload: true });
+const preReadySwitchSrc = frame.src;
+switchFrameVideo(frame, secondVideoId);
+assert(
+  frame.src !== preReadySwitchSrc && frame.src.includes(`/embed/${secondVideoId}`),
+  "pre-ready switches should refresh the iframe src instead of relying on a dropped loadVideoById command",
+);
+assert(commands.length === 0, "pre-ready switches should not send loadVideoById before confirmation");
+
+handleYouTubePlayerMessage({
+  origin: "https://www.youtube.com",
+  source: frame.contentWindow,
+  data: JSON.stringify({
+    info: {
+      playerState: 5,
+      videoData: {
+        video_id: secondVideoId,
+      },
+    },
+  }),
+});
+assert(playerWrap.dataset.playerStatus === "ready", "playerState=5 should confirm a loaded frame");
+assert(
+  frameLoadRecoveryTimers[primaryChannel.key] === null,
+  "playerState=5 confirmation should cancel the watchdog",
+);
+
+commands.length = 0;
+switchFrameVideo(frame, firstVideoId);
+assert(
+  commands.some((command) => command.func === "loadVideoById" && command.args?.[0] === firstVideoId),
+  "ready frames should continue using loadVideoById for normal in-place switches",
+);
+
 switchFrameVideo(frame, firstVideoId, { forceReload: true });
 handleYouTubePlayerMessage({
   origin: "https://www.youtube.com",
@@ -326,4 +364,6 @@ assert(
   "pausing should clear outstanding watchdog timers",
 );
 
-console.log("Validated per-tile load watchdog retries, confirmation, stale-generation safety, terminal error handling, and pause cleanup.");
+console.log(
+  "Validated per-tile load watchdog retries, confirmation, pre-ready reload fallback, ready-state loadVideoById switching, stale-generation safety, terminal error handling, and pause cleanup.",
+);
