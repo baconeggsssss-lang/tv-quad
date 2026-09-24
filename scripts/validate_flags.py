@@ -52,6 +52,19 @@ for key in EXPECTED:
     if f'.tile[data-flag="{key}"]' not in css:
         errors.append(f'missing CSS rule for {key}')
 
+germany_rule = re.search(r'\.tile\[data-flag="de"\] \{(?P<body>.*?)\n\}', css, re.S)
+if not germany_rule:
+    errors.append('missing CSS block for de')
+else:
+    germany_css = germany_rule.group('body')
+    expected_german_flag = '--tile-flag: linear-gradient(180deg, #000000 0 33.33%, #dd0000 33.33% 66.66%, #ffce00 66.66% 100%) var(--flag-fill);'
+    if expected_german_flag not in germany_css:
+        errors.append('Germany flag stripes must remain black/red/gold horizontal thirds')
+    if '--flag-overlay-opacity: 1;' not in germany_css:
+        errors.append('Germany flag overlay opacity must preserve true colors')
+    if '--flag-overlay-filter: none;' not in germany_css:
+        errors.append('Germany flag overlay filter must remain disabled')
+
 for key in COMPLEX:
     match = re.search(rf'\.tile\[data-flag="{key}"\] \{{\s+--tile-flag: url\("data:image/svg\+xml,([^"]+)"\) var\(--flag-fill\);', css, re.S)
     if not match:
