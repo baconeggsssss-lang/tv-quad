@@ -1146,6 +1146,7 @@ function pauseAllFeeds() {
     const frame = tile.querySelector(".playerFrame");
     const badge = tile.querySelector(".audioBadge");
     frame.src = "about:blank";
+    frame.dataset.currentVideoId = "";
     frame.dataset.expectedVideoId = "";
     frame.dataset.switchRequestedAt = "0";
     setPlayerFrameStatus(frame, "paused");
