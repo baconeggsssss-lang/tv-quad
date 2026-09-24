@@ -350,6 +350,13 @@ function isFramePlayerReady(frame) {
   return frame?.dataset?.playerReady === "true";
 }
 
+function isFrameOnActiveTile(frame) {
+  if (!frame?.dataset?.channelKey) {
+    return false;
+  }
+  return getChannelIndexByKey(frame.dataset.channelKey) === activeIndex;
+}
+
 function markFrameLoadConfirmed(frame, reportedVideoId = "") {
   if (!frame) {
     return false;
@@ -388,6 +395,13 @@ function scheduleFrameLoadRecovery(frame, videoId) {
       currentVideoId !== videoId ||
       expectedVideoId !== videoId
     ) {
+      return;
+    }
+    if (!isFrameOnActiveTile(frame)) {
+      clearFrameLoadRecovery(frame, { resetRetryCount: true });
+      frame.dataset.expectedVideoId = "";
+      frame.dataset.switchRequestedAt = "0";
+      setPlayerFrameStatus(frame, null);
       return;
     }
     const retryCount = Number(frame.dataset.loadRetryCount ?? "0");
@@ -977,6 +991,12 @@ function applyActiveChannel(index, initiatedByUser) {
   const activeFrame = document.querySelector(
     `.tile[data-channel-key="${targetChannel.key}"] .playerFrame`,
   );
+  if (activeFrame && !isFramePlayerReady(activeFrame)) {
+    const currentVideoId = getCurrentVideoId(targetChannel);
+    if (currentVideoId) {
+      switchFrameVideo(activeFrame, currentVideoId, { forceReload: true });
+    }
+  }
   const expectedActiveIndex = activeIndex;
   const activationToken = audioActivationToken;
   setTimeout(() => {

@@ -6,7 +6,7 @@ import sys
 import xml.etree.ElementTree as ET
 
 EXPECTED = ['qa', 'tr', 'ng', 'de', 'fr', 'sg', 'co', 'ar', 'us', 'au', 'ca', 'es', 'cg', 'eu', 'cn', 'hk', 'in', 'gb', 'kr', 'jp']
-COMPLEX = {'qa', 'tr', 'sg', 'us', 'au', 'ca', 'eu', 'cn', 'hk', 'in', 'gb', 'kr'}
+COMPLEX = {'qa', 'tr', 'de', 'sg', 'us', 'au', 'ca', 'eu', 'cn', 'hk', 'in', 'gb', 'kr'}
 repo = Path(__file__).resolve().parent.parent
 css = (repo / 'styles.css').read_text()
 
@@ -57,16 +57,18 @@ if not germany_rule:
     errors.append('missing CSS block for de')
 else:
     germany_css = germany_rule.group('body')
-    expected_german_flag = '--tile-flag: linear-gradient(180deg, #000000 0 33.33%, #dd0000 33.33% 66.66%, #ffce00 66.66% 100%) var(--flag-fill);'
+    expected_german_flag = '--tile-flag: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%201600%20900%27%3E%3Crect%20x%3D%270%27%20y%3D%270%27%20width%3D%271600%27%20height%3D%27300%27%20fill%3D%27%23000000%27%2F%3E%3Crect%20x%3D%270%27%20y%3D%27300%27%20width%3D%271600%27%20height%3D%27300%27%20fill%3D%27%23DD0000%27%2F%3E%3Crect%20x%3D%270%27%20y%3D%27600%27%20width%3D%271600%27%20height%3D%27300%27%20fill%3D%27%23FFCE00%27%2F%3E%3C%2Fsvg%3E") var(--flag-fill);'
     if expected_german_flag not in germany_css:
-        errors.append('Germany flag stripes must remain black/red/gold horizontal thirds')
+        errors.append('Germany flag must render as a solid SVG with black/red/gold horizontal thirds')
+    if '--flag-overlay: none;' not in germany_css:
+        errors.append('Germany flag overlay must remain disabled')
     if '--flag-overlay-opacity: 1;' not in germany_css:
         errors.append('Germany flag overlay opacity must preserve true colors')
     if '--flag-overlay-filter: none;' not in germany_css:
         errors.append('Germany flag overlay filter must remain disabled')
 
 for key in COMPLEX:
-    match = re.search(rf'\.tile\[data-flag="{key}"\] \{{\s+--tile-flag: url\("data:image/svg\+xml,([^"]+)"\) var\(--flag-fill\);', css, re.S)
+    match = re.search(rf'\.tile\[data-flag="{key}"\] \{{.*?--tile-flag: url\("data:image/svg\+xml,([^"]+)"\) var\(--flag-fill\);', css, re.S)
     if not match:
         errors.append(f'missing SVG data URI for {key}')
         continue
