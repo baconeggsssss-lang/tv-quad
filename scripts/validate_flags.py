@@ -48,6 +48,12 @@ def has_full_canvas_background(root):
         coverage_end = max(coverage_end, end)
     return coverage_end >= 900.0 - 1e-6
 
+def has_tile_default(name, value):
+    tile_rule = re.search(r'\.tile \{(?P<body>.*?)\n\}', css, re.S)
+    if not tile_rule:
+        return False
+    return f'{name}: {value};' in tile_rule.group('body')
+
 for key in EXPECTED:
     if f'.tile[data-flag="{key}"]' not in css:
         errors.append(f'missing CSS rule for {key}')
@@ -60,12 +66,19 @@ else:
     expected_german_flag = '--tile-flag: url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%201600%20900%27%3E%3Crect%20x%3D%270%27%20y%3D%270%27%20width%3D%271600%27%20height%3D%27300%27%20fill%3D%27%23000000%27%2F%3E%3Crect%20x%3D%270%27%20y%3D%27300%27%20width%3D%271600%27%20height%3D%27300%27%20fill%3D%27%23DD0000%27%2F%3E%3Crect%20x%3D%270%27%20y%3D%27600%27%20width%3D%271600%27%20height%3D%27300%27%20fill%3D%27%23FFCE00%27%2F%3E%3C%2Fsvg%3E") var(--flag-fill);'
     if expected_german_flag not in germany_css:
         errors.append('Germany flag must render as a solid SVG with black/red/gold horizontal thirds')
-    if '--flag-overlay: none;' not in germany_css:
-        errors.append('Germany flag overlay must remain disabled')
-    if '--flag-overlay-opacity: 1;' not in germany_css:
-        errors.append('Germany flag overlay opacity must preserve true colors')
-    if '--flag-overlay-filter: none;' not in germany_css:
-        errors.append('Germany flag overlay filter must remain disabled')
+    if '--flag-overlay:' in germany_css:
+        errors.append('Germany flag must inherit the shared tile overlay instead of overriding it')
+    if '--flag-overlay-opacity:' in germany_css:
+        errors.append('Germany flag must inherit the shared tile overlay opacity instead of overriding it')
+    if '--flag-overlay-filter:' in germany_css:
+        errors.append('Germany flag must inherit the shared tile overlay filter instead of overriding it')
+
+if not has_tile_default('--flag-overlay', 'linear-gradient(rgba(9, 13, 20, 0.68), rgba(9, 13, 20, 0.68)) center / cover no-repeat'):
+    errors.append('Base tile rule must define the shared dark flag overlay gradient')
+if not has_tile_default('--flag-overlay-opacity', '0.58'):
+    errors.append('Base tile rule must define the shared dark flag overlay opacity')
+if not has_tile_default('--flag-overlay-filter', 'saturate(0.8) brightness(0.68)'):
+    errors.append('Base tile rule must define the shared dark flag overlay filter')
 
 for key in COMPLEX:
     match = re.search(rf'\.tile\[data-flag="{key}"\] \{{.*?--tile-flag: url\("data:image/svg\+xml,([^"]+)"\) var\(--flag-fill\);', css, re.S)
