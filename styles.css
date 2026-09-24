@@ -107,6 +107,9 @@ body {
   --flag-position: center;
   --flag-repeat: no-repeat;
   --flag-fill: var(--flag-position) / var(--flag-fit) var(--flag-repeat);
+  --flag-overlay: linear-gradient(rgba(9, 13, 20, 0.68), rgba(9, 13, 20, 0.68)) center / cover no-repeat;
+  --flag-overlay-opacity: 0.58;
+  --flag-overlay-filter: saturate(0.8) brightness(0.68);
   --tile-flag: linear-gradient(#090d14 0 100%) var(--flag-fill);
   position: relative;
   border: 0;
@@ -131,7 +134,10 @@ body {
 }
 
 .tile[data-flag="de"] {
-  --tile-flag: linear-gradient(180deg, #111111 0 33.33%, #b31924 33.33% 66.66%, #f0bf2f 66.66% 100%) var(--flag-fill);
+  --flag-overlay: linear-gradient(rgba(0, 0, 0, 0), rgba(0, 0, 0, 0)) center / cover no-repeat;
+  --flag-overlay-opacity: 1;
+  --flag-overlay-filter: none;
+  --tile-flag: linear-gradient(180deg, #000000 0 33.33%, #dd0000 33.33% 66.66%, #ffce00 66.66% 100%) var(--flag-fill);
 }
 
 .tile[data-flag="fr"] {
@@ -346,10 +352,10 @@ body {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(rgba(9, 13, 20, 0.68), rgba(9, 13, 20, 0.68)) center / cover no-repeat,
+    var(--flag-overlay),
     var(--tile-flag);
-  opacity: 0.58;
-  filter: saturate(0.8) brightness(0.68);
+  opacity: var(--flag-overlay-opacity);
+  filter: var(--flag-overlay-filter);
   pointer-events: none;
 }
 
