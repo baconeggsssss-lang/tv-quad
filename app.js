@@ -263,6 +263,9 @@ const variantIndices = {};
 const variantTimers = {};
 const variantNextSwitchAt = {};
 const audioVariantPointers = {};
+const frameLoadRecoveryTimers = {};
+const FRAME_LOAD_CONFIRMATION_TIMEOUT_MS = 12000;
+const MAX_FRAME_LOAD_RECOVERY_RETRIES = 1;
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   "FBSePb-Noqs": 50, // CCTV13
@@ -270,7 +273,7 @@ const LOUD_CHANNEL_VOLUME_OVERRIDES = {
 };
 const TIME_FORMATTERS = {};
 
-function buildEmbedUrl(videoId) {
+function buildEmbedUrl(videoId, reloadToken = "") {
   const params = new URLSearchParams({
     autoplay: "1",
     mute: "1",
@@ -282,6 +285,9 @@ function buildEmbedUrl(videoId) {
   });
   if (window.location.protocol.startsWith("http")) {
     params.set("origin", window.location.origin);
+  }
+  if (reloadToken) {
+    params.set("tvq_reload", reloadToken);
   }
   return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
 }
@@ -304,6 +310,99 @@ function updatePlayerThumbnail(frame, videoId) {
     return;
   }
   playerWrap.style.setProperty("--player-thumbnail", `url("${thumbnailUrl}")`);
+}
+
+function setPlayerFrameStatus(frame, status) {
+  const playerWrap = frame?.closest(".playerWrap");
+  if (!playerWrap?.dataset) {
+    return;
+  }
+  if (status) {
+    playerWrap.dataset.playerStatus = status;
+    return;
+  }
+  delete playerWrap.dataset.playerStatus;
+}
+
+function clearFrameLoadRecovery(frame, { resetRetryCount = false } = {}) {
+  if (!frame) {
+    return;
+  }
+  const channelKey = frame.dataset.channelKey;
+  const timer = channelKey ? frameLoadRecoveryTimers[channelKey] : null;
+  if (timer) {
+    clearTimeout(timer);
+    frameLoadRecoveryTimers[channelKey] = null;
+  }
+  if (resetRetryCount) {
+    delete frame.dataset.loadRetryCount;
+  }
+}
+
+function markFrameLoadConfirmed(frame, reportedVideoId = "") {
+  if (!frame) {
+    return false;
+  }
+  const currentVideoId = frame.dataset.currentVideoId ?? "";
+  const expectedVideoId = frame.dataset.expectedVideoId ?? "";
+  if (
+    reportedVideoId &&
+    reportedVideoId !== currentVideoId &&
+    reportedVideoId !== expectedVideoId
+  ) {
+    return false;
+  }
+  clearFrameLoadRecovery(frame, { resetRetryCount: true });
+  frame.dataset.expectedVideoId = "";
+  frame.dataset.switchRequestedAt = "0";
+  setPlayerFrameStatus(frame, "ready");
+  return true;
+}
+
+function scheduleFrameLoadRecovery(frame, videoId) {
+  if (!frame || !videoId) {
+    return;
+  }
+  clearFrameLoadRecovery(frame);
+  const channelKey = frame.dataset.channelKey;
+  const loadGeneration = frame.dataset.loadGeneration ?? "0";
+  frameLoadRecoveryTimers[channelKey] = setTimeout(() => {
+    const currentVideoId = frame.dataset.currentVideoId ?? "";
+    const expectedVideoId = frame.dataset.expectedVideoId ?? "";
+    if (
+      feedsPaused ||
+      (frame.dataset.loadGeneration ?? "0") !== loadGeneration ||
+      currentVideoId !== videoId ||
+      expectedVideoId !== videoId
+    ) {
+      return;
+    }
+    const retryCount = Number(frame.dataset.loadRetryCount ?? "0");
+    if (retryCount >= MAX_FRAME_LOAD_RECOVERY_RETRIES) {
+      clearFrameLoadRecovery(frame, { resetRetryCount: true });
+      frame.dataset.expectedVideoId = "";
+      frame.dataset.switchRequestedAt = "0";
+      setPlayerFrameStatus(frame, "error");
+      return;
+    }
+    frame.dataset.loadRetryCount = String(retryCount + 1);
+    frame.dataset.switchRequestedAt = String(Date.now());
+    setPlayerFrameStatus(frame, "loading");
+    frame.src = buildEmbedUrl(videoId, `retry-${loadGeneration}-${retryCount + 1}`);
+    scheduleFrameLoadRecovery(frame, videoId);
+  }, FRAME_LOAD_CONFIRMATION_TIMEOUT_MS);
+}
+
+function getYouTubePlayerErrorCode(payload) {
+  const rawErrorCode = payload?.event === "onError" ? payload.info ?? payload.data : null;
+  const normalized =
+    Array.isArray(rawErrorCode) && rawErrorCode.length > 0 ? rawErrorCode[0] : rawErrorCode;
+  const numericCode = Number(normalized);
+  return Number.isFinite(numericCode) ? numericCode : null;
+}
+
+function isTerminalYouTubePlayerError(errorCode) {
+  return errorCode === 2 || errorCode === 100 || errorCode === 101 || errorCode === 150;
 }
 
 function getChannelIndexByKey(channelKey) {
@@ -564,10 +663,33 @@ function handleYouTubePlayerMessage(event) {
   const channelKey = frame.dataset.channelKey;
   const channel = channels[getChannelIndexByKey(channelKey)];
   const reportedVideoId = payload.info?.videoData?.video_id;
+  const playerState = payload.info?.playerState;
+  const errorCode = getYouTubePlayerErrorCode(payload);
   const currentVideoId = frame.dataset.currentVideoId ?? "";
   const expectedVideoId = frame.dataset.expectedVideoId ?? "";
   const isAwaitingExpectedVideo =
     expectedVideoId.length > 0 && expectedVideoId !== currentVideoId;
+  const matchesExpectedOrCurrentVideo =
+    !reportedVideoId ||
+    reportedVideoId === currentVideoId ||
+    reportedVideoId === expectedVideoId;
+  if (errorCode !== null && matchesExpectedOrCurrentVideo) {
+    if (isTerminalYouTubePlayerError(errorCode)) {
+      clearFrameLoadRecovery(frame, { resetRetryCount: true });
+      frame.dataset.expectedVideoId = "";
+      frame.dataset.switchRequestedAt = "0";
+      setPlayerFrameStatus(frame, "error");
+      return;
+    }
+  }
+  if (
+    matchesExpectedOrCurrentVideo &&
+    (payload.event === "onReady" ||
+      (typeof playerState === "number" && [1, 2, 3, 5].includes(playerState)) ||
+      (typeof reportedVideoId === "string" && reportedVideoId.length > 0))
+  ) {
+    markFrameLoadConfirmed(frame, reportedVideoId || currentVideoId || expectedVideoId);
+  }
   if (
     channelKey &&
     channel?.variants?.length &&
@@ -664,17 +786,22 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
   if (!forceReload && currentVideoId === videoId) {
     return;
   }
+  const loadGeneration = Number(frame.dataset.loadGeneration ?? "0") + 1;
+  frame.dataset.loadGeneration = String(loadGeneration);
+  frame.dataset.loadRetryCount = "0";
   frame.dataset.expectedVideoId = videoId;
   frame.dataset.switchRequestedAt = String(Date.now());
+  setPlayerFrameStatus(frame, "loading");
 
   const hasEmbedPlayer = frame.src.includes("youtube.com/embed/");
   if (!forceReload && hasEmbedPlayer && currentVideoId) {
     sendPlayerCommand(frame, "loadVideoById", [videoId]);
   } else {
-    frame.src = buildEmbedUrl(videoId);
+    frame.src = buildEmbedUrl(videoId, forceReload ? `load-${loadGeneration}` : "");
   }
   frame.dataset.currentVideoId = videoId;
   updatePlayerThumbnail(frame, videoId);
+  scheduleFrameLoadRecovery(frame, videoId);
 }
 
 function maximizeAndStabilizeAudio(frame, expectedIndex, token) {
@@ -986,6 +1113,12 @@ function stopVariantSwitches() {
   });
 }
 
+function stopFrameLoadRecoveries({ resetRetryCount = false } = {}) {
+  document.querySelectorAll(".playerFrame").forEach((frame) => {
+    clearFrameLoadRecovery(frame, { resetRetryCount });
+  });
+}
+
 function reloadAllFeedsFresh() {
   channels.forEach((channel) => {
     const tile = document.querySelector(`.tile[data-channel-key="${channel.key}"]`);
@@ -1010,10 +1143,14 @@ function pauseAllFeeds() {
   feedsPaused = true;
   stopAudioRotation();
   stopVariantSwitches();
+  stopFrameLoadRecoveries({ resetRetryCount: true });
   document.querySelectorAll(".tile").forEach((tile) => {
     const frame = tile.querySelector(".playerFrame");
     const badge = tile.querySelector(".audioBadge");
     frame.src = "about:blank";
+    frame.dataset.expectedVideoId = "";
+    frame.dataset.switchRequestedAt = "0";
+    setPlayerFrameStatus(frame, "paused");
     setAudioBadgeState(badge, false, "Paused");
     tile.classList.remove("active");
   });
@@ -1162,6 +1299,7 @@ function buildTile(channel, index) {
   const playerWrap = node.querySelector(".playerWrap");
   const badge = node.querySelector(".audioBadge");
   frame.dataset.channelKey = channel.key;
+  setPlayerFrameStatus(frame, "loading");
   if (playerWrapResizeObserver && playerWrap) {
     playerWrapResizeObserver.observe(playerWrap);
   }
@@ -1207,6 +1345,7 @@ function init() {
     statusText.textContent =
       "Run via http://localhost first, then click a tile to start audio rotation.";
   }
+  window.addEventListener("message", handleYouTubePlayerMessage);
 
   channels.forEach((channel, index) => {
     const tile = buildTile(channel, index);
@@ -1235,7 +1374,6 @@ function init() {
     togglePauseFeeds();
   });
   document.addEventListener("keydown", handleGlobalHotkeys, true);
-  window.addEventListener("message", handleYouTubePlayerMessage);
   window.addEventListener("resize", () => {
     updateAllTileHeaderCompression();
     if (!playerWrapResizeObserver) {
@@ -1243,6 +1381,7 @@ function init() {
     }
   });
   window.addEventListener("beforeunload", () => {
+    stopFrameLoadRecoveries({ resetRetryCount: true });
     playerWrapResizeObserver?.disconnect();
   });
 
