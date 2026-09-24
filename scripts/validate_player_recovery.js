@@ -69,6 +69,12 @@ const documentStub = {
     if (tileMatch) {
       return domRegistry.tilesByKey.get(tileMatch[1]) ?? null;
     }
+    const frameMatch = selector.match(
+      /^\.tile\[data-channel-key="([^"]+)"\] \.playerFrame$/,
+    );
+    if (frameMatch) {
+      return domRegistry.tilesByKey.get(frameMatch[1])?.querySelector(".playerFrame") ?? null;
+    }
     return null;
   },
   querySelectorAll(selector) {
@@ -134,6 +140,7 @@ module.exports = {
   channels,
   switchFrameVideo,
   handleYouTubePlayerMessage,
+  applyActiveChannel,
   pauseAllFeeds,
   frameLoadRecoveryTimers,
   FRAME_LOAD_CONFIRMATION_TIMEOUT_MS,
@@ -146,6 +153,7 @@ const {
   channels,
   switchFrameVideo,
   handleYouTubePlayerMessage,
+  applyActiveChannel,
   pauseAllFeeds,
   frameLoadRecoveryTimers,
   FRAME_LOAD_CONFIRMATION_TIMEOUT_MS,
@@ -251,11 +259,27 @@ assert(
   "initial switch should schedule a watchdog timeout",
 );
 
+const initialSrc = frame.src;
 const firstTimeout = timers.get(frameLoadRecoveryTimers[primaryChannel.key]);
 firstTimeout.fn();
-assert(frame.dataset.loadRetryCount === "1", "first timeout should trigger exactly one retry");
+assert(frame.src === initialSrc, "inactive startup timeout should not force a background reload");
+assert(frame.dataset.expectedVideoId === "", "inactive startup timeout should clear pending expected video");
 assert(
-  frame.src.includes(`tvq_reload=retry-1-1`),
+  playerWrap.dataset.playerStatus === undefined,
+  "inactive startup timeout should keep the frame visible instead of marking it errored",
+);
+
+applyActiveChannel(0, true);
+assert(
+  frame.src.includes(`tvq_reload=load-2`),
+  "activating an unconfirmed tile should force a fresh foreground reload",
+);
+
+const activeTimeout = timers.get(frameLoadRecoveryTimers[primaryChannel.key]);
+activeTimeout.fn();
+assert(frame.dataset.loadRetryCount === "1", "active timeout should trigger exactly one retry");
+assert(
+  frame.src.includes(`tvq_reload=retry-2-1`),
   "retry should reload with a fresh embed URL",
 );
 assert(playerWrap.dataset.playerStatus === "loading", "retry should remain in loading state");
