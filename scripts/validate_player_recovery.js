@@ -38,20 +38,23 @@ function createStubElement() {
   };
 }
 
-function assert(condition, message) {
-  if (!condition) {
-    throw new Error(message);
-  }
-}
-
 const domRegistry = {
   tilesByKey: new Map(),
   allTiles: [],
 };
 
+const templateStub = createStubElement();
+templateStub.content = {
+  firstElementChild: {
+    cloneNode() {
+      throw new Error("buildTile() is not used by this validator");
+    },
+  },
+};
+
 const elementById = {
   grid: createStubElement(),
-  tileTemplate: createStubElement(),
+  tileTemplate: templateStub,
   statusText: createStubElement(),
   protocolWarning: createStubElement(),
   rotationCountdown: createStubElement(),
@@ -142,8 +145,6 @@ module.exports = {
   handleYouTubePlayerMessage,
   applyActiveChannel,
   pauseAllFeeds,
-  frameLoadRecoveryTimers,
-  FRAME_LOAD_CONFIRMATION_TIMEOUT_MS,
 };`,
   sandbox,
   { filename: "app.js" },
@@ -155,9 +156,13 @@ const {
   handleYouTubePlayerMessage,
   applyActiveChannel,
   pauseAllFeeds,
-  frameLoadRecoveryTimers,
-  FRAME_LOAD_CONFIRMATION_TIMEOUT_MS,
 } = sandbox.module.exports;
+
+function assert(condition, message) {
+  if (!condition) {
+    throw new Error(message);
+  }
+}
 
 function createFakeTile(channelKey) {
   const classNames = new Set();
@@ -244,150 +249,74 @@ const primaryChannel = channels[0];
 assert(primaryChannel?.variants?.length >= 2, "expected a multi-variant channel");
 const firstVideoId = primaryChannel.variants[0].videoId;
 const secondVideoId = primaryChannel.variants[1].videoId;
-const { frame, playerWrap, commands } = registerTile(primaryChannel.key);
+const { tile, frame, playerWrap, commands } = registerTile(primaryChannel.key);
 
 switchFrameVideo(frame, firstVideoId, { forceReload: true });
-assert(playerWrap.dataset.playerStatus === "loading", "initial switch should mark loading");
-assert(frame.dataset.expectedVideoId === firstVideoId, "initial switch should track expected video");
 assert(
-  frame.src.includes(`tvq_reload=load-1`),
-  "force reload should include a fresh embed token",
+  frame.src.includes(`/embed/${firstVideoId}`),
+  "force reload should load the expected YouTube embed",
 );
 assert(
-  timers.get(frameLoadRecoveryTimers[primaryChannel.key])?.delay ===
-    FRAME_LOAD_CONFIRMATION_TIMEOUT_MS,
-  "initial switch should schedule a watchdog timeout",
+  !frame.src.includes("tvq_reload="),
+  "restored startup flow should not append recovery reload tokens",
+);
+assert(
+  frame.dataset.expectedVideoId === firstVideoId,
+  "initial switch should still track the expected video",
+);
+assert(
+  playerWrap.dataset.playerStatus === undefined,
+  "restored startup flow should not hide frames behind player status transitions",
 );
 
 const initialSrc = frame.src;
-const firstTimeout = timers.get(frameLoadRecoveryTimers[primaryChannel.key]);
-firstTimeout.fn();
-assert(frame.src === initialSrc, "inactive startup timeout should not force a background reload");
-assert(frame.dataset.expectedVideoId === "", "inactive startup timeout should clear pending expected video");
-assert(
-  playerWrap.dataset.playerStatus === undefined,
-  "inactive startup timeout should keep the frame visible instead of marking it errored",
-);
-
 applyActiveChannel(0, true);
 assert(
-  frame.src.includes(`tvq_reload=load-2`),
-  "activating an unconfirmed tile should force a fresh foreground reload",
+  frame.src === initialSrc,
+  "activating an unconfirmed tile should not force a second iframe reload",
 );
-
-const activeTimeout = timers.get(frameLoadRecoveryTimers[primaryChannel.key]);
-activeTimeout.fn();
-assert(frame.dataset.loadRetryCount === "1", "active timeout should trigger exactly one retry");
+assert(tile.classList.contains("active"), "activating a tile should mark it active");
 assert(
-  frame.src.includes(`tvq_reload=retry-2-1`),
-  "retry should reload with a fresh embed URL",
-);
-assert(playerWrap.dataset.playerStatus === "loading", "retry should remain in loading state");
-
-const secondTimeout = timers.get(frameLoadRecoveryTimers[primaryChannel.key]);
-secondTimeout.fn();
-assert(
-  playerWrap.dataset.playerStatus === "error",
-  "second timeout should stop retrying and mark the frame as error",
-);
-assert(frame.dataset.expectedVideoId === "", "terminal timeout should clear expected video state");
-
-switchFrameVideo(frame, firstVideoId, { forceReload: true });
-handleYouTubePlayerMessage({
-  origin: "https://www.youtube.com",
-  source: frame.contentWindow,
-  data: JSON.stringify({
-    event: "onReady",
-    info: {
-      videoData: {
-        video_id: firstVideoId,
-      },
-    },
-  }),
-});
-assert(playerWrap.dataset.playerStatus === "ready", "onReady should confirm the frame");
-assert(frame.dataset.expectedVideoId === "", "successful confirmation should clear expected video");
-assert(
-  frameLoadRecoveryTimers[primaryChannel.key] === null,
-  "successful confirmation should cancel the watchdog",
-);
-
-switchFrameVideo(frame, firstVideoId, { forceReload: true });
-const staleTimeout = timers.get(frameLoadRecoveryTimers[primaryChannel.key]);
-switchFrameVideo(frame, secondVideoId, { forceReload: true });
-staleTimeout.fn();
-assert(
-  frame.dataset.currentVideoId === secondVideoId,
-  "stale timeout must not revert the frame to a previous video",
-);
-assert(
-  frame.dataset.loadRetryCount === "0",
-  "stale timeout must not consume the retry budget for a newer generation",
+  commands.some((command) => command.func === "unMute"),
+  "activating a tile should still request audio playback",
 );
 
 commands.length = 0;
-switchFrameVideo(frame, firstVideoId, { forceReload: true });
-const preReadySwitchSrc = frame.src;
 switchFrameVideo(frame, secondVideoId);
 assert(
-  frame.src !== preReadySwitchSrc && frame.src.includes(`/embed/${secondVideoId}`),
-  "pre-ready switches should refresh the iframe src instead of relying on a dropped loadVideoById command",
+  commands.some(
+    (command) => command.func === "loadVideoById" && command.args?.[0] === secondVideoId,
+  ),
+  "restored switching should continue using loadVideoById for in-place variant changes",
 );
-assert(commands.length === 0, "pre-ready switches should not send loadVideoById before confirmation");
+assert(
+  frame.src === initialSrc,
+  "in-place variant switching should avoid reloading the iframe src",
+);
 
 handleYouTubePlayerMessage({
   origin: "https://www.youtube.com",
   source: frame.contentWindow,
   data: JSON.stringify({
     info: {
-      playerState: 5,
       videoData: {
         video_id: secondVideoId,
       },
     },
   }),
 });
-assert(playerWrap.dataset.playerStatus === "ready", "playerState=5 should confirm a loaded frame");
 assert(
-  frameLoadRecoveryTimers[primaryChannel.key] === null,
-  "playerState=5 confirmation should cancel the watchdog",
+  frame.dataset.expectedVideoId === "",
+  "matching player metadata should clear pending expected video state",
 );
 
-commands.length = 0;
-switchFrameVideo(frame, firstVideoId);
-assert(
-  commands.some((command) => command.func === "loadVideoById" && command.args?.[0] === firstVideoId),
-  "ready frames should continue using loadVideoById for normal in-place switches",
-);
-
-switchFrameVideo(frame, firstVideoId, { forceReload: true });
-handleYouTubePlayerMessage({
-  origin: "https://www.youtube.com",
-  source: frame.contentWindow,
-  data: JSON.stringify({
-    event: "onError",
-    info: 100,
-  }),
-});
-assert(
-  playerWrap.dataset.playerStatus === "error",
-  "terminal YouTube errors should mark the frame as error immediately",
-);
-assert(
-  frameLoadRecoveryTimers[primaryChannel.key] === null,
-  "terminal YouTube errors should cancel the watchdog",
-);
-
-switchFrameVideo(frame, firstVideoId, { forceReload: true });
 pauseAllFeeds();
-assert(frame.src === "about:blank", "pausing should unload the iframe");
-assert(playerWrap.dataset.playerStatus === "paused", "pausing should mark the frame as paused");
-assert(frame.dataset.expectedVideoId === "", "pausing should clear pending expected video state");
+assert(frame.src === "about:blank", "pausing should still unload the iframe");
 assert(
-  frameLoadRecoveryTimers[primaryChannel.key] === null,
-  "pausing should clear outstanding watchdog timers",
+  playerWrap.dataset.playerStatus === undefined,
+  "pausing should not depend on hidden-frame player status markers",
 );
 
 console.log(
-  "Validated per-tile load watchdog retries, confirmation, pre-ready reload fallback, ready-state loadVideoById switching, stale-generation safety, terminal error handling, and pause cleanup.",
+  "Validated restored non-watchdog startup flow, in-place switching, message sync, and pause cleanup.",
 );
