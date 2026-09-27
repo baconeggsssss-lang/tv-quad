@@ -379,6 +379,11 @@ sourceDefinitions.forEach((source) => {
     expectedSource.videoId === source.videoId,
     `source video id mismatch for ${source.name}`,
   );
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: source.timeZone }).format(new Date());
+  } catch (error) {
+    throw new Error(`invalid IANA time zone for ${source.name}: ${source.timeZone}`);
+  }
 });
 assert(channels.length === 6, "expected exactly six random channel groups");
 const flattenedVariants = channels.flatMap((channel) => channel.variants);
@@ -488,6 +493,6 @@ channels.forEach((channel) => {
   );
 });
 
-console.log("Validated all 34 source definitions, exact video IDs, and source → flag mappings.");
+console.log("Validated all 34 source definitions, exact video IDs, source → flag mappings, and IANA time zones.");
 console.log("Validated six-group random coverage without omissions or duplicates.");
 console.log("Validated tile build/render, rapid switch stale-message protection, auto rotation, and pause/resume reload sync.");
