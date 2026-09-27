@@ -326,7 +326,7 @@ channels.forEach((channel) => {
 
 const expectedSources = new Map([
   ["Al Jazeera English", { flagKey: "qa", videoId: "gCNeDWCI0vo" }],
-  ["TRT World", { flagKey: "tr", videoId: "A1xuih-xum8" }],
+  ["TRT World", { flagKey: "tr", videoId: "qBe59l6p_EU" }],
   ["Arise News", { flagKey: "ng", videoId: "Fy_03Aorpq8" }],
   ["Citizen TV Kenya", { flagKey: "ke", videoId: "NGBOqBx9rF4" }],
   ["DW News", { flagKey: "de", videoId: "LuKwFajn37U" }],
