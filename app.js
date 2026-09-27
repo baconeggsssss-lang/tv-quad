@@ -12,7 +12,7 @@ const sourceDefinitions = [
   {
     name: "TRT World",
     shortName: "TRT",
-    videoId: "A1xuih-xum8",
+    videoId: "qBe59l6p_EU",
     flagKey: "tr",
     regionLabel: "Ankara",
     timeZone: "Europe/Istanbul",
