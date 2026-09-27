@@ -337,7 +337,10 @@ const expectedSources = new Map([
   ["teleSUR", { flagKey: "ve", videoId: "GKp8PFf6m4o" }],
   ["TN", { flagKey: "ar", videoId: "cb12KmMMDJA" }],
   ["Milenio", { flagKey: "mx", videoId: "oPy8a-TCjzA" }],
+  ["Record News", { flagKey: "br", videoId: "9qw1AHojfiM" }],
+  ["Meganoticias", { flagKey: "cl", videoId: "CJ3Z8kn_kAY" }],
   ["CNN", { flagKey: "us", videoId: "GotlA1KKWoo" }],
+  ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }],
   ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
   ["CBS News", { flagKey: "us", videoId: "tTgQEqBxoqU" }],
   ["NBC News", { flagKey: "us", videoId: "wCzFV6XV1yI" }],
@@ -347,6 +350,7 @@ const expectedSources = new Map([
   ["RTVE 24H", { flagKey: "es", videoId: "b4tE5aKhtlg" }],
   ["Africanews English", { flagKey: "cg", videoId: "NQjabLGdP5g" }],
   ["Euronews English", { flagKey: "eu", videoId: "pykpO5kQJ98" }],
+  ["TVP World", { flagKey: "pl", videoId: "tvXWIgsWuK0" }],
   ["CCTV13", { flagKey: "cn", videoId: "FBSePb-Noqs" }],
   ["Phoenix InfoNews", { flagKey: "hk", videoId: "Ry--eMIjYLQ" }],
   ["WION LIVE", { flagKey: "in", videoId: "vfszY1JYbMc" }],
@@ -384,6 +388,47 @@ sourceDefinitions.forEach((source) => {
   } catch (error) {
     throw new Error(`invalid IANA time zone for ${source.name}: ${source.timeZone}`);
   }
+});
+const expectedNewSourceDetails = new Map([
+  [
+    "CNN en Español",
+    {
+      shortName: "CNN ES",
+      regionLabel: "Atlanta",
+      timeZone: "America/New_York",
+    },
+  ],
+  [
+    "Record News",
+    {
+      shortName: "Record",
+      regionLabel: "São Paulo",
+      timeZone: "America/Sao_Paulo",
+    },
+  ],
+  [
+    "Meganoticias",
+    {
+      shortName: "Mega",
+      regionLabel: "Santiago",
+      timeZone: "America/Santiago",
+    },
+  ],
+  [
+    "TVP World",
+    {
+      shortName: "TVP",
+      regionLabel: "Warsaw",
+      timeZone: "Europe/Warsaw",
+    },
+  ],
+]);
+expectedNewSourceDetails.forEach((expectedSource, name) => {
+  const source = sourceDefinitions.find((entry) => entry.name === name);
+  assert(source, `missing source definition for ${name}`);
+  assert(source.shortName === expectedSource.shortName, `short name mismatch for ${name}`);
+  assert(source.regionLabel === expectedSource.regionLabel, `region label mismatch for ${name}`);
+  assert(source.timeZone === expectedSource.timeZone, `time zone mismatch for ${name}`);
 });
 const totalGroups = 6;
 assert(channels.length === totalGroups, "expected exactly six random channel groups");
@@ -499,6 +544,8 @@ channels.forEach((channel) => {
   );
 });
 
-console.log("Validated all 34 source definitions, exact video IDs, source → flag mappings, and IANA time zones.");
+console.log(
+  `Validated all ${sourceDefinitions.length} source definitions, exact video IDs, source → flag mappings, and IANA time zones.`,
+);
 console.log("Validated six-group random coverage without omissions or duplicates.");
 console.log("Validated tile build/render, rapid switch stale-message protection, auto rotation, and pause/resume reload sync.");
