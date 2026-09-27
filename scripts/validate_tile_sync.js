@@ -340,7 +340,7 @@ const expectedSources = new Map([
   ["Record News", { flagKey: "br", videoId: "9qw1AHojfiM" }],
   ["Meganoticias", { flagKey: "cl", videoId: "CJ3Z8kn_kAY" }],
   ["CNN", { flagKey: "us", videoId: "GotlA1KKWoo" }],
-  ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }],
+  ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }], // US-based CNN Spanish-language feed
   ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
   ["CBS News", { flagKey: "us", videoId: "tTgQEqBxoqU" }],
   ["NBC News", { flagKey: "us", videoId: "wCzFV6XV1yI" }],

@@ -125,7 +125,7 @@ const sourceDefinitions = [
     name: "CNN en Español",
     shortName: "CNN ES",
     videoId: "Qr61waJ6AZg",
-    flagKey: "us",
+    flagKey: "us", // US-based CNN Spanish-language feed; not Spain
     regionLabel: "Atlanta",
     timeZone: "America/New_York",
   },
