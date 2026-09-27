@@ -396,17 +396,10 @@ assert(
   new Set(flattenedVariants.map((variant) => variant.name)).size === sourceDefinitions.length,
   "random groups should not duplicate any source",
 );
-const expectedGroupSizes = Array.from({ length: totalGroups }, (_, index) => {
-  const baseGroupSize = Math.floor(sourceDefinitions.length / totalGroups);
-  const extraSources = sourceDefinitions.length % totalGroups;
-  return baseGroupSize + (index < extraSources ? 1 : 0);
-}).sort((left, right) => left - right);
+const groupSizes = channels.map((channel) => channel.variants.length);
 assert(
-  channels
-    .map((channel) => channel.variants.length)
-    .sort((left, right) => left - right)
-    .join(",") === expectedGroupSizes.join(","),
-  "source count should split into balanced group sizes across six tiles",
+  Math.max(...groupSizes) - Math.min(...groupSizes) <= 1,
+  "random groups should stay balanced to within one source per tile",
 );
 
 channels.forEach((channel) => {
