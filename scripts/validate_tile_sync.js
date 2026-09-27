@@ -324,40 +324,90 @@ channels.forEach((channel) => {
   }
 });
 
-const expectedFlags = new Map([
-  ["Al Jazeera English", "qa"],
-  ["TRT World", "tr"],
-  ["Arise News", "ng"],
-  ["DW News", "de"],
-  ["FRANCE 24", "fr"],
-  ["CNA", "sg"],
-  ["NTN24", "co"],
-  ["TN", "ar"],
-  ["CNN", "us"],
-  ["Bloomberg Business News", "us"],
-  ["ABC News Australia", "au"],
-  ["CBC News", "ca"],
-  ["RTVE 24H", "es"],
-  ["Africanews English", "cg"],
-  ["Euronews English", "eu"],
-  ["CCTV13", "cn"],
-  ["Phoenix InfoNews", "hk"],
-  ["WION LIVE", "in"],
-  ["GB News", "gb"],
-  ["Sky News", "gb"],
-  ["Arirang TV", "kr"],
-  ["NHK WORLD-JAPAN", "jp"],
-  ["ABC News", "us"],
-  ["CGTN", "cn"],
+const expectedSources = new Map([
+  ["Al Jazeera English", { flagKey: "qa", videoId: "gCNeDWCI0vo" }],
+  ["TRT World", { flagKey: "tr", videoId: "A1xuih-xum8" }],
+  ["Arise News", { flagKey: "ng", videoId: "Fy_03Aorpq8" }],
+  ["Citizen TV Kenya", { flagKey: "ke", videoId: "NGBOqBx9rF4" }],
+  ["DW News", { flagKey: "de", videoId: "LuKwFajn37U" }],
+  ["FRANCE 24", { flagKey: "fr", videoId: "a47ckXKZjxI" }],
+  ["CNA", { flagKey: "sg", videoId: "XWq5kBlakcQ" }],
+  ["CNA Originals", { flagKey: "sg", videoId: "fSUMKrxPEd8" }],
+  ["NTN24", { flagKey: "co", videoId: "I4AVxPm58S0" }],
+  ["teleSUR", { flagKey: "ve", videoId: "GKp8PFf6m4o" }],
+  ["TN", { flagKey: "ar", videoId: "cb12KmMMDJA" }],
+  ["Milenio", { flagKey: "mx", videoId: "oPy8a-TCjzA" }],
+  ["CNN", { flagKey: "us", videoId: "GotlA1KKWoo" }],
+  ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
+  ["CBS News", { flagKey: "us", videoId: "tTgQEqBxoqU" }],
+  ["NBC News", { flagKey: "us", videoId: "wCzFV6XV1yI" }],
+  ["Bloomberg Business News", { flagKey: "us", videoId: "QB5BNdBFujE" }],
+  ["ABC News Australia", { flagKey: "au", videoId: "vOTiJkg1voo" }],
+  ["CBC News", { flagKey: "ca", videoId: "5vfaDsMhCF4" }],
+  ["RTVE 24H", { flagKey: "es", videoId: "b4tE5aKhtlg" }],
+  ["Africanews English", { flagKey: "cg", videoId: "NQjabLGdP5g" }],
+  ["Euronews English", { flagKey: "eu", videoId: "pykpO5kQJ98" }],
+  ["CCTV13", { flagKey: "cn", videoId: "FBSePb-Noqs" }],
+  ["Phoenix InfoNews", { flagKey: "hk", videoId: "Ry--eMIjYLQ" }],
+  ["WION LIVE", { flagKey: "in", videoId: "vfszY1JYbMc" }],
+  ["GB News", { flagKey: "gb", videoId: "I8E6eDmhegY" }],
+  ["BBC News Arabic", { flagKey: "gb", videoId: "O1pGmVtj2Y8" }],
+  ["Sky News", { flagKey: "gb", videoId: "xDWQ3LkccY8" }],
+  ["Arirang TV", { flagKey: "kr", videoId: "hvVlyZ5GiE8" }],
+  ["NHK WORLD-JAPAN", { flagKey: "jp", videoId: "IimtbuqYIE8" }],
+  ["ABC News", { flagKey: "us", videoId: "iipR5yUp36o" }],
+  ["Channels TV", { flagKey: "ng", videoId: "W8nThq62Vb4" }],
+  ["Al Arabiya", { flagKey: "sa", videoId: "n7eQejkXbnM" }],
+  ["CGTN", { flagKey: "cn", videoId: "0i7n3r01L2U" }],
 ]);
 
-assert(sourceDefinitions.length === expectedFlags.size, "unexpected source definition count");
+assert(sourceDefinitions.length === expectedSources.size, "unexpected source definition count");
+const seenSourceNames = new Set();
+const seenVideoIds = new Set();
 sourceDefinitions.forEach((source) => {
+  const expectedSource = expectedSources.get(source.name);
+  assert(expectedSource, `unexpected source definition for ${source.name}`);
+  assert(!seenSourceNames.has(source.name), `duplicate source name ${source.name}`);
+  assert(!seenVideoIds.has(source.videoId), `duplicate video id ${source.videoId}`);
+  seenSourceNames.add(source.name);
+  seenVideoIds.add(source.videoId);
   assert(
-    expectedFlags.get(source.name) === source.flagKey,
+    expectedSource.flagKey === source.flagKey,
     `source flag mapping mismatch for ${source.name}`,
   );
+  assert(
+    expectedSource.videoId === source.videoId,
+    `source video id mismatch for ${source.name}`,
+  );
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone: source.timeZone }).format(new Date());
+  } catch (error) {
+    throw new Error(`invalid IANA time zone for ${source.name}: ${source.timeZone}`);
+  }
 });
+const totalGroups = 6;
+assert(channels.length === totalGroups, "expected exactly six random channel groups");
+const flattenedVariants = channels.flatMap((channel) => channel.variants);
+assert(
+  flattenedVariants.length === sourceDefinitions.length,
+  "random groups should cover every source exactly once",
+);
+assert(
+  new Set(flattenedVariants.map((variant) => variant.name)).size === sourceDefinitions.length,
+  "random groups should not duplicate any source",
+);
+const expectedGroupSizes = Array.from({ length: totalGroups }, (_, index) => {
+  const baseGroupSize = Math.floor(sourceDefinitions.length / totalGroups);
+  const extraSources = sourceDefinitions.length % totalGroups;
+  return baseGroupSize + (index < extraSources ? 1 : 0);
+}).sort((left, right) => left - right);
+assert(
+  channels
+    .map((channel) => channel.variants.length)
+    .sort((left, right) => left - right)
+    .join(",") === expectedGroupSizes.join(","),
+  "source count should split into balanced group sizes across six tiles",
+);
 
 channels.forEach((channel) => {
   channel.variants.forEach((variant, index) => {
@@ -449,5 +499,6 @@ channels.forEach((channel) => {
   );
 });
 
-console.log("Validated all 24 source → flag mappings.");
+console.log("Validated all 34 source definitions, exact video IDs, source → flag mappings, and IANA time zones.");
+console.log("Validated six-group random coverage without omissions or duplicates.");
 console.log("Validated tile build/render, rapid switch stale-message protection, auto rotation, and pause/resume reload sync.");

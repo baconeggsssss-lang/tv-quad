@@ -5,8 +5,8 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
-EXPECTED = ['qa', 'tr', 'ng', 'de', 'fr', 'sg', 'co', 'ar', 'us', 'au', 'ca', 'es', 'cg', 'eu', 'cn', 'hk', 'in', 'gb', 'kr', 'jp']
-COMPLEX = {'qa', 'tr', 'de', 'sg', 'us', 'au', 'ca', 'eu', 'cn', 'hk', 'in', 'gb', 'kr'}
+EXPECTED = ['qa', 'tr', 'ng', 'ke', 'de', 'fr', 'sg', 'co', 've', 'ar', 'mx', 'us', 'au', 'ca', 'es', 'cg', 'eu', 'cn', 'hk', 'in', 'gb', 'kr', 'jp', 'sa']
+COMPLEX = {'qa', 'tr', 'ke', 'de', 'sg', 've', 'mx', 'us', 'au', 'ca', 'eu', 'cn', 'hk', 'in', 'gb', 'kr', 'sa'}
 repo = Path(__file__).resolve().parent.parent
 css = (repo / 'styles.css').read_text()
 
@@ -110,5 +110,5 @@ if errors:
         print('-', err)
     sys.exit(1)
 
-print('Validated all 20 flag keys.')
+print(f'Validated all {len(EXPECTED)} flag keys.')
 print('Verified SVG decoding, XML parsing, viewBox, and full-canvas backgrounds for complex flags.')
