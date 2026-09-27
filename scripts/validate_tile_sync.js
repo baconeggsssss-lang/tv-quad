@@ -385,7 +385,8 @@ sourceDefinitions.forEach((source) => {
     throw new Error(`invalid IANA time zone for ${source.name}: ${source.timeZone}`);
   }
 });
-assert(channels.length === 6, "expected exactly six random channel groups");
+const totalGroups = 6;
+assert(channels.length === totalGroups, "expected exactly six random channel groups");
 const flattenedVariants = channels.flatMap((channel) => channel.variants);
 assert(
   flattenedVariants.length === sourceDefinitions.length,
@@ -395,12 +396,17 @@ assert(
   new Set(flattenedVariants.map((variant) => variant.name)).size === sourceDefinitions.length,
   "random groups should not duplicate any source",
 );
+const expectedGroupSizes = Array.from({ length: totalGroups }, (_, index) => {
+  const baseGroupSize = Math.floor(sourceDefinitions.length / totalGroups);
+  const extraSources = sourceDefinitions.length % totalGroups;
+  return baseGroupSize + (index < extraSources ? 1 : 0);
+}).sort((left, right) => left - right);
 assert(
   channels
     .map((channel) => channel.variants.length)
     .sort((left, right) => left - right)
-    .join(",") === "5,5,6,6,6,6",
-  "34 sources should split into 5/6-sized groups across six tiles",
+    .join(",") === expectedGroupSizes.join(","),
+  "source count should split into balanced group sizes across six tiles",
 );
 
 channels.forEach((channel) => {
