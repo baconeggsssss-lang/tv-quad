@@ -108,7 +108,7 @@ const sourceDefinitions = [
   {
     name: "Meganoticias",
     shortName: "Mega",
-    videoId: "CJ3Z8kn_kAY",
+    videoId: "LUAsnV0ox5A",
     flagKey: "cl",
     regionLabel: "Santiago",
     timeZone: "America/Santiago",
