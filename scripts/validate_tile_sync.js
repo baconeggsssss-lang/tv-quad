@@ -343,7 +343,6 @@ const expectedSources = new Map([
   ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }], // US-based CNN Spanish-language feed
   ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
   ["CBS News", { flagKey: "us", videoId: "tTgQEqBxoqU" }],
-  ["NBC News", { flagKey: "us", videoId: "wCzFV6XV1yI" }],
   ["Bloomberg Business News", { flagKey: "us", videoId: "QB5BNdBFujE" }],
   ["ABC News Australia", { flagKey: "au", videoId: "vOTiJkg1voo" }],
   ["CBC News", { flagKey: "ca", videoId: "5vfaDsMhCF4" }],

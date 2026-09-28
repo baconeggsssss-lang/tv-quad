@@ -146,14 +146,6 @@ const sourceDefinitions = [
     timeZone: "America/New_York",
   },
   {
-    name: "NBC News",
-    shortName: "NBC",
-    videoId: "wCzFV6XV1yI",
-    flagKey: "us",
-    regionLabel: "New York",
-    timeZone: "America/New_York",
-  },
-  {
     name: "Bloomberg Business News",
     shortName: "Bloomberg",
     videoId: "QB5BNdBFujE",
