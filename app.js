@@ -100,18 +100,10 @@ const sourceDefinitions = [
   {
     name: "Record News",
     shortName: "Record",
-    videoId: "_OcWxnhjMQQ",
+    videoId: "8Blha8_YFRc",
     flagKey: "br",
     regionLabel: "São Paulo",
     timeZone: "America/Sao_Paulo",
-  },
-  {
-    name: "Meganoticias",
-    shortName: "Mega",
-    videoId: "LUAsnV0ox5A",
-    flagKey: "cl",
-    regionLabel: "Santiago",
-    timeZone: "America/Santiago",
   },
   {
     name: "CNN",
