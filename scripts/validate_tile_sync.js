@@ -338,11 +338,13 @@ const expectedSources = new Map([
   ["TN", { flagKey: "ar", videoId: "cb12KmMMDJA" }],
   ["Milenio", { flagKey: "mx", videoId: "oPy8a-TCjzA" }],
   ["Record News", { flagKey: "br", videoId: "8Blha8_YFRc" }],
+  ["NC News", { flagKey: "br", videoId: "WPfIR4e95FI" }],
   ["CNN", { flagKey: "us", videoId: "GotlA1KKWoo" }],
   ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }], // US-based CNN Spanish-language feed
   ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
   ["CBS News", { flagKey: "us", videoId: "tTgQEqBxoqU" }],
   ["Bloomberg Business News", { flagKey: "us", videoId: "QB5BNdBFujE" }],
+  ["Yahoo Finance", { flagKey: "us", videoId: "KQp-e_XQnDE" }],
   ["ABC News Australia", { flagKey: "au", videoId: "vOTiJkg1voo" }],
   ["CBC News", { flagKey: "ca", videoId: "5vfaDsMhCF4" }],
   ["RTVE 24H", { flagKey: "es", videoId: "b4tE5aKhtlg" }],
@@ -402,6 +404,22 @@ const expectedNewSourceDetails = new Map([
       shortName: "Record",
       regionLabel: "São Paulo",
       timeZone: "America/Sao_Paulo",
+    },
+  ],
+  [
+    "NC News",
+    {
+      shortName: "NC",
+      regionLabel: "Manaus",
+      timeZone: "America/Manaus",
+    },
+  ],
+  [
+    "Yahoo Finance",
+    {
+      shortName: "Yahoo",
+      regionLabel: "New York",
+      timeZone: "America/New_York",
     },
   ],
   [
