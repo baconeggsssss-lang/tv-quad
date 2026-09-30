@@ -337,8 +337,7 @@ const expectedSources = new Map([
   ["teleSUR", { flagKey: "ve", videoId: "GKp8PFf6m4o" }],
   ["TN", { flagKey: "ar", videoId: "cb12KmMMDJA" }],
   ["Milenio", { flagKey: "mx", videoId: "oPy8a-TCjzA" }],
-  ["Record News", { flagKey: "br", videoId: "_OcWxnhjMQQ" }],
-  ["Meganoticias", { flagKey: "cl", videoId: "LUAsnV0ox5A" }],
+  ["Record News", { flagKey: "br", videoId: "8Blha8_YFRc" }],
   ["CNN", { flagKey: "us", videoId: "GotlA1KKWoo" }],
   ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }], // US-based CNN Spanish-language feed
   ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
@@ -350,7 +349,7 @@ const expectedSources = new Map([
   ["Africanews English", { flagKey: "cg", videoId: "NQjabLGdP5g" }],
   ["Euronews English", { flagKey: "eu", videoId: "pykpO5kQJ98" }],
   ["TVP World", { flagKey: "pl", videoId: "tvXWIgsWuK0" }],
-  ["CCTV13", { flagKey: "cn", videoId: "FBSePb-Noqs" }],
+  ["CCTV13", { flagKey: "cn", videoId: "2KhTOlV2DZ0" }],
   ["Phoenix InfoNews", { flagKey: "hk", videoId: "Ry--eMIjYLQ" }],
   ["WION LIVE", { flagKey: "in", videoId: "vfszY1JYbMc" }],
   ["GB News", { flagKey: "gb", videoId: "I8E6eDmhegY" }],
@@ -403,14 +402,6 @@ const expectedNewSourceDetails = new Map([
       shortName: "Record",
       regionLabel: "São Paulo",
       timeZone: "America/Sao_Paulo",
-    },
-  ],
-  [
-    "Meganoticias",
-    {
-      shortName: "Mega",
-      regionLabel: "Santiago",
-      timeZone: "America/Santiago",
     },
   ],
   [
