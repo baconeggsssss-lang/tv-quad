@@ -204,7 +204,7 @@ const sourceDefinitions = [
   {
     name: "CCTV13",
     shortName: "CCTV13",
-    videoId: "2KhTOlV2DZ0",
+    videoId: "dPGq0xElK8E",
     flagKey: "cn",
     regionLabel: "Beijing",
     timeZone: "Asia/Shanghai",
@@ -369,7 +369,7 @@ const variantNextSwitchAt = {};
 const audioVariantPointers = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
-  "2KhTOlV2DZ0": 50, // CCTV13
+  "dPGq0xElK8E": 50, // CCTV13
   Fy_03Aorpq8: 50, // Arise News
 };
 const TIME_FORMATTERS = {};
