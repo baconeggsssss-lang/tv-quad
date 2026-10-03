@@ -98,14 +98,6 @@ const sourceDefinitions = [
     timeZone: "America/Mexico_City",
   },
   {
-    name: "NC News",
-    shortName: "NC",
-    videoId: "WPfIR4e95FI",
-    flagKey: "br",
-    regionLabel: "Manaus",
-    timeZone: "America/Manaus",
-  },
-  {
     name: "CNN",
     shortName: "CNN",
     videoId: "GotlA1KKWoo",

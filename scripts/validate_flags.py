@@ -5,8 +5,8 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
-EXPECTED = ['qa', 'tr', 'ng', 'ke', 'de', 'fr', 'sg', 'co', 've', 'ar', 'br', 'mx', 'us', 'au', 'ca', 'es', 'cg', 'eu', 'cn', 'hk', 'in', 'gb', 'kr', 'jp', 'pl', 'sa']
-COMPLEX = {'qa', 'tr', 'ke', 'de', 'sg', 've', 'br', 'mx', 'us', 'au', 'ca', 'eu', 'cn', 'hk', 'in', 'gb', 'kr', 'pl', 'sa'}
+EXPECTED = ['qa', 'tr', 'ng', 'ke', 'de', 'fr', 'sg', 'co', 've', 'ar', 'mx', 'us', 'au', 'ca', 'es', 'cg', 'eu', 'cn', 'hk', 'in', 'gb', 'kr', 'jp', 'pl', 'sa']
+COMPLEX = {'qa', 'tr', 'ke', 'de', 'sg', 've', 'mx', 'us', 'au', 'ca', 'eu', 'cn', 'hk', 'in', 'gb', 'kr', 'pl', 'sa'}
 repo = Path(__file__).resolve().parent.parent
 css = (repo / 'styles.css').read_text()
 
