@@ -340,7 +340,7 @@ const expectedSources = new Map([
   ["CNN", { flagKey: "us", videoId: "GotlA1KKWoo" }],
   ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }], // US-based CNN Spanish-language feed
   ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
-  ["CBS News", { flagKey: "us", videoId: "tTgQEqBxoqU" }],
+  ["Noticias Telemundo", { flagKey: "us", videoId: "c660thEPeeY" }],
   ["Bloomberg Business News", { flagKey: "us", videoId: "QB5BNdBFujE" }],
   ["Yahoo Finance", { flagKey: "us", videoId: "KQp-e_XQnDE" }],
   ["ABC News Australia", { flagKey: "au", videoId: "vOTiJkg1voo" }],
@@ -357,6 +357,7 @@ const expectedSources = new Map([
   ["Sky News", { flagKey: "gb", videoId: "xDWQ3LkccY8" }],
   ["Arirang TV", { flagKey: "kr", videoId: "hvVlyZ5GiE8" }],
   ["NHK WORLD-JAPAN", { flagKey: "jp", videoId: "IimtbuqYIE8" }],
+  ["TBS NEWS DIG", { flagKey: "jp", videoId: "Anr15FA9OCI" }],
   ["ABC News", { flagKey: "us", videoId: "iipR5yUp36o" }],
   ["Channels TV", { flagKey: "ng", videoId: "W8nThq62Vb4" }],
   ["Al Arabiya", { flagKey: "sa", videoId: "n7eQejkXbnM" }],
@@ -388,6 +389,22 @@ sourceDefinitions.forEach((source) => {
   }
 });
 const expectedNewSourceDetails = new Map([
+  [
+    "TBS NEWS DIG",
+    {
+      shortName: "TBS",
+      regionLabel: "Tokyo",
+      timeZone: "Asia/Tokyo",
+    },
+  ],
+  [
+    "Noticias Telemundo",
+    {
+      shortName: "Telemundo",
+      regionLabel: "Miami",
+      timeZone: "America/New_York",
+    },
+  ],
   [
     "CNN en Español",
     {
