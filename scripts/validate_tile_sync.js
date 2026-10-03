@@ -337,7 +337,6 @@ const expectedSources = new Map([
   ["teleSUR", { flagKey: "ve", videoId: "GKp8PFf6m4o" }],
   ["TN", { flagKey: "ar", videoId: "cb12KmMMDJA" }],
   ["Milenio", { flagKey: "mx", videoId: "oPy8a-TCjzA" }],
-  ["NC News", { flagKey: "br", videoId: "WPfIR4e95FI" }],
   ["CNN", { flagKey: "us", videoId: "GotlA1KKWoo" }],
   ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }], // US-based CNN Spanish-language feed
   ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
@@ -395,14 +394,6 @@ const expectedNewSourceDetails = new Map([
       shortName: "CNN ES",
       regionLabel: "Atlanta",
       timeZone: "America/New_York",
-    },
-  ],
-  [
-    "NC News",
-    {
-      shortName: "NC",
-      regionLabel: "Manaus",
-      timeZone: "America/Manaus",
     },
   ],
   [
