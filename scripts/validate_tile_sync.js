@@ -328,7 +328,7 @@ const expectedSources = new Map([
   ["Al Jazeera English", { flagKey: "qa", videoId: "gCNeDWCI0vo" }],
   ["TRT World", { flagKey: "tr", videoId: "qBe59l6p_EU" }],
   ["Arise News", { flagKey: "ng", videoId: "Fy_03Aorpq8" }],
-  ["Citizen TV Kenya", { flagKey: "ke", videoId: "NGBOqBx9rF4" }],
+  ["Citizen TV Kenya", { flagKey: "ke", videoId: "1Vm7lAjpZZM" }],
   ["DW News", { flagKey: "de", videoId: "LuKwFajn37U" }],
   ["FRANCE 24", { flagKey: "fr", videoId: "a47ckXKZjxI" }],
   ["CNA", { flagKey: "sg", videoId: "XWq5kBlakcQ" }],
