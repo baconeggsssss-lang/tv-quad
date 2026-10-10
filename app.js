@@ -371,6 +371,7 @@ let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
   "dPGq0xElK8E": 50, // CCTV13
   Fy_03Aorpq8: 50, // Arise News
+  W8nThq62Vb4: 50, // Channels TV
 };
 const TIME_FORMATTERS = {};
 
