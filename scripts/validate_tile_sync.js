@@ -153,6 +153,8 @@ module.exports = {
   reloadAllFeedsFresh,
   pauseAllFeeds,
   resumeAllFeedsFresh,
+  applyActiveChannel,
+  muteAllAudio,
 };`,
   sandbox,
   { filename: "app.js" },
@@ -172,6 +174,8 @@ const {
   reloadAllFeedsFresh,
   pauseAllFeeds,
   resumeAllFeedsFresh,
+  applyActiveChannel,
+  muteAllAudio,
 } = sandbox.module.exports;
 
 function assert(condition, message) {
@@ -316,12 +320,21 @@ channels.forEach((channel) => {
       syncVideo: true,
       forceReload: true,
     });
+
   } else {
     syncTilePresentation(domRegistry.tilesByKey.get(channel.key), channel, channel, {
       syncVideo: true,
       forceReload: true,
     });
   }
+});
+
+domRegistry.allTiles.forEach((tile) => {
+  const frame = tile.querySelector(".playerFrame");
+  assert(
+    new URLSearchParams(frame.src.split("?")[1]).get("mute") === "1",
+    "startup embeds should be muted",
+  );
 });
 
 const expectedSources = new Map([
@@ -551,8 +564,53 @@ channels.forEach((channel) => {
   );
 });
 
+function runTimeouts(delay) {
+  [...timers.entries()].forEach(([id, timer]) => {
+    if (timer.type === "timeout" && timer.delay === delay) {
+      timers.delete(id);
+      timer.fn();
+    }
+  });
+}
+
+const reducedVolumeSources = new Set(["Channels TV", "CCTV13", "Arise News"]);
+channels.forEach((channel, channelIndex) => {
+  const commands = [];
+  getTileParts(channel.key).frame.contentWindow.postMessage = (message) => {
+    commands.push(JSON.parse(message));
+  };
+  channel.variants.forEach((variant, variantIndex) => {
+    muteAllAudio();
+    timers.clear();
+    variantIndices[channel.key] = variantIndex;
+    renderVariantTile(channel.key);
+    commands.length = 0;
+    applyActiveChannel(channelIndex, true);
+    assertAudioVolume(variant, commands, "audio activation");
+    commands.length = 0;
+    runTimeouts(1200);
+    assertAudioVolume(variant, commands, "delayed audio activation");
+    commands.length = 0;
+    switchVariant(channel.key, true);
+    runTimeouts(900);
+    assertAudioVolume(getCurrentVariant(channel.key), commands, "active source switch");
+  });
+});
+
+function assertAudioVolume(source, commands, context) {
+  const expectedVolume = reducedVolumeSources.has(source.name) ? 50 : 100;
+  const volumeCommands = commands.filter((command) => command.func === "setVolume");
+  assert(
+    volumeCommands.length > 0 && volumeCommands.every((command) => command.args[0] === expectedVolume),
+    `${context}: ${source.name} should receive volume ${expectedVolume}`,
+  );
+  assert(commands.some((command) => command.func === "unMute"), `${context}: ${source.name} should be unmuted`);
+}
+muteAllAudio();
+
 console.log(
   `Validated all ${sourceDefinitions.length} source definitions, exact video IDs, source → flag mappings, and IANA time zones.`,
 );
 console.log("Validated six-group random coverage without omissions or duplicates.");
 console.log("Validated tile build/render, rapid switch stale-message protection, auto rotation, and pause/resume reload sync.");
+console.log("Validated muted startup and per-source volumes on audio activation and active source switches.");
