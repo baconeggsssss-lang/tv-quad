@@ -362,7 +362,6 @@ const expectedSources = new Map([
   ["Africanews English", { flagKey: "cg", videoId: "NQjabLGdP5g" }],
   ["Euronews English", { flagKey: "eu", videoId: "pykpO5kQJ98" }],
   ["TVP World", { flagKey: "pl", videoId: "tvXWIgsWuK0" }],
-  ["CCTV13", { flagKey: "cn", videoId: "dPGq0xElK8E" }],
   ["Phoenix InfoNews", { flagKey: "hk", videoId: "Ry--eMIjYLQ" }],
   ["WION LIVE", { flagKey: "in", videoId: "vfszY1JYbMc" }],
   ["GB News", { flagKey: "gb", videoId: "I8E6eDmhegY" }],
@@ -573,7 +572,7 @@ function runTimeouts(delay) {
   });
 }
 
-const reducedVolumeSources = new Set(["Channels TV", "CCTV13", "Arise News"]);
+const reducedVolumeSources = new Set(["Channels TV", "Arise News"]);
 channels.forEach((channel, channelIndex) => {
   const commands = [];
   getTileParts(channel.key).frame.contentWindow.postMessage = (message) => {
