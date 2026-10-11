@@ -194,14 +194,6 @@ const sourceDefinitions = [
     timeZone: "Europe/Warsaw",
   },
   {
-    name: "CCTV13",
-    shortName: "CCTV13",
-    videoId: "dPGq0xElK8E",
-    flagKey: "cn",
-    regionLabel: "Beijing",
-    timeZone: "Asia/Shanghai",
-  },
-  {
     name: "Phoenix InfoNews",
     shortName: "PHX",
     videoId: "Ry--eMIjYLQ",
@@ -369,7 +361,6 @@ const variantNextSwitchAt = {};
 const audioVariantPointers = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
-  "dPGq0xElK8E": 50, // CCTV13
   Fy_03Aorpq8: 50, // Arise News
   W8nThq62Vb4: 50, // Channels TV
 };
