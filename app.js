@@ -20,7 +20,7 @@ const sourceDefinitions = [
   {
     name: "Arise News",
     shortName: "Arise",
-    videoId: "Fy_03Aorpq8",
+    videoId: "6G7Vc9Ce1NY",
     flagKey: "ng",
     regionLabel: "Lagos",
     timeZone: "Africa/Lagos",
@@ -361,7 +361,7 @@ const variantNextSwitchAt = {};
 const audioVariantPointers = {};
 let audioActivationToken = 0;
 const LOUD_CHANNEL_VOLUME_OVERRIDES = {
-  Fy_03Aorpq8: 50, // Arise News
+  "6G7Vc9Ce1NY": 50, // Arise News
   W8nThq62Vb4: 50, // Channels TV
 };
 const TIME_FORMATTERS = {};
