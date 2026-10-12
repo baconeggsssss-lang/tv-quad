@@ -212,7 +212,7 @@ const sourceDefinitions = [
   {
     name: "GB News",
     shortName: "GB",
-    videoId: "I8E6eDmhegY",
+    videoId: "EDbWwVR7i9Q",
     flagKey: "gb",
     regionLabel: "London",
     timeZone: "Europe/London",

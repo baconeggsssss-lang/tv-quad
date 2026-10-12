@@ -364,7 +364,7 @@ const expectedSources = new Map([
   ["TVP World", { flagKey: "pl", videoId: "tvXWIgsWuK0" }],
   ["Phoenix InfoNews", { flagKey: "hk", videoId: "Ry--eMIjYLQ" }],
   ["WION LIVE", { flagKey: "in", videoId: "vfszY1JYbMc" }],
-  ["GB News", { flagKey: "gb", videoId: "I8E6eDmhegY" }],
+  ["GB News", { flagKey: "gb", videoId: "EDbWwVR7i9Q" }],
   ["BBC News Arabic", { flagKey: "gb", videoId: "O1pGmVtj2Y8" }],
   ["Sky News", { flagKey: "gb", videoId: "xDWQ3LkccY8" }],
   ["Arirang TV", { flagKey: "kr", videoId: "hvVlyZ5GiE8" }],
