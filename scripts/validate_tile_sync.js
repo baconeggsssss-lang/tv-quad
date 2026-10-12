@@ -340,7 +340,7 @@ domRegistry.allTiles.forEach((tile) => {
 const expectedSources = new Map([
   ["Al Jazeera English", { flagKey: "qa", videoId: "gCNeDWCI0vo" }],
   ["TRT World", { flagKey: "tr", videoId: "qBe59l6p_EU" }],
-  ["Arise News", { flagKey: "ng", videoId: "6G7Vc9Ce1NY" }],
+  ["Arise News", { flagKey: "ng", videoId: "wqAwGhKnkjc" }],
   ["Citizen TV Kenya", { flagKey: "ke", videoId: "1Vm7lAjpZZM" }],
   ["DW News", { flagKey: "de", videoId: "LuKwFajn37U" }],
   ["FRANCE 24", { flagKey: "fr", videoId: "a47ckXKZjxI" }],
@@ -401,6 +401,14 @@ sourceDefinitions.forEach((source) => {
   }
 });
 const expectedNewSourceDetails = new Map([
+  [
+    "Arise News",
+    {
+      shortName: "Arise",
+      regionLabel: "Lagos",
+      timeZone: "Africa/Lagos",
+    },
+  ],
   [
     "TBS NEWS DIG",
     {
