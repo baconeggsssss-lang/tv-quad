@@ -141,6 +141,7 @@ const sourceDefinitions = [
     name: "Yahoo Finance",
     shortName: "Yahoo",
     videoId: "KQp-e_XQnDE",
+    captionsDefaultOn: true,
     flagKey: "us",
     regionLabel: "New York",
     timeZone: "America/New_York",
@@ -366,6 +367,12 @@ const LOUD_CHANNEL_VOLUME_OVERRIDES = {
 };
 const TIME_FORMATTERS = {};
 
+function captionsDefaultOn(videoId) {
+  return sourceDefinitions.some(
+    (source) => source.videoId === videoId && source.captionsDefaultOn,
+  );
+}
+
 function buildEmbedUrl(videoId) {
   const params = new URLSearchParams({
     autoplay: "1",
@@ -376,6 +383,10 @@ function buildEmbedUrl(videoId) {
     modestbranding: "1",
     enablejsapi: "1",
   });
+  if (captionsDefaultOn(videoId)) {
+    params.set("cc_load_policy", "1");
+    params.set("cc_lang_pref", "en");
+  }
   if (window.location.protocol.startsWith("http")) {
     params.set("origin", window.location.origin);
   }
@@ -700,6 +711,13 @@ function handleYouTubePlayerMessage(event) {
       }
     }
   }
+  if (payload.event === "onReady") {
+    sendPlayerCommand(frame, "addEventListener", ["onApiChange"]);
+    sendPlayerCommand(frame, "addEventListener", ["onStateChange"]);
+  }
+  if (["onReady", "onApiChange", "onStateChange"].includes(payload.event)) {
+    applyCaptionPolicyForFrame(frame, { loadModule: payload.event !== "onApiChange" });
+  }
 }
 
 function sendPlayerCommand(iframe, func, args = []) {
@@ -709,14 +727,23 @@ function sendPlayerCommand(iframe, func, args = []) {
   );
 }
 
-function forceCaptionsOffForFrame(frame) {
-  sendPlayerCommand(frame, "unloadModule", ["captions"]);
-  sendPlayerCommand(frame, "setOption", ["captions", "track", {}]);
+function applyCaptionPolicyForFrame(frame, { loadModule = true } = {}) {
+  if (captionsDefaultOn(frame.dataset.currentVideoId)) {
+    if (loadModule) {
+      sendPlayerCommand(frame, "loadModule", ["captions"]);
+    }
+    sendPlayerCommand(frame, "setOption", ["captions", "track", { languageCode: "en" }]);
+  } else {
+    if (loadModule) {
+      sendPlayerCommand(frame, "unloadModule", ["captions"]);
+    }
+    sendPlayerCommand(frame, "setOption", ["captions", "track", {}]);
+  }
 }
 
-function forceCaptionsOffAll() {
+function applyCaptionPolicyAll() {
   document.querySelectorAll(".playerFrame").forEach((frame) => {
-    forceCaptionsOffForFrame(frame);
+    applyCaptionPolicyForFrame(frame);
   });
 }
 
@@ -770,6 +797,7 @@ function switchFrameVideo(frame, videoId, { forceReload = false } = {}) {
     frame.src = buildEmbedUrl(videoId);
   }
   frame.dataset.currentVideoId = videoId;
+  applyCaptionPolicyForFrame(frame);
   updatePlayerThumbnail(frame, videoId);
 }
 
@@ -794,7 +822,7 @@ function setAudioState(nextActiveIndex) {
     const badge = tile.querySelector(".audioBadge");
     const channelKey = tile.dataset.channelKey;
     const channel = channels[index];
-    forceCaptionsOffForFrame(frame);
+    applyCaptionPolicyForFrame(frame);
     if (index === nextActiveIndex) {
       if (channel?.variants?.length && variantTimers[channelKey]) {
         clearTimeout(variantTimers[channelKey]);
@@ -978,7 +1006,7 @@ function renderVariantTile(channelKey) {
   }
   syncTilePresentation(tile, channel, variant, { syncVideo: true });
   setTimeout(() => {
-    forceCaptionsOffForFrame(frame);
+    applyCaptionPolicyForFrame(frame);
   }, 1800);
 
   if (channelIndex === activeIndex) {
@@ -1092,7 +1120,7 @@ function reloadAllFeedsFresh() {
     const badge = tile.querySelector(".audioBadge");
     syncTilePresentation(tile, channel, null, { syncVideo: true, forceReload: true });
     setTimeout(() => {
-      forceCaptionsOffForFrame(frame);
+      applyCaptionPolicyForFrame(frame);
     }, 1800);
     setAudioBadgeState(badge, false, "Muted");
     tile.classList.remove("active");
@@ -1257,6 +1285,13 @@ function buildTile(channel, index) {
   const playerWrap = node.querySelector(".playerWrap");
   const badge = node.querySelector(".audioBadge");
   frame.dataset.channelKey = channel.key;
+  frame.addEventListener("load", () => {
+    frame.contentWindow?.postMessage(
+      JSON.stringify({ event: "listening", id: channel.key }),
+      "https://www.youtube.com",
+    );
+    applyCaptionPolicyForFrame(frame);
+  });
   if (playerWrapResizeObserver && playerWrap) {
     playerWrapResizeObserver.observe(playerWrap);
   }
@@ -1309,10 +1344,10 @@ function init() {
   });
   updateAllTileHeaderCompression();
   setTimeout(() => {
-    forceCaptionsOffAll();
+    applyCaptionPolicyAll();
   }, 2200);
   setTimeout(() => {
-    forceCaptionsOffAll();
+    applyCaptionPolicyAll();
   }, 4500);
 
   startRotationCountdownTicker();
@@ -1338,7 +1373,7 @@ function init() {
 
   if (window.location.protocol !== "file:") {
     statusText.textContent =
-      "All streams are loading muted with CC off. Click a tile header to start audio rotation.";
+      "All streams are loading muted with CC off except Yahoo Finance (when available). Click a tile header to start audio rotation.";
   }
 }
 

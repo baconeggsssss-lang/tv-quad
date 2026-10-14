@@ -47,7 +47,7 @@ const templateStub = createStubElement();
 templateStub.content = {
   firstElementChild: {
     cloneNode() {
-      throw new Error("buildTile() is not used by this validator");
+      return createFakeTile("").tile;
     },
   },
 };
@@ -142,6 +142,9 @@ vm.runInNewContext(
 module.exports = {
   sourceDefinitions,
   channels,
+  buildTile,
+  buildEmbedUrl,
+  applyCaptionPolicyAll,
   variantIndices,
   audioVariantPointers,
   getCurrentVariant,
@@ -163,6 +166,9 @@ module.exports = {
 const {
   sourceDefinitions,
   channels,
+  buildTile,
+  buildEmbedUrl,
+  applyCaptionPolicyAll,
   variantIndices,
   audioVariantPointers,
   getCurrentVariant,
@@ -209,6 +215,10 @@ function createFakeTile(channelKey) {
   };
   const frame = {
     dataset: { channelKey },
+    listeners: {},
+    addEventListener(name, listener) {
+      this.listeners[name] = listener;
+    },
     title: "",
     src: "https://www.youtube.com/embed/bootstrap",
     style: createStyleStore(),
@@ -615,9 +625,154 @@ function assertAudioVolume(source, commands, context) {
 }
 muteAllAudio();
 
+sourceDefinitions.forEach((source) => {
+  const params = new URLSearchParams(buildEmbedUrl(source.videoId).split("?")[1]);
+  const isYahoo = source.name === "Yahoo Finance";
+  assert(
+    params.get("cc_load_policy") === (isYahoo ? "1" : null),
+    `${source.name}: only Yahoo should request captions in the embed URL`,
+  );
+  assert(
+    params.get("cc_lang_pref") === (isYahoo ? "en" : null),
+    `${source.name}: only Yahoo should request English captions`,
+  );
+});
+
+const captionCommands = new Map();
+channels.forEach((channel) => {
+  const frame = getTileParts(channel.key).frame;
+  const commands = [];
+  captionCommands.set(channel.key, commands);
+  frame.contentWindow.postMessage = (message) => commands.push(JSON.parse(message));
+});
+
+function assertCaptionPolicy(commands, source, context, expectModule = true) {
+  const isYahoo = source.name === "Yahoo Finance";
+  const trackCommands = commands.filter(
+    (command) => command.func === "setOption" &&
+      command.args[0] === "captions" && command.args[1] === "track",
+  );
+  assert(trackCommands.length > 0, `${context}: missing caption track policy`);
+  assert(
+    trackCommands.every((command) => isYahoo
+      ? command.args[2].languageCode === "en"
+      : Object.keys(command.args[2]).length === 0),
+    `${context}: ${source.name} received the wrong caption track policy`,
+  );
+  const moduleCommands = commands.filter(
+    (command) => ["loadModule", "unloadModule"].includes(command.func),
+  );
+  assert(
+    expectModule
+      ? moduleCommands.length > 0 && moduleCommands.every(
+        (command) => command.func === (isYahoo ? "loadModule" : "unloadModule") &&
+          command.args[0] === "captions",
+      )
+      : moduleCommands.length === 0,
+    `${context}: caption module policy must not conflict or loop on API changes`,
+  );
+}
+
+const yahooChannel = channels.find(
+  (channel) => channel.variants.some((source) => source.name === "Yahoo Finance"),
+);
+const yahooIndex = yahooChannel.variants.findIndex((source) => source.name === "Yahoo Finance");
+const yahooFrame = getTileParts(yahooChannel.key).frame;
+const yahooCommands = captionCommands.get(yahooChannel.key);
+// Start and end on Yahoo so queued callbacks exercise both directions of a reused iframe.
+const captionSequence = [
+  yahooIndex,
+  ...yahooChannel.variants.map((_, index) => index).filter((index) => index !== yahooIndex),
+  yahooIndex,
+];
+channels.forEach((channel, channelIndex) => {
+  const frame = getTileParts(channel.key).frame;
+  const commands = captionCommands.get(channel.key);
+  const sequence = channel === yahooChannel
+    ? captionSequence
+    : channel.variants.map((_, index) => index);
+  variantIndices[channel.key] = (sequence[0] + 1) % channel.variants.length;
+  renderVariantTile(channel.key);
+  sequence.forEach((variantIndex) => {
+    const source = channel.variants[variantIndex];
+    variantIndices[channel.key] = variantIndex;
+    commands.length = 0;
+    const previousSrc = frame.src;
+    renderVariantTile(channel.key);
+    assert(frame.src === previousSrc, "caption switching should reuse the iframe");
+    assertCaptionPolicy(commands, source, "in-place switch");
+    commands.length = 0;
+    runTimeouts(1800);
+    assertCaptionPolicy(commands, source, "delayed enforcement");
+    commands.length = 0;
+    applyActiveChannel(channelIndex, true);
+    assertCaptionPolicy(commands, source, "audio focus change");
+    ["onReady", "onApiChange", "onStateChange"].forEach((event) => {
+      commands.length = 0;
+      handleYouTubePlayerMessage({
+        origin: "https://www.youtube.com",
+        source: frame.contentWindow,
+        data: JSON.stringify({ event, info: event === "onStateChange" ? 1 : undefined }),
+      });
+      assertCaptionPolicy(commands, source, event, event !== "onApiChange");
+      if (event === "onReady") {
+        ["onApiChange", "onStateChange"].forEach((name) => {
+          assert(commands.some((command) => command.func === "addEventListener" &&
+            command.args[0] === name), `ready player should subscribe to ${name}`);
+        });
+      }
+    });
+  });
+});
+
+// A Yahoo callback queued before a rapid switch must use the new source's policy.
+variantIndices[yahooChannel.key] = yahooIndex;
+renderVariantTile(yahooChannel.key);
+variantIndices[yahooChannel.key] = (yahooIndex + 1) % yahooChannel.variants.length;
+renderVariantTile(yahooChannel.key);
+yahooCommands.length = 0;
+runTimeouts(1800);
+assertCaptionPolicy(yahooCommands, getCurrentVariant(yahooChannel.key), "stale Yahoo timer");
+variantIndices[yahooChannel.key] = yahooIndex;
+renderVariantTile(yahooChannel.key);
+
+["global enforcement", "forced reload", "pause/resume"].forEach((context) => {
+  captionCommands.forEach((commands) => { commands.length = 0; });
+  if (context === "global enforcement") {
+    applyCaptionPolicyAll();
+  } else if (context === "forced reload") {
+    reloadAllFeedsFresh();
+    runTimeouts(1800);
+  } else {
+    pauseAllFeeds();
+    resumeAllFeedsFresh();
+    runTimeouts(1800);
+  }
+  channels.forEach((channel) => {
+    assertCaptionPolicy(captionCommands.get(channel.key), getCurrentVariant(channel.key), context);
+  });
+  if (context !== "global enforcement") {
+    assert(new URLSearchParams(yahooFrame.src.split("?")[1]).get("cc_load_policy") === "1",
+      `${context}: Yahoo reload should retain the initial CC request`);
+  }
+});
+
+const builtTile = buildTile(yahooChannel, channels.indexOf(yahooChannel));
+const builtFrame = builtTile.querySelector(".playerFrame");
+const loadCommands = [];
+builtFrame.contentWindow.postMessage = (message) => loadCommands.push(JSON.parse(message));
+variantIndices[yahooChannel.key] = yahooIndex;
+syncTilePresentation(builtTile, yahooChannel, null, { syncVideo: true, forceReload: true });
+loadCommands.length = 0;
+builtFrame.listeners.load();
+assert(loadCommands.some((command) => command.event === "listening"),
+  "iframe load should initiate player event delivery");
+assertCaptionPolicy(loadCommands, yahooChannel.variants[yahooIndex], "iframe load");
+
 console.log(
   `Validated all ${sourceDefinitions.length} source definitions, exact video IDs, source → flag mappings, and IANA time zones.`,
 );
 console.log("Validated six-group random coverage without omissions or duplicates.");
 console.log("Validated tile build/render, rapid switch stale-message protection, auto rotation, and pause/resume reload sync.");
 console.log("Validated muted startup and per-source volumes on audio activation and active source switches.");
+console.log("Validated Yahoo-only caption requests, reused-iframe transitions, stale timers, player events, audio focus, reload, and pause/resume (mock checks, not live caption rendering).");
