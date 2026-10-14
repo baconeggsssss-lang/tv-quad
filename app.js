@@ -52,7 +52,7 @@ const sourceDefinitions = [
   {
     name: "CNA",
     shortName: "CNA",
-    videoId: "XWq5kBlakcQ",
+    videoId: "-PWMxjBgr0k",
     flagKey: "sg",
     regionLabel: "Singapore",
     timeZone: "Asia/Singapore",
@@ -60,7 +60,7 @@ const sourceDefinitions = [
   {
     name: "CNA Originals",
     shortName: "CNA O",
-    videoId: "fSUMKrxPEd8",
+    videoId: "9Y4kOQk_K3Y",
     flagKey: "sg",
     regionLabel: "Singapore",
     timeZone: "Asia/Singapore",
