@@ -10,7 +10,7 @@ A lightweight static web app that shows six live news streams at once from a rot
 - Audio rotates across tiles on a 10-minute cycle
 - Each muted tile rotates through its assigned channel set every 8 minutes
 - Local time labels show the active source's region clock
-- Closed captions are forced off by default
+- Closed captions default on for Yahoo Finance when a caption track is available; all other sources are forced off, including after channel switches
 - One stream has audio at a time; clicking a tile switches focus
 - Inline channel switch controls for each tile
 - Keyboard shortcuts for quick playback control
