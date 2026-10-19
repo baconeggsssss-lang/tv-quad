@@ -290,6 +290,22 @@ const sourceDefinitions = [
     regionLabel: "Beijing",
     timeZone: "Asia/Shanghai",
   },
+  {
+    name: "CCTV 13",
+    shortName: "CCTV 13",
+    videoId: "OI16kMLh2C0",
+    flagKey: "cn",
+    regionLabel: "Beijing",
+    timeZone: "Asia/Shanghai",
+  },
+  {
+    name: "CCTV 4",
+    shortName: "CCTV 4",
+    videoId: "vNVp6bxkL1c",
+    flagKey: "cn",
+    regionLabel: "Beijing",
+    timeZone: "Asia/Shanghai",
+  },
 ];
 
 function shuffledCopy(items) {
