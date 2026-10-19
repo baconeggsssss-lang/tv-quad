@@ -384,6 +384,8 @@ const expectedSources = new Map([
   ["Channels TV", { flagKey: "ng", videoId: "W8nThq62Vb4" }],
   ["Al Arabiya", { flagKey: "sa", videoId: "n7eQejkXbnM" }],
   ["CGTN", { flagKey: "cn", videoId: "0i7n3r01L2U" }],
+  ["CCTV 13", { flagKey: "cn", videoId: "OI16kMLh2C0" }],
+  ["CCTV 4", { flagKey: "cn", videoId: "vNVp6bxkL1c" }],
 ]);
 
 assert(sourceDefinitions.length === expectedSources.size, "unexpected source definition count");
