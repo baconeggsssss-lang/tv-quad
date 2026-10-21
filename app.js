@@ -18,6 +18,14 @@ const sourceDefinitions = [
     timeZone: "Europe/Istanbul",
   },
   {
+    name: "CNN Türk",
+    shortName: "CNN TR",
+    videoId: "6N8_r2uwLEc",
+    flagKey: "tr",
+    regionLabel: "Istanbul",
+    timeZone: "Europe/Istanbul",
+  },
+  {
     name: "Arise News",
     shortName: "Arise",
     videoId: "wqAwGhKnkjc",
@@ -96,6 +104,22 @@ const sourceDefinitions = [
     flagKey: "mx",
     regionLabel: "Mexico City",
     timeZone: "America/Mexico_City",
+  },
+  {
+    name: "CNN Brasil",
+    shortName: "CNN BR",
+    videoId: "gmBuQX-uDfo",
+    flagKey: "br",
+    regionLabel: "São Paulo",
+    timeZone: "America/Sao_Paulo",
+  },
+  {
+    name: "Record News",
+    shortName: "Record",
+    videoId: "CHUZ0hjRrdI",
+    flagKey: "br",
+    regionLabel: "São Paulo",
+    timeZone: "America/Sao_Paulo",
   },
   {
     name: "CNN",
