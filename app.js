@@ -293,7 +293,7 @@ const sourceDefinitions = [
   {
     name: "CCTV 13",
     shortName: "CCTV 13",
-    videoId: "OI16kMLh2C0",
+    videoId: "HIF2FFOo1t0",
     flagKey: "cn",
     regionLabel: "Beijing",
     timeZone: "Asia/Shanghai",
