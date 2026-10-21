@@ -68,7 +68,7 @@ const sourceDefinitions = [
   {
     name: "NTN24",
     shortName: "NTN24",
-    videoId: "I4AVxPm58S0",
+    videoId: "GNyQH9R1_V0",
     flagKey: "co",
     regionLabel: "Bogota",
     timeZone: "America/Bogota",
