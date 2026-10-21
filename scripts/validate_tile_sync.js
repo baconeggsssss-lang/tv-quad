@@ -350,6 +350,7 @@ domRegistry.allTiles.forEach((tile) => {
 const expectedSources = new Map([
   ["Al Jazeera English", { flagKey: "qa", videoId: "gCNeDWCI0vo" }],
   ["TRT World", { flagKey: "tr", videoId: "qBe59l6p_EU" }],
+  ["CNN Türk", { flagKey: "tr", videoId: "6N8_r2uwLEc" }],
   ["Arise News", { flagKey: "ng", videoId: "wqAwGhKnkjc" }],
   ["Citizen TV Kenya", { flagKey: "ke", videoId: "1Vm7lAjpZZM" }],
   ["DW News", { flagKey: "de", videoId: "LuKwFajn37U" }],
@@ -360,6 +361,8 @@ const expectedSources = new Map([
   ["teleSUR", { flagKey: "ve", videoId: "GKp8PFf6m4o" }],
   ["TN", { flagKey: "ar", videoId: "cb12KmMMDJA" }],
   ["Milenio", { flagKey: "mx", videoId: "oPy8a-TCjzA" }],
+  ["CNN Brasil", { flagKey: "br", videoId: "gmBuQX-uDfo" }],
+  ["Record News", { flagKey: "br", videoId: "CHUZ0hjRrdI" }],
   ["CNN", { flagKey: "us", videoId: "GotlA1KKWoo" }],
   ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }], // US-based CNN Spanish-language feed
   ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
@@ -413,6 +416,30 @@ sourceDefinitions.forEach((source) => {
   }
 });
 const expectedNewSourceDetails = new Map([
+  [
+    "CNN Türk",
+    {
+      shortName: "CNN TR",
+      regionLabel: "Istanbul",
+      timeZone: "Europe/Istanbul",
+    },
+  ],
+  [
+    "CNN Brasil",
+    {
+      shortName: "CNN BR",
+      regionLabel: "São Paulo",
+      timeZone: "America/Sao_Paulo",
+    },
+  ],
+  [
+    "Record News",
+    {
+      shortName: "Record",
+      regionLabel: "São Paulo",
+      timeZone: "America/Sao_Paulo",
+    },
+  ],
   [
     "Arise News",
     {
