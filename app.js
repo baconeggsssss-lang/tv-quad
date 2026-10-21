@@ -253,7 +253,7 @@ const sourceDefinitions = [
   {
     name: "Sky News",
     shortName: "Sky",
-    videoId: "xDWQ3LkccY8",
+    videoId: "umLWFz4izTM",
     flagKey: "gb",
     regionLabel: "London",
     timeZone: "Europe/London",

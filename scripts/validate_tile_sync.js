@@ -379,7 +379,7 @@ const expectedSources = new Map([
   ["WION LIVE", { flagKey: "in", videoId: "vfszY1JYbMc" }],
   ["GB News", { flagKey: "gb", videoId: "EDbWwVR7i9Q" }],
   ["BBC News Arabic", { flagKey: "gb", videoId: "O1pGmVtj2Y8" }],
-  ["Sky News", { flagKey: "gb", videoId: "xDWQ3LkccY8" }],
+  ["Sky News", { flagKey: "gb", videoId: "umLWFz4izTM" }],
   ["Arirang TV", { flagKey: "kr", videoId: "hvVlyZ5GiE8" }],
   ["NHK WORLD-JAPAN", { flagKey: "jp", videoId: "IimtbuqYIE8" }],
   ["TBS NEWS DIG", { flagKey: "jp", videoId: "Anr15FA9OCI" }],
