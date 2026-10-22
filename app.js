@@ -84,7 +84,7 @@ const sourceDefinitions = [
   {
     name: "teleSUR",
     shortName: "teleSUR",
-    videoId: "GKp8PFf6m4o",
+    videoId: "cOsv8sEoMAY",
     flagKey: "ve",
     regionLabel: "Caracas",
     timeZone: "America/Caracas",
