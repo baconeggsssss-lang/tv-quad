@@ -358,7 +358,7 @@ const expectedSources = new Map([
   ["CNA", { flagKey: "sg", videoId: "-PWMxjBgr0k" }],
   ["CNA Originals", { flagKey: "sg", videoId: "9Y4kOQk_K3Y" }],
   ["NTN24", { flagKey: "co", videoId: "GNyQH9R1_V0" }],
-  ["teleSUR", { flagKey: "ve", videoId: "GKp8PFf6m4o" }],
+  ["teleSUR", { flagKey: "ve", videoId: "cOsv8sEoMAY" }],
   ["TN", { flagKey: "ar", videoId: "cb12KmMMDJA" }],
   ["Milenio", { flagKey: "mx", videoId: "oPy8a-TCjzA" }],
   ["CNN Brasil", { flagKey: "br", videoId: "gmBuQX-uDfo" }],
