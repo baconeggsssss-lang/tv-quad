@@ -114,14 +114,6 @@ const sourceDefinitions = [
     timeZone: "America/Sao_Paulo",
   },
   {
-    name: "Record News",
-    shortName: "Record",
-    videoId: "CHUZ0hjRrdI",
-    flagKey: "br",
-    regionLabel: "São Paulo",
-    timeZone: "America/Sao_Paulo",
-  },
-  {
     name: "CNN",
     shortName: "CNN",
     videoId: "GotlA1KKWoo",
@@ -317,7 +309,7 @@ const sourceDefinitions = [
   {
     name: "CCTV 13",
     shortName: "CCTV 13",
-    videoId: "HIF2FFOo1t0",
+    videoId: "tcrLV8j2GVk",
     flagKey: "cn",
     regionLabel: "Beijing",
     timeZone: "Asia/Shanghai",
