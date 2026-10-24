@@ -277,7 +277,7 @@ const sourceDefinitions = [
   {
     name: "ABC News",
     shortName: "ABC US",
-    videoId: "iipR5yUp36o",
+    videoId: "KQhNZQ_Uag8",
     flagKey: "us",
     regionLabel: "New York",
     timeZone: "America/New_York",
