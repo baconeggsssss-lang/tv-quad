@@ -382,7 +382,7 @@ const expectedSources = new Map([
   ["Arirang TV", { flagKey: "kr", videoId: "hvVlyZ5GiE8" }],
   ["NHK WORLD-JAPAN", { flagKey: "jp", videoId: "IimtbuqYIE8" }],
   ["TBS NEWS DIG", { flagKey: "jp", videoId: "Anr15FA9OCI" }],
-  ["ABC News", { flagKey: "us", videoId: "iipR5yUp36o" }],
+  ["ABC News", { flagKey: "us", videoId: "KQhNZQ_Uag8" }],
   ["Channels TV", { flagKey: "ng", videoId: "W8nThq62Vb4" }],
   ["Al Arabiya", { flagKey: "sa", videoId: "n7eQejkXbnM" }],
   ["CGTN", { flagKey: "cn", videoId: "0i7n3r01L2U" }],
