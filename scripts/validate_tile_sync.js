@@ -361,7 +361,6 @@ const expectedSources = new Map([
   ["teleSUR", { flagKey: "ve", videoId: "cOsv8sEoMAY" }],
   ["TN", { flagKey: "ar", videoId: "cb12KmMMDJA" }],
   ["Milenio", { flagKey: "mx", videoId: "oPy8a-TCjzA" }],
-  ["CNN Brasil", { flagKey: "br", videoId: "gmBuQX-uDfo" }],
   ["CNN", { flagKey: "us", videoId: "GotlA1KKWoo" }],
   ["CNN en Español", { flagKey: "us", videoId: "Qr61waJ6AZg" }], // US-based CNN Spanish-language feed
   ["Fox News", { flagKey: "us", videoId: "C96oohpWBGw" }],
@@ -386,7 +385,6 @@ const expectedSources = new Map([
   ["Channels TV", { flagKey: "ng", videoId: "W8nThq62Vb4" }],
   ["Al Arabiya", { flagKey: "sa", videoId: "n7eQejkXbnM" }],
   ["CGTN", { flagKey: "cn", videoId: "0i7n3r01L2U" }],
-  ["CCTV 13", { flagKey: "cn", videoId: "tcrLV8j2GVk" }],
   ["CCTV 4", { flagKey: "cn", videoId: "vNVp6bxkL1c" }],
 ]);
 
@@ -421,14 +419,6 @@ const expectedNewSourceDetails = new Map([
       shortName: "CNN TR",
       regionLabel: "Istanbul",
       timeZone: "Europe/Istanbul",
-    },
-  ],
-  [
-    "CNN Brasil",
-    {
-      shortName: "CNN BR",
-      regionLabel: "São Paulo",
-      timeZone: "America/Sao_Paulo",
     },
   ],
   [
