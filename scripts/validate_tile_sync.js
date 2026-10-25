@@ -349,7 +349,7 @@ domRegistry.allTiles.forEach((tile) => {
 
 const expectedSources = new Map([
   ["Al Jazeera English", { flagKey: "qa", videoId: "gCNeDWCI0vo" }],
-  ["TRT World", { flagKey: "tr", videoId: "qBe59l6p_EU" }],
+  ["TRT World", { flagKey: "tr", videoId: "adUSssjOCLY" }],
   ["CNN Türk", { flagKey: "tr", videoId: "6N8_r2uwLEc" }],
   ["Arise News", { flagKey: "ng", videoId: "wqAwGhKnkjc" }],
   ["Citizen TV Kenya", { flagKey: "ke", videoId: "1Vm7lAjpZZM" }],
