@@ -352,7 +352,7 @@ const expectedSources = new Map([
   ["TRT World", { flagKey: "tr", videoId: "adUSssjOCLY" }],
   ["CNN Türk", { flagKey: "tr", videoId: "6N8_r2uwLEc" }],
   ["Arise News", { flagKey: "ng", videoId: "wqAwGhKnkjc" }],
-  ["Citizen TV Kenya", { flagKey: "ke", videoId: "ZDucCAYX_eY" }],
+  ["Citizen TV Kenya", { flagKey: "ke", videoId: "Zdm69cMSOiE" }],
   ["DW News", { flagKey: "de", videoId: "LuKwFajn37U" }],
   ["FRANCE 24", { flagKey: "fr", videoId: "a47ckXKZjxI" }],
   ["CNA", { flagKey: "sg", videoId: "-PWMxjBgr0k" }],

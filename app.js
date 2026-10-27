@@ -36,7 +36,7 @@ const sourceDefinitions = [
   {
     name: "Citizen TV Kenya",
     shortName: "Citizen",
-    videoId: "ZDucCAYX_eY",
+    videoId: "Zdm69cMSOiE",
     flagKey: "ke",
     regionLabel: "Nairobi",
     timeZone: "Africa/Nairobi",
