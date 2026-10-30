@@ -352,7 +352,7 @@ const expectedSources = new Map([
   ["TRT World", { flagKey: "tr", videoId: "adUSssjOCLY" }],
   ["CNN Türk", { flagKey: "tr", videoId: "6N8_r2uwLEc" }],
   ["Arise News", { flagKey: "ng", videoId: "wqAwGhKnkjc" }],
-  ["Citizen TV Kenya", { flagKey: "ke", videoId: "Zdm69cMSOiE" }],
+  ["Citizen TV Kenya", { flagKey: "ke", videoId: "gyp8Onb4vmk" }],
   ["DW News", { flagKey: "de", videoId: "LuKwFajn37U" }],
   ["FRANCE 24", { flagKey: "fr", videoId: "a47ckXKZjxI" }],
   ["CNA", { flagKey: "sg", videoId: "-PWMxjBgr0k" }],
@@ -385,7 +385,7 @@ const expectedSources = new Map([
   ["Channels TV", { flagKey: "ng", videoId: "W8nThq62Vb4" }],
   ["Al Arabiya", { flagKey: "sa", videoId: "n7eQejkXbnM" }],
   ["CGTN", { flagKey: "cn", videoId: "0i7n3r01L2U" }],
-  ["CCTV 4", { flagKey: "cn", videoId: "vNVp6bxkL1c" }],
+  ["CCTV 4", { flagKey: "cn", videoId: "cAqktxCy0ls" }],
 ]);
 
 assert(sourceDefinitions.length === expectedSources.size, "unexpected source definition count");
